@@ -16,10 +16,10 @@ test('通用规则能抓到违规样本，合规样本不误报', () => {
     fs.writeFileSync(path.join(root, file), text);
   };
   try {
-    write('src/a.js', 'show(item.createdAt.slice(0, 16));\nshow(beijingTime(item.createdAt));\nshow(item.updatedAt.slice(11, 16)); // 北京时间\n');
+    write('web/src/a.js', 'show(item.createdAt.slice(0, 16));\nshow(beijingTime(item.createdAt));\nshow(item.updatedAt.slice(11, 16)); // 北京时间\n');
     write('server/index.mjs', "server.listen(port);\nserver.listen(port, '127.0.0.1');\n");
     write('package.json', JSON.stringify({ dependencies: { 'left-pad': '1.0.0' } }, null, 2));
-    assert.deepEqual(checkRules(root).map(v => `${v.file}:${v.line} ${v.kind}`), ['src/a.js:1 time', 'server/index.mjs:1 listen', 'package.json:3 deps']);
+    assert.deepEqual(checkRules(root).map(v => `${v.file}:${v.line} ${v.kind}`), ['web/src/a.js:1 time', 'server/index.mjs:1 listen', 'package.json:3 deps']);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }

@@ -23,6 +23,10 @@
 ## 运行
 
 ```sh
+npm install                      # 首次装依赖
+npm run dev                      # 前端原型（示例数据），只监听 127.0.0.1
+npm test                         # vitest + 交接格式 + 通用规则（含自测），提交前跑
+npm run typecheck                # tsc --noEmit
 node --test tests/*.test.mjs     # 交接格式 + 通用规则（含自测）
 node scripts/check-rules.mjs     # 只跑通用规则检查
 ```

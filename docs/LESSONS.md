@@ -28,3 +28,11 @@
 - 证据：
 - 升级：未升级。
 ```
+
+## L-01 自托管 Geist 后，中文全角标点变成半角宽（2026-11-06）
+
+- 现象：首页标题「常浩，本周…」里的「，」只有 6px 宽，视觉稿里是 29px；`tsc`、测试、溢出扫描都看不出来，只有对照视觉稿才发现。
+- 根因：`@fontsource/geist-sans` 的 `@font-face` 不带 `unicode-range`，Geist 自带一套窄版全角标点（，。：等），在 `--sans` 里排在苹方前面，就把苹方的标点挡住了。视觉稿用的 Google Fonts 只下发 latin 子集，带了 `unicode-range`，所以没这个问题。
+- 正确做法：不直接 import `@fontsource/*/400.css`，改在 `web/src/styles/fonts.css` 自写 `@font-face`，`unicode-range` 照 Google Fonts 的 latin 子集限定，让中文和全角标点回落到系统中文字体。以后换西文字体也照这个做。
+- 证据：浏览器里量「，」的宽度，修前 6.06px、修后 29.25px，与视觉稿一致；`npm run build` 后 `dist/assets` 里有 5 个 woff2。
+- 升级：未升级。

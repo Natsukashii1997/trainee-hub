@@ -1,6 +1,28 @@
 # 当前状态
 
-更新：2026-11-06。需求定稿，一期已拆成 19 张 GitHub issue，未开始编码。唯一下一步：实现 #1 工程骨架（无依赖），用户点名后开工。
+更新：2026-11-06。UI 先行：分支 `feat/ui-prototype` 上一期全部页面的前端原型已核对完（示例数据），`npm test`、类型检查、构建都通过，开发端口改为 5320，已提交并开 PR（关联 #1）。唯一下一步：用户在浏览器里过一遍原型，确认后按票逐张接后端。
+
+## UI 原型收尾：修自测、逐页核对、修字体与排序行（2026-11-06，Claude，用户同意按三批计划开工、端口改 5320 并开 PR；已提交、已推送分支、无需发布）
+
+- 时间：开工 `2026-11-06 00:55`（`date '+%F %H:%M'` 记录）。来由：上一节遗留的 ①②③④，用户确认「按计划开工」。
+- 改了哪些文件：`tests/check-rules.test.mjs`（违规样本从 `src/a.js` 改到 `web/src/a.js`，跟随 `SCAN`）；`web/src/styles/app.css`（`.order-row` 最后一列 64px 改 `auto`，上移/下移两个按钮要 74px，原来溢出）；新建 `web/src/styles/fonts.css`、改 `web/src/main.tsx`（不再直接 import `@fontsource/*` 的 CSS，自写带 `unicode-range` 的 `@font-face`，见 L-01）；`vite.config.ts`（开发端口 5310 改 5320、预览 5311 改 5321，5310 被本机 github-center 常驻服务占用）；`AGENTS.md`「运行」补 `npm install`、`npm run dev`、`npm test`、`npm run typecheck`；`docs/LESSONS.md` 新增 L-01；本文件。本机另建 `.claude/launch.json`（预览用，未纳入提交）。
+- 测试：`npm test` 原样结果：vitest `Tests  5 passed (5)`；`node --test` 为 `ℹ pass 4` / `ℹ fail 0`；`通用规则检查通过`。`npx tsc --noEmit` 无报错。`npm run build` 通过，`dist/assets` 含 5 个 woff2（验证后已删 `dist/`）。
+- 验证：5310 被占，先用 `npm run dev -- --port 5320` 起服务、改端口后用 `npm run dev` 复核能起，在内置浏览器 1440×900 下核对。四种演示视角 × 24 个路由（含任务、资产、档案详情）加登录页，用脚本查页面横向滚动、元素超出视口、内容溢出和控制台报错：修完后全部为零。排行榜「你」一行宽出 16px 是视觉稿有意的高亮出血，安装命令截断带「复制」按钮也与视觉稿一致，不算问题。交互各点一次：管培生提交产出（空链接被拦下，合法链接提交后状态变「已提交」）、带教人点评「达标」（状态变「已通过」）、管理员审核通过上架、退回（空原因被拦，填原因后退回）、收藏资产（AI 首页出现在收藏里），均有提示、无报错。可见性：同事视角打开林夏的任务只看到「提交内容和点评只对 林夏 本人、带教人和管理员可见」，非管理员进后台看到拦截说明。首页三角色与 `docs/design/home-01.html` 同为 1440×900 截图对照：布局、卡片、配色一致，差别只在示例数据（6 人对 12 人、标题随数据变化）。
+- 截图：只在会话里看过，未保存。
+- 发布与回读：无需发布。
+- 与授权不一致之处、遗留问题、范围外发现：①端口：本机 `cn.github-center.web` 常驻服务占着 5310，用户同意改 5320；②只核对了 1440 宽，1280 下限未专门看；③PR 未合并，等用户确认原型。
+- 本轮新坑：L-01。
+
+## UI 先行：一期前端原型（2026-11-06，Claude，用户选「UI 先行」「开发库用本机 PostgreSQL」；未提交、未推送、无需发布）
+
+- 时间：开工 `2026-11-06 00:55`（`date '+%F %H:%M'` 记录）。来由：用户要求先把一期所有页面用前端加示例数据做出来，确认后再逐张票接后端（偏离了 issue 的纵向切法，用户已知情）。
+- 改了哪些文件：新建 `package.json`（单包，前端在 `web/`）、`package-lock.json`、`vite.config.ts`（只监听 127.0.0.1:5310）、`tsconfig.json`、`.gitignore`、`web/index.html`、`web/src/`（`styles/app.css` 视觉规范、`lib/time.ts` 北京时间格式化及测试、`data/types.ts` 领域类型与可见性规则、`data/mock.ts` 示例数据、`data/api.ts` 数据访问层、`components/ui.tsx`、`components/Layout.tsx`、`pages/` 下首页三角色加同事、成长四页、AI 四页、团队两页、后台四页、登录与二三期占位页、`main.tsx` 路由）；改 `scripts/check-rules.mjs`（`SCAN` 改为 `web/src`、`server`，`ALLOWED_DEPS` 登记 13 个依赖，理由写在注释里）。
+- 测试：`npm test` 原样结果：vitest `Tests 5 passed`；`node --test` 为 `pass 3 / fail 1`，失败项是「通用规则能抓到违规样本，合规样本不误报」，推测是自测仍把违规样本放在 `src/`、而 `SCAN` 已改成 `web/src`，未核实；`check-rules` 对仓库本身通过。`tsc --noEmit` 无报错。
+- 验证：未启动开发服务器，未在浏览器核对任何页面。
+- 截图：无。
+- 发布与回读：无需发布。
+- 与授权不一致之处、遗留问题、范围外发现：上下文到 50% 按规定停在干净断点；遗留：①修 `tests/check-rules.test.mjs` 的自测；②`npm run dev` 后在 1440×900 逐页核对（对照 `docs/design/home-01.html`），切四种演示视角；③AGENTS.md「运行」补 `npm run dev` / `npm test`；④提交并开 PR（关联 #1，说明 UI 先行）。示例数据是 6 位管培生，不是视觉稿里的 12 人。
+- 本轮新坑：无。
 
 ## 一期拆票并发布（2026-11-06，Claude，用户同意建私有仓库、建标签、发布 issue；交接未提交、代码未推送、无需发布）
 
