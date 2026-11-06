@@ -36,3 +36,11 @@
 - 正确做法：不直接 import `@fontsource/*/400.css`，改在 `web/src/styles/fonts.css` 自写 `@font-face`，`unicode-range` 照 Google Fonts 的 latin 子集限定，让中文和全角标点回落到系统中文字体。以后换西文字体也照这个做。
 - 证据：浏览器里量「，」的宽度，修前 6.06px、修后 29.25px，与视觉稿一致；`npm run build` 后 `dist/assets` 里有 5 个 woff2。
 - 升级：未升级。
+
+## L-02 macOS 上自起 PostgreSQL，pg_ctl 启动即退出「postmaster became multithreaded during startup」（2026-11-06）
+
+- 现象：`initdb` 成功，`pg_ctl start` 报「无法启动服务器进程」；日志只有 `FATAL: postmaster became multithreaded during startup`，提示设 `LC_ALL`。
+- 根因：从 AI 会话、脚本里起的进程 `LANG`、`LC_ALL` 都是空的；postmaster 按空区域设置初始化时会调用系统框架、拉起额外线程，PostgreSQL 检测到多线程就自杀。终端里 `LANG` 通常有值，手动起不出问题。
+- 正确做法：脚本启动 `pg_ctl` / `postgres` 时显式传 `LC_ALL`（`scripts/db.mjs` 的 `PG_ENV`，环境里没有就用 `en_US.UTF-8`）。以后装成 launchd 常驻时，plist 的 `EnvironmentVariables` 里也要写 `LC_ALL`。
+- 证据：`~/Library/Application Support/trainee-hub/evidence/issue1-工程骨架-20261106/postgres-启动失败.log`；修后 `npm run db:up` 正常启动。
+- 升级：未升级（换个项目也成立，可提议提升为全局坑）。

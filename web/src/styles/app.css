@@ -132,6 +132,17 @@ h1, h2, h3 { text-wrap: balance; }
 .crumb b { color: var(--ink); font-weight: 500; }
 .crumb .ico { width: 12px; height: 12px; }
 .top .seg { margin-left: auto; }
+/* 后端健康状态（components/Health.tsx）：固定在主区右下角，不占顶栏（1280 宽时顶栏放不下）；
+   正常时低调，出错时用状态色；层级在抽屉（50/51）和提示（60）之下 */
+.health { position: fixed; right: calc(var(--gap) + 8px); bottom: calc(var(--gap) + 4px); z-index: 30; display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 11px 0 10px; border-radius: 999px; font-size: 12px; color: var(--mute); background: var(--glass-hi); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: var(--sh-sm); white-space: nowrap; cursor: default; }
+.health i { width: 7px; height: 7px; border-radius: 50%; background: var(--faint); flex: none; }
+.health em { font-style: normal; color: var(--faint); }
+.health.ok i { background: var(--ok); box-shadow: 0 0 0 3px var(--ok-soft); }
+.health.warn { color: var(--warn-ink); background: var(--warn-soft); }
+.health.warn i { background: var(--warn); }
+.health.down { color: var(--due-ink); background: var(--due-soft); }
+.health.down i { background: var(--due); }
+.app:has(> .health) { padding-bottom: 52px; } /* 滚到底时标记不盖住最后一张卡 */
 .ibtn { position: relative; width: 36px; height: 36px; border-radius: var(--r-md); display: grid; place-items: center; background: var(--glass-hi); box-shadow: var(--sh); color: var(--ink2); flex: none; transition: color var(--t), background var(--t); }
 .ibtn:hover { color: var(--ink); background: #fff; }
 .ibtn .badge { position: absolute; top: 8px; right: 9px; width: 7px; height: 7px; border-radius: 50%; background: var(--due); box-shadow: 0 0 0 2px #fff; }

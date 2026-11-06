@@ -22,7 +22,10 @@ const ALLOWED_DEPS = [
   'react', 'react-dom', 'react-router-dom', '@fontsource/geist-sans', '@fontsource/geist-mono',
   // V3「柔光」数字字体（2026-11-06 第 2 批）：Manrope 自托管，只用 latin 子集，同样为国内访问不走 Google Fonts
   '@fontsource/manrope',
+  // 后端（2026-11-06 issue #1 工程骨架）：pg 是 PostgreSQL 官方常用驱动、纯 JS 无原生编译；后端用 Node 自带 http 与直跑 TypeScript，不另加框架
+  'pg',
   // 开发与测试
+  '@types/pg', '@types/node',
   'vite', '@vitejs/plugin-react', 'typescript', 'vitest', 'jsdom', '@testing-library/react', '@types/react', '@types/react-dom',
 ];
 

@@ -1,6 +1,7 @@
 import { Component, Suspense, useEffect, type ReactNode } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Avatar, Empty, Icon, Mark, Segmented, useSession, useToast, type Domain, type IconName } from './ui';
+import { HealthStatus } from './Health';
 import { listAssets, myWeek, pendingReviews, tasksOf, todosOf, trainees, useDataVersion, userById } from '../data/api';
 import type { Role } from '../data/types';
 import { ROLE_LABEL } from '../data/types';
@@ -138,7 +139,7 @@ export function PageFrame({ children }: { children: ReactNode }) {
 }
 
 export function AppLayout() {
-  return <div className="app"><Sidebar /><PageFrame><Outlet /></PageFrame></div>;
+  return <div className="app"><Sidebar /><PageFrame><Outlet /></PageFrame><HealthStatus /></div>;
 }
 
 /** 各角色的默认主按钮 */

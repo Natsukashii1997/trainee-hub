@@ -25,12 +25,24 @@
 
 ```sh
 npm install                      # 首次装依赖
-npm run dev                      # 前端原型（示例数据），只监听 127.0.0.1
-npm test                         # vitest + 交接格式 + 通用规则（含自测），提交前跑
-npm run typecheck                # tsc --noEmit
+npm run dev:all                  # 一条命令：数据库（没建就建、没起就起）→ 迁移 → 后端 127.0.0.1:5325 + 前端 127.0.0.1:5320；Ctrl-C 停后端和前端
+npm run dev                      # 只起前端（127.0.0.1:5320，/api 代理到后端；后端没起时顶栏显示「后端连不上」）
+npm run dev:server               # 只起后端（改代码自动重启）
+npm run db:up                    # 建库并启动开发库（幂等）；db:stop 停止；db:migrate 执行迁移（幂等）
+npm test                         # vitest + 后端测试（连真测试库，会先 db:up）+ 交接格式 + 通用规则，提交前跑
+npm run typecheck                # 前端与后端（server/tsconfig.json）的 tsc --noEmit
 node --test tests/*.test.mjs     # 交接格式 + 通用规则（含自测）
 node scripts/check-rules.mjs     # 只跑通用规则检查
 ```
+
+数据库：本机 Homebrew PostgreSQL 16（`brew install postgresql@16`），但不用 Homebrew 的默认实例，`scripts/db.mjs` 给本项目单独建一个：
+
+- 数据目录、日志、连接串都在仓库外的 `~/Library/Application Support/trainee-hub/`（`pgdata/`、`postgres.log`、`db.env`）；首次 `db:up` 时 `initdb` 建库、生成随机密码，建开发库 `trainee_hub` 和测试库 `trainee_hub_test`。
+- 只监听 127.0.0.1:5433，不建 Unix 套接字，不装开机自启；电脑重启后再跑一次 `npm run dev:all` 或 `npm run db:up`。
+- 连接串从环境变量 `DATABASE_URL`、`TEST_DATABASE_URL` 读；`node scripts/db.mjs exec -- <命令>` 会从 `db.env` 读入后再执行（环境里已设的不覆盖）。手工连库：`node scripts/db.mjs exec -- sh -c 'psql "$DATABASE_URL"'`。
+- 迁移放 `server/migrations/NNNN_名称.sql`，按文件名顺序执行，执行过的记在 `schema_migrations`；已执行的迁移不再改，要改表就新加一条。
+- 后端测试每次会清空测试库再从头迁移，只对库名以 `_test` 结尾的库这么做。
+- Docker Compose 打包留到部署时再做（issue #19、PRD 第 11 节）。
 
 ## 结构
 
@@ -45,8 +57,13 @@ docs/
   LESSONS.md         本项目的坑（排障、改脚本前先搜）
   OPERATIONS.md      操作手册：交接写法、报告与验收
   templates/handoff.md  交接一节的骨架
+server/              后端（Node + TypeScript，Node 直接跑 .ts，不编译）
+  src/               入口 index.ts、HTTP 与来源校验 app.ts、连接池 db.ts、迁移 migrate.ts、测试 *.test.ts
+  migrations/        数据库迁移（NNNN_名称.sql）
 scripts/
   check-rules.mjs    通用规则检查（只查机器能判定的）
+  db.mjs             本机开发库：建、启、停、带连接串执行命令
+  dev.mjs            npm run dev:all 一条命令起数据库、后端、前端
 tests/               node:test 测试
 ```
 

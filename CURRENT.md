@@ -1,6 +1,59 @@
 # 当前状态
 
-更新：2026-11-06。原型已按 PRD v1.1 和 V3 柔光重做并推送（PR #20 待合并）；GitHub issue 已按 v1.1 更新（#1、#3–#10、#14–#17 改验收，新开 #21–#26）。唯一下一步：常浩过一遍原型并合并 PR #20，然后从 #1 工程骨架开始逐票接后端（已有会话卡片「后端工程骨架」）。
+更新：2026-11-06。PR #20（原型）已合并；#1 工程骨架后端部分已做完、本地提交在分支 `claude/serene-rubin-a28633`，未推送。唯一下一步：常浩确认后推送并开 PR（关联 #1）；合并后按依赖主线接 #3（以及 #21 → #22 → #23 …）。
+
+## #1 工程骨架：本机数据库、迁移、后端健康检查接到外壳（2026-11-06，Claude，用户同意分批计划「按推荐开工」：项目单独的数据库实例、健康状态只做一版；已本地提交、未推送、无需发布）
+
+- 时间：开工 `2026-11-06 17:23`（`date '+%F %H:%M'` 记录）。来由：上一会话派单做 issue #1 后端部分，让前端原型能从示例数据开始接真接口。
+- 改了哪些文件：
+  - 新建 `scripts/db.mjs`：本机开发库的建、启、停，以及「带连接串执行命令」。数据目录、日志、`db.env` 放在 `~/Library/Application Support/trainee-hub/`，只监听 127.0.0.1:5433，不建 Unix 套接字。
+  - 新建 `scripts/dev.mjs`：`npm run dev:all` 一条命令起数据库、跑迁移、起后端和前端。
+  - 新建 `server/`：
+    - `src/index.ts` 入口，127.0.0.1:5325；
+    - `src/app.ts` 做入口统一的来源校验（G-07）和 `GET /api/health`；
+    - `src/db.ts` 连接池，2 秒连接超时；
+    - `src/migrate.ts` 迁移执行器，有咨询锁、每条一个事务、记进 `schema_migrations`；
+    - `src/server.test.ts` 后端测试；
+    - `migrations/0001_init.sql` 初始迁移：团队、期次、用户 `app_user`、路径模板四表、个人路径、站 `personal_module`、任务实例、提交、点评、事件日志、待办，共 14 张表；事件日志用触发器保证只追加；待办用部分唯一索引保证同一规则、对象、负责人只有一条未关闭；
+    - `tsconfig.json`。
+  - 新建 `web/src/components/Health.tsx` 及测试：健康状态标记，挂在 `AppLayout`。
+  - 改 `Layout.tsx`：挂一次 `<HealthStatus />`。
+  - 改 `app.css`：加 `.health` 样式，并给 `.app` 底部留 52px。
+  - 改 `vite.config.ts`：`/api` 代理到 5325，开发服务和预览服务都配。
+  - 改 `package.json`：加 `dev:all`、`dev:server`、`db:up`、`db:stop`、`db:migrate`、`test:server`；`test` 加跑后端测试，`typecheck` 加查后端。
+  - 新增依赖 `pg`、`@types/pg`、`@types/node`，已登记进 `scripts/check-rules.mjs` 的 `ALLOWED_DEPS`。理由：`pg` 是常用的纯 JS PostgreSQL 驱动；后端用 Node 自带 http、直接跑 TypeScript，不另加框架和 tsx。
+  - 改 `AGENTS.md`：「运行」一节补数据库、后端的启动和测试命令，「结构」一节补相关目录。
+  - 改 `docs/LESSONS.md`：新增 L-02。
+  - 改本文件。
+- 测试：`npm test` 原样结果：
+  - vitest `Tests  89 passed (89)`；
+  - 后端 `ℹ pass 7` / `ℹ fail 0`（连真测试库，数据库从停止状态由 `test:server` 自动拉起）；
+  - `node --test tests/*.test.mjs` `ℹ pass 4` / `ℹ fail 0`；
+  - `通用规则检查通过`；
+  - `npm run typecheck` 前后端都无报错。
+- 验证：
+  - **数据库与迁移**：`db:up` 连跑两次幂等；迁移连跑两次，第二次输出「没有新的迁移」；`psql \dt` 回读 15 张表（含 `schema_migrations`）。
+  - **一条命令启动**：数据库停着时跑 `npm run dev:all`，`lsof` 看到 postgres 127.0.0.1:5433、后端 127.0.0.1:5325、前端 127.0.0.1:5320。
+  - **代理与来源校验**：经前端代理 `curl /api/health` 返回 `{"ok":true,"db":"up","migration":"0001_init",…}`；带 `Origin: https://evil.example` 时 403。
+  - **停止**：给 dev.mjs 发 SIGINT 后 5320、5325 都释放，无残留进程。
+  - **浏览器验证**（内置浏览器，iframe 扫描脚本）：1280、1440 两种宽度 × 4 个视角 × 24 个路由，共 192 页全部通过，检查了顶栏不溢出、面包屑不被挤、无横向滚动、状态为正常、滚到底不盖住可点元素。
+  - **三种状态实看**：
+    - 正常：「数据库正常 · 迁移 0001」；
+    - 停数据库：经代理返回 503，页面显示红色「数据库连不上」，悬停看到「ECONNREFUSED（检查于 17:58）」；
+    - 只起前端：显示「后端连不上」，悬停看到「HTTP 502」。
+    三种情况页面都照常渲染，不白屏。
+- 截图：只在会话里看过，未保存；数据库启动失败的日志证据在 `~/Library/Application Support/trainee-hub/evidence/issue1-工程骨架-20261106/`。
+- 发布与回读：无需发布。
+- 与授权不一致之处、遗留问题、范围外发现：
+  - ① 计划里说状态标记放「主区右上角」，实际改到**主区右下角**（固定定位），原因：放顶栏时，1280 宽有 10 个页面的面包屑被挤（最挤的管理员「成员与角色」差 153px，去掉标记后只剩约 21px 余量）。代价是浏览中途标记会叠在右下角卡片上（已给主区底部留白，滚到底不盖内容）；想换成侧栏底部常驻也只是改一处。
+  - ② 检查时间放在悬停提示里，没有常驻显示（计划写的是常驻），为了让标记更短。
+  - ③ 迁移只建了 14 张核心表；周期任务规则、工作日日历、交接要点、资产、通知等留给后续各票。`task_instance.recurring_rule_id` 暂不加外键，等 `recurring_rule` 建表时补。
+  - ④ 外键实际用到的表比派单列的多：`team` 被用户表引用，路径模板在 PRD 里是 4 张表，都一并建了。
+  - ⑤ 数据库是项目单独的实例，不开机自启：电脑重启后跑一次 `npm run dev:all` 或 `npm run db:up`；`npm test` 也会自动拉起数据库并让它继续运行。
+  - ⑥ Docker Compose 按 issue 留到部署时（#19）。
+  - ⑦ 写接口还没有，正文大小上限等 G-07 的其余保护，等第一个写接口时在 `app.ts` 入口加。
+  - ⑧ 推送和开 PR 待常浩同意。
+- 本轮新坑：L-02。
 
 ## GitHub issue 按 PRD v1.1 更新（2026-11-06，Claude，用户同意「现在更新 issue」；交接已本地提交、未推送、无需发布）
 
