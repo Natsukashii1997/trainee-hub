@@ -1,0 +1,203 @@
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top"><i aria-hidden="true"><b style="background:var(--s1)"></b><b style="background:var(--s2)"></b><b style="background:var(--s3)"></b></i>管培生工作台 · 结构重排</a>
+    <nav aria-label="章节">
+      <a href="#s1"><span>01</span><em>结论</em></a>
+      <a href="#s2"><span>02</span><em>场景</em></a>
+      <a href="#s3"><span>03</span><em>根因</em></a>
+      <a href="#s4"><span>04</span><em>本体</em></a>
+      <a href="#s5"><span>05</span><em>待办</em></a>
+      <a href="#s6"><span>06</span><em>时间视图</em></a>
+      <a href="#s7"><span>07</span><em>信息架构</em></a>
+      <a href="#s8"><span>08</span><em>写回</em></a>
+      <a href="#s9"><span>09</span><em>差异</em></a>
+      <a href="#s10"><span>10</span><em>指标分期</em></a>
+      <a href="#s11"><span>11</span><em>拍板</em></a>
+      <a href="#s12"><span>12</span><em>局限</em></a>
+    </nav>
+  </div>
+</header>
+<main id="top">
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-head">
+      <div>
+        <div class="eyebrow"><span class="bars" aria-hidden="true"><b style="background:var(--s1)"></b><b style="background:var(--s2)"></b><b style="background:var(--s3)"></b></span><span class="k">AI 落地三步法 · 第二步 技术方案 · 2026-11-06</span></div>
+        <h1>管培生工作台<br><span class="thin">整体结构</span>重排</h1>
+        <p class="sub">把 PRD v1.0 的六个板块放回一套<b>本体</b>上：对象、事件和<b>时间口径</b>先立起来，日程、待办、通知这些视图就能从结构里推出来，不用靠「想起来」。</p>
+      </div>
+      <blockquote class="quote">
+        <p>「所有数据存工作台自己的 PostgreSQL，工作台是唯一数据源。」</p>
+        <div class="who"><b>PRD v1.0 第 124 行</b>唯一数据源，意味着每个页面都该是同一套本体的投影。PRD 在轮岗日历上已经这么想了一次（L66「由所有人的个人路径汇总生成」）；这份方案把这条思路推到全站：首页、日程、待办、看板、动态都从同一套对象和事件里切出来。</div>
+      </blockquote>
+    </div>
+
+    <div class="spine" role="img" aria-label="全貌：本体、规则、视图三层，视图上的动作写回本体">
+      <a class="sp-col s1" href="#s4">
+        <div class="sp-sec"><div class="sp-top"><span class="sp-num">①</span><span class="k">本体 · 第 4 章</span></div><h3>对象、事件、日程项</h3><p class="what">业务里有哪些东西、怎么连、走到哪一步、什么时候在哪</p></div>
+        <div class="sp-sec"><div class="sp-lab"><span class="k">新增 7 个对象 + 1 个查询视图</span></div><div class="sp-chips"><span class="n">期次</span><span class="n">周期任务规则</span><span class="n">工作日日历</span><span class="n">交接要点</span><span class="n">事件日志</span><span class="n">待办</span><span class="n">通知</span><span>日程项（视图，不建表）</span></div></div>
+        <div class="sp-sec"><div class="sp-lab"><span class="k">最关键的修订</span></div><div class="sp-chips"><span>带教关系挂到「站」</span><span>任务加开放日</span><span>周期任务分四型</span></div></div>
+      </a>
+      <div class="sp-link" aria-hidden="true"><div class="arr"></div></div>
+      <a class="sp-col s2" href="#s5">
+        <div class="sp-sec"><div class="sp-top"><span class="sp-num">②</span><span class="k">规则 · 第 5、10 章</span></div><h3>待办 = 事件 × 规则</h3><p class="what">什么时候变成谁的事、多久算晚、怎么去重和撤销、怎么量结果</p></div>
+        <div class="sp-sec"><div class="sp-lab"><span class="k">19 条待办规则（一期 12 条）</span></div><div class="sp-chips"><span>待点评 · 2 个工作日</span><span>换站前 5 个工作日</span><span>修改截止</span><span>交接要点</span></div></div>
+        <div class="sp-sec"><div class="sp-lab"><span class="k">指标</span></div><div class="sp-chips"><span class="n">路径任务按期达标率</span><span>阶段评估达标率</span></div></div>
+      </a>
+      <div class="sp-link" aria-hidden="true"><div class="arr"></div></div>
+      <a class="sp-col s3" href="#s6">
+        <div class="sp-sec"><div class="sp-top"><span class="sp-num">③</span><span class="k">视图 · 第 6、7 章</span></div><h3>板块装东西，顶栏放切面</h3><p class="what">六个板块是对象的家；搜索、日程、待办、通知跨板块看</p></div>
+        <div class="sp-sec"><div class="sp-lab"><span class="k">四个时间视图</span></div><div class="sp-chips"><span class="n">我的本周</span><span class="n">我带的人</span><span class="n">轮岗排期</span><span class="n">团队活动月历</span></div></div>
+        <div class="sp-sec"><div class="sp-lab"><span class="k">顶栏</span></div><div class="sp-chips"><span>搜索</span><span class="n">日程</span><span class="n">待办</span><span>通知</span></div></div>
+      </a>
+    </div>
+    <div class="loop"><span><b>写回闭环</b>（第 8 章）：视图上的每个动作——提交、点评、写交接要点、顺延一站——都写回本体的某个字段，同时追加一条事件，事件再按规则生成下一条待办。</span><span class="k">数据源 → 事件 → 规则 → 待办 → 视图 → 写回</span></div>
+
+    <div class="nums">
+      <div class="hl s3"><b>40</b><span>PRD 第 3 节页面</span><span class="cap">保留 24 · 修订 15 · 并入 1</span></div>
+      <div class="hl s1"><b>+8</b><span>新增页面</span><span class="cap">日程两个视角、待办、周期任务规则、期次启动、交接要点、工作日日历、汇报</span></div>
+      <div><b>30<small>→37</small></b><span>本体对象</span><span class="cap">PRD 30 个实体保留 16、修订 14，新增 7；日程项是查询视图，不计入</span></div>
+      <div><b>69</b><span>角色走查缺口</span><span class="cap">管培生 21 · 带教 25 · 管理员与同事 23（推演）</span></div>
+      <div class="hl s1"><b>10</b><span>待常浩拍板</span><span class="cap">四份走查 27 个问题合并去重</span></div>
+    </div>
+
+    <div class="basis">
+      <div>
+        <h4>和 PRD v1.0 的关系 · 依据从哪来</h4>
+        <ul>
+          <li><b>保留</b>：定位、四种角色、一级导航 6 个板块、飞书登录、工作台是唯一数据源、只做电脑版、积分只奖励贡献 <span class="ev p">PRD L12–29 L33 L116 L124 L166</span>。</li>
+          <li><b>修订</b>：信息架构（顶栏加日程、待办）、三种首页、带教关系、任务状态与周期任务、可见性、数据模型、机器人接口、分期、主指标。逐条提案见 <code>prd-changes.md</code>。</li>
+          <li><b>依据</b>：PRD v1.0（235 行，35 轮问答定稿 <span class="ev p">L4</span>）；一期前端原型 <code>web/src</code>（示例数据，演示时刻 2026-11-05 周四 10:24 <span class="ev o">mock.ts:10</span>）；四份角色与本体走查；带教机器人项目文档作旁证。<b>没有真人访谈，也没有过程数据</b>，局限见第 12 章。</li>
+        </ul>
+      </div>
+      <div class="legend">
+        <h4>全文依据分级</h4>
+        <div><span class="ev p">PRD L66</span><span>已确认：PRD 原文行号</span></div>
+        <div><span class="ev o">mock.ts:68</span><span>原型现状：<code>web/src/</code> 下的文件与行号</span></div>
+        <div><span class="ev g">推演</span><span>走查里的推断，待常浩确认，不当事实</span></div>
+        <div><span class="ev x">旁证</span><span>机器人项目文档，只作参考</span></div>
+        <div><span class="ev g">建议值</span><span>规则阈值，没有业务出处，由常浩定</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 01 结论 -->
+<section class="sec white" id="s1">
+  <div class="wrap concl">
+    <div class="concl-lead">
+      <div class="sec-k"><span class="k">01 · 结论先行</span></div>
+      <h2 class="h2">十句话讲清这套结构</h2>
+      <p>读完这一页，就知道对象、事件、规则、视图、写回各是什么，以及哪些要常浩拍板。后面各章是依据和能开工的细节。</p>
+    </div>
+    <ol>
+      <li><span><b>重排的是整套工作台的结构，不是换页面。</b>PRD 的定位、角色、六个板块基本保留，改的是底下本体、规则、视图三层的关系。</span></li>
+      <li><span><b>轮岗日历是漏排了，「本周」是推不出来。</b>轮岗日历的数据 PRD 已经有：个人路径带每站起止 <span class="ev p">L65</span><span class="ev p">L131</span>，也写明由它汇总 <span class="ev p">L66</span>，只是分期表三期都没列 <span class="ev p">L170–174</span>。管培生、带教要的「本周」推不出来，是因为本体只有起止和截止两类时间，缺开放日、跟岗和 1:1 这类安排、点评和交接期限，也没有工作日口径。</span></li>
+      <li><span><b>本体新增 7 个对象、修订 14 个。</b>最关键的是带教关系改挂到「站」上，作为唯一来源；主带教可选，不设时由管理员担任。</span></li>
+      <li><span><b>带时间的东西统一成「日程项」</b>，分时段、截止、时刻三种形状。它是接口返回的查询视图，不建表：都在查询时从本体算出，飞书来的团队活动本来就存在 <code>team_event</code>。</span></li>
+      <li><span><b>四个时间视图由此推出</b>：管培生「我的本周」、带教「我带的人」、管理员「轮岗排期」甘特、全员「团队活动」月历，各回答一个角色的一个问题。</span></li>
+      <li><span><b>待办 = 事件 × 规则。</b>本体走查的 33 类事件（加上新增的 E34 站结束）归纳出 19 条待办规则，一期 12 条；每条写到负责人、期限、去重和撤销，阈值都标了出处或「建议值」。</span></li>
+      <li><span><b>和飞书日历按类型分开处理</b>：团队活动只读一本共享日历；截止、换站这类推算出来的不写进飞书，提醒交给机器人；「加入日历」改为跳转。</span></li>
+      <li><span><b>导航：一级 6 个不动，顶栏加「日程」「待办」。</b>PRD 第 3 节 40 页里保留 24、修订 15、并入 1，另新增 8 页。一期的修订和新增页都画了原型（P1–P8），只有工作日日历、机器人接口密钥两个简单设置页没画；二期的通知中心、答辩材料包、汇报随期另画。</span></li>
+      <li><span><b>主指标改为「路径任务按期达标率」</b>：只算路径任务，按期提交且被评为达标以上才算，显示 n/N；期末另看阶段评估达标率和定岗结果。</span></li>
+      <li><span><b>一期补进时间结构</b>：站带教关系、事件与待办、我的本周、我带的人、轮岗排期；读飞书日历、通知中心、站评三档放二期。<b>10 项要常浩拍板</b>，第一项是每个轮岗站有没有固定带教。</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 02 场景 -->
+<section class="stage s3" id="s2">
+  <div class="wrap">
+    <div class="st-head">
+      <div class="st-num">02</div>
+      <div><span class="k">场景还原 · 为什么要这么做</span><h2>三类人、四个时间尺度，<em>每个人要的是不同的时间</em></h2><p>PRD 把管培生的工作建模成「一串要交的产出」，但一天里更多的是「一串带时间的安排」。示例时刻 2026-11-05 周四 10:24；人名、日期来自原型示例数据 <span class="ev o">mock.ts:1</span>，只当结构样例，作息和做法是 <span class="ev g">推演</span>。</p></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>林夏的一天：现在和重排后</h3><span class="k">示意 · 轮岗中段 · 客服岗第 2 周 · 培养第 57 / 180 天</span></div>
+      <div class="pscroll">
+      <div class="day" role="table" aria-label="林夏 11-05 一天对照">
+        <div class="hd">时刻</div><div class="hd now">现在（PRD v1.0 + 原型）</div><div class="hd aft">重排后</div>
+        <div class="tm">09:00</div><div class="now">打开首页：两张截止卡，轻测今天 20:00、复盘明天 18:00 <span class="ev o">Home.tsx:55</span>。跟岗、1:1 只在周颖的日历里 <span class="ev o">mock.ts:189-190</span>，她看不到。</div><div class="aft"><b>我的本周</b>一条时间线：客服岗第 2 周 · 11-12 换到销售 · 今晚轻测 · 明天复盘截止。跟岗、1:1 二期从飞书日历叠加。</div>
+        <div class="tm">09:30</div><div class="now">跟岗。工作台里没有这件事；「客服跟岗观察表」只躺在资产库 <span class="ev o">mock.ts:167</span>。</div><div class="aft">一期：机器人晨报只推截止。二期：跟岗作为日程项挂到客服站，推荐工具挂在日程上。</div>
+        <div class="tm">12:00</div><div class="now">昨天交的话术录音评了没？首页只显示已有的点评 <span class="ev o">Home.tsx:121-126</span>，看不到「还在等」。</div><div class="aft">「我在等」：话术演练录音 · 点评期限 11-06 16:50（提交后 2 个工作日，<span class="ev g">建议值</span>）。</div>
+        <div class="tm">16:00</div><div class="now">与带教 1:1。PRD 全文没有 1:1。</div><div class="aft">二期日程叠加；1:1 结论要不要沉淀，暂不定 <span class="ev g">T-20</span>。</div>
+        <div class="tm">20:00</div><div class="now">轻测：按钮「开始」跳任务详情，让贴飞书文档链接；示例把产出写成「文档」、出题人写成带教 <span class="ev o">mock.ts:114</span>，和「机器人出题，成绩写回」矛盾 <span class="ev p">L78</span>。</div><div class="aft">测验型周期任务：按钮「去飞书作答」，成绩由机器人写回；没答记「未答」，不判逾期 <span class="ev x">旁证</span>。</div>
+        <div class="tm lst">全天</div><div class="now lst">首页六站条只有站名，不提示 11-12 换站 <span class="ev o">Home.tsx:99</span>；下一站谁带、先读什么，都没有。</div><div class="aft lst">今天正是开站前第 5 个工作日：她的待办出现「换站准备 · 下一站 销售 · 11-12 周四」，新站带教同日收到「接人准备」。</div>
+      </div>
+      </div>
+      <p class="fig-cap"><b>图 1</b>同一天，现在的工作台只能回答「我欠什么」，答不了「我什么时候在哪、下一步跟谁」。重排后一期先补齐推算得出的部分，飞书日程二期叠上来。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>差异分组 × 时间尺度：谁在什么尺度上要什么</h3><span class="k">点标签切换角色</span></div>
+      <p class="lead">同一个角色里，不同阶段要的东西不一样：新人要「今天去哪」，中段要「别漏、换站别掉链子」，答辩前要「材料齐不齐」。带教的首次和老手、管理员的每天到跨期也各不相同。每格写：要知道什么 → 现在 → 重排后由哪个视图回答。</p>
+      <div class="tabs" role="tablist" aria-label="角色">
+        <button role="tab" aria-selected="true" data-tab="tr"><span>T</span>管培生</button>
+        <button role="tab" aria-selected="false" data-tab="me"><span>M</span>带教人</button>
+        <button role="tab" aria-selected="false" data-tab="ad"><span>A</span>管理员</button>
+        <button role="tab" aria-selected="false" data-tab="co"><span>C</span>同事</button>
+      </div>
+      <div class="tabp on" data-panel="tr" role="tabpanel">
+        <div class="tw"><table class="t min">
+          <thead><tr><th>分组</th><th>一天</th><th>一周</th><th>一站（约两周）</th><th>整期（180 天）</th></tr></thead>
+          <tbody>
+            <tr><td><b>新人</b><br><span class="cap">第 1–2 周 · 示例里没有这类人 <span class="ev o">mock.ts:13-18</span></span></td>
+              <td><span class="cell-q">今天去哪、找谁</span><span class="cell-now"><span class="mk no">✗</span> 新登录默认「同事」，看到同事首页 <span class="ev p">L28</span></span><span class="cell-new">→ 期次预置名单，首登即管培生；焦点放入职清单</span></td>
+              <td><span class="cell-q">入职任务哪天交</span><span class="cell-now"><span class="mk half">◐</span> 有截止，没有安排</span><span class="cell-new">→ 我的本周</span></td>
+              <td><span class="cell-q">通识路演哪天、谁来听</span><span class="cell-now"><span class="mk no">✗</span> 路演只是一条截止 <span class="ev o">mock.ts:50</span></span><span class="cell-new">→ 日程项·时刻（二期）</span></td>
+              <td><span class="cell-q">180 天怎么走</span><span class="cell-now"><span class="mk half">◐</span> 路径总览只有模板</span><span class="cell-new">→ 我的路径加培养期时间轴</span></td></tr>
+            <tr><td><b>轮岗中段</b><br><span class="cap">林夏，第 57 天</span></td>
+              <td><span class="cell-q">几点跟岗、1:1，今晚轻测</span><span class="cell-now"><span class="mk half">◐</span> 只有截止</span><span class="cell-new">→ 我的本周（安排二期叠加）</span></td>
+              <td><span class="cell-q">截止和分享会在哪天</span><span class="cell-now"><span class="mk no">✗</span> 活动只有写死的下一场 <span class="ev o">mock.ts:186</span></span><span class="cell-new">→ 我的本周 + 团队活动月历</span></td>
+              <td><span class="cell-q">下一站哪天、谁带、上一站遗留</span><span class="cell-now"><span class="mk no">✗</span> 六站条只有站名 <span class="ev o">Home.tsx:99</span></span><span class="cell-new">→ 换站预告待办 + 站带教</span></td>
+              <td><span class="cell-q">我做成了多少</span><span class="cell-now"><span class="mk no">✗</span> 进度环量的是第几天 <span class="ev o">api.ts:59-64</span></span><span class="cell-new">→ 时间进度、完成进度两个数</span></td></tr>
+            <tr><td><b>答辩前</b><br><span class="cap">定岗期 75 天</span></td>
+              <td><span class="cell-q">定岗岗位上做什么</span><span class="cell-now"><span class="mk no">✗</span> 定岗只有 2 个任务 <span class="ev o">mock.ts:64-65</span></span><span class="cell-new">→ 定岗方向字段（二期）</span></td>
+              <td><span class="cell-q">材料还差什么</span><span class="cell-now"><span class="mk no">✗</span> 材料包在二期且不查完整度</span><span class="cell-new">→ 材料包完整度检查（二期）</span></td>
+              <td><span class="cell-q">定岗这一站谁带</span><span class="cell-now"><span class="mk half">◐</span> 定岗是一个模块 <span class="ev o">mock.ts:41</span>，PRD 没说谁带</span><span class="cell-new">→ 定岗算一站，站带教可为主带教或管理员</span></td>
+              <td><span class="cell-q">答辩哪天、谁评</span><span class="cell-now"><span class="mk no">✗</span> 答辩是 61 天的截止任务 <span class="ev o">mock.ts:65</span></span><span class="cell-new">→ 答辩日程项 + 倒计时焦点（二期）</span></td></tr>
+          </tbody></table></div>
+      </div>
+      <div class="tabp" data-panel="me" role="tabpanel">
+        <div class="tw"><table class="t min">
+          <thead><tr><th>分组</th><th>一天</th><th>一周</th><th>一站（接人 → 带 → 评 → 交接）</th><th>整期（轮岗 12 周）</th></tr></thead>
+          <tbody>
+            <tr><td><b>首次带教</b><br><span class="cap">缺的是标准 <span class="ev g">推演</span></span></td>
+              <td><span class="cell-q">有新提交了吗、达标长什么样</span><span class="cell-now"><span class="mk no">✗</span> 机器人接口读不到待点评 <span class="ev p">L154</span>；提示语却许诺「带教人会收到飞书提醒」<span class="ev o">Growth.tsx:129</span></span><span class="cell-new">→ 待点评待办 + 机器人读接口；三档说明（二期）</span></td>
+              <td><span class="cell-q">这周要做哪些带教动作</span><span class="cell-now"><span class="mk no">✗</span> 没有</span><span class="cell-new">→ 我带的人</span></td>
+              <td><span class="cell-q">两周里什么时候接人、交接</span><span class="cell-now"><span class="mk no">✗</span> 看板只认当前在带 <span class="ev o">api.ts:186</span></span><span class="cell-new">→ 换站接人、写交接要点两条待办</span></td>
+              <td><span class="cell-q">我这站每两周来的是谁</span><span class="cell-now"><span class="mk no">✗</span> 轮岗日历没做</span><span class="cell-new">→ 轮岗排期 · 只看我这站</span></td></tr>
+            <tr><td><b>老带教</b><br><span class="cap">示例「带过三期」<span class="ev o">mock.ts:19</span>；缺的是不漏人</span></td>
+              <td><span class="cell-q">别漏评、先评最急的</span><span class="cell-now"><span class="mk half">◐</span> 待点评先到先评 <span class="ev o">Growth.tsx:226</span></span><span class="cell-new">→ 按离点评期限还有多久排序</span></td>
+              <td><span class="cell-q">一屏看完所有人</span><span class="cell-now"><span class="mk half">◐</span> 看板只有当前在带</span><span class="cell-new">→ 我带的人：在带 / 将到 / 刚交接出去</span></td>
+              <td><span class="cell-q">交接周三种状态同时出现</span><span class="cell-now"><span class="mk no">✗</span> 示例里 6 人同一天换站 <span class="ev o">mock.ts:68</span></span><span class="cell-new">→ 三组 + 换站节点焦点</span></td>
+              <td><span class="cell-q">这一期比上一期怎样</span><span class="cell-now"><span class="mk no">✗</span> 没有</span><span class="cell-new">→ 跨期对比（三期）</span></td></tr>
+          </tbody></table></div>
+      </div>
+      <div class="tabp" data-panel="ad" role="tabpanel">
+        <div class="tw"><table class="t min">
+          <thead><tr><th>节奏</th><th>要知道 / 要做</th><th>现在</th><th>重排后</th></tr></thead>
+          <tbody>
+            <tr><td><b>每天</b></td><td>审核积压、逾期的人、谁压着没点评</td><td><span class="mk half">◐</span> 焦点只有审核和已逾期 <span class="ev o">Home.tsx:251-261</span>；没有按带教的点评积压</td><td class="cell-new">待办「待处理」组 + 点评积压按带教人汇总</td></tr>
+            <tr><td><b>每周</b></td><td>谁换站、哪些节点、主指标走势</td><td><span class="mk no">✗</span> 只能逐人看路径 <span class="ev o">Admin.tsx:147</span>；趋势线写死 <span class="ev o">Home.tsx:266</span></td><td class="cell-new">首页「本周与下周排期」+ 按期达标率 n/N</td></tr>
+            <tr><td><b>每站</b></td><td>岗位接不接得住、谁要顺延</td><td><span class="mk no">✗</span> 看不到同段扎堆；日期不能改 <span class="ev o">Admin.tsx:145</span></td><td class="cell-new">轮岗排期 · 按岗位 / 按带教 + 抽屉顺延（留痕）</td></tr>
+            <tr><td><b>每期</b></td><td>建期次、导入约 12 人、排轮岗、分站带教</td><td><span class="mk no">✗</span> 逐人改角色、逐人排 <span class="ev o">Admin.tsx:55-78</span> <span class="ev o">Admin.tsx:130-169</span></td><td class="cell-new">期次启动向导（预览甘特后一次发布）</td></tr>
+            <tr><td><b>跨期</b></td><td>模板复用、两期对比、对上汇报</td><td><span class="mk no">✗</span> 模板没有版本 <span class="ev o">Admin.tsx:88</span></td><td class="cell-new">模板版本（一期）；对比（三期）；汇报（二期 <span class="ev g">推演</span>）</td></tr>
+          </tbody></table></div>
+      </div>
+      <div class="tabp" data-panel="co" role="tabpanel">
+        <div class="tw"><table class="t min">
+          <thead><tr><th>情境</th><th>要知道 / 要做</th><th>现在</th><th>重排后</th></tr></thead>
+          <tbody>
+            <tr><td><b>偶尔来一次</b><br><span class="cap">从飞书群里的链接进来 <span class="ev g">推演</span></span></td><td>有没有我能直接用的</td><td><span class="mk half">◐</span> 同事首页讲「这里有什么」<span class="ev o">Home.tsx:299-314</span></td><td class="cell-new">二期候选：按岗位推荐、资产标「需要什么工具」<span class="ev g">A-15</span></td></tr>
+            <tr><td><b>被邀请主讲</b></td><td>哪天、听众在哪一站</td><td><span class="mk no">✗</span> 只有一张写死的活动卡 <span class="ev o">mock.ts:186</span></td><td class="cell-new">团队活动月历 + 活动详情（听众所在站分布）；挂上回放并确认后才记主讲贡献</td></tr>
+            <tr><td><b>接任站带教</b></td><td>从哪天带谁、前几站怎么样</td><td><span class="mk no">✗</span> 档案只对主带教开放 <span class="ev o">Team.tsx:49</span></td><td class="cell-new">站带教关系生效即有权限；档案交接卡</td></tr>
+          </tbody></table></div>
+      </div>
+      <p class="fig-cap"><b>图 2</b>✗ 现在答不了；◐ 部分能答。差异分组和缺口来自三份角色走查，全部是 <span class="ev g">推演</span>，第 12 章写了要用什么真实材料验证。</p>
+    </div>
+  </div>
+</section>

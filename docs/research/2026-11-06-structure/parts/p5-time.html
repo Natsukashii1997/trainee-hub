@@ -1,0 +1,299 @@
+
+<!-- 06 时间模型与四个视图 -->
+<section class="stage s3" id="s6">
+  <div class="wrap">
+    <div class="st-head">
+      <div class="st-num">06</div>
+      <div><span class="k">呈现（一）· 时间模型与四个时间视图</span><h2>先有「日程项」，<em>日历是推出来的</em></h2><p>工作台里带时间的东西只有三种形状，来源分推算、规则展开和飞书三种。把它们统一成日程项这个查询视图以后，四个时间视图只是同一份数据按人、按带教、按岗位、按团队切出来的四个切面，不需要另想、另存。</p></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>三种形状，三种来源</h3></div>
+      <div class="tw"><table class="t min">
+        <thead><tr><th>形状</th><th>是什么</th><th>本案里的例子</th><th>在视图里怎么画</th></tr></thead>
+        <tbody>
+          <tr><td><b>时段</b></td><td>有开始和结束</td><td>培养期、阶段、站、任务开放期、团队活动；二期：跟岗、1:1</td><td>横条或时间块</td></tr>
+          <tr><td><b>截止</b></td><td>某刻之前要完成</td><td>任务截止、修改截止、周报、轻测、点评期限、交接要点期限</td><td>竖针，颜色跟状态（语义色）</td></tr>
+          <tr><td><b>时刻</b></td><td>某一刻发生</td><td>换站、入职、阶段评估节点、答辩、公告发布</td><td>菱形或竖线</td></tr>
+          <tr><td><i>来源 · 推算</i></td><td>个人路径 × 工作日日历 × 当前时间</td><td>站、换站、开放期、截止、点评与交接期限、评估节点</td><td>—</td></tr>
+          <tr><td><i>来源 · 规则展开</i></td><td>周期任务规则展开成实例，每个实例是一条截止</td><td>周报每周日、轻测每周一次、月度物料每月末</td><td>按截止画</td></tr>
+          <tr><td><i>来源 · 飞书</i></td><td>以飞书为准，工作台只读</td><td>团队活动（一本共享日历）；二期：带教日程</td><td>实线块标「飞书」；未接入时虚线标「二期」</td></tr>
+        </tbody>
+      </table></div>
+      <div class="tw" style="margin-top:16px"><table class="t wide">
+        <thead><tr><th>日程项类型</th><th>形状</th><th>从哪来</th><th>可见级别</th><th>期</th><th>依据</th></tr></thead>
+        <tbody>
+          <tr><td>培养期、阶段、站</td><td>时段</td><td>推算：个人路径起止</td><td>公开</td><td>一期</td><td><span class="ev p">L65</span><span class="ev p">L84</span></td></tr>
+          <tr><td>换站</td><td>时刻</td><td>推算</td><td>公开</td><td>一期</td><td>C2</td></tr>
+          <tr><td>任务开放期、任务截止、修改截止</td><td>时段 / 截止</td><td>推算：截止规则 × 工作日日历</td><td>名称与状态公开，详情受限</td><td>一期</td><td><span class="ev p">L132</span></td></tr>
+          <tr><td>周报、轻测、月度物料</td><td>截止</td><td>周期任务规则</td><td>周报「交没交」公开；轻测受限</td><td>一期</td><td><span class="ev p">L85</span><span class="ev p">L136</span></td></tr>
+          <tr><td>点评期限、交接要点期限</td><td>截止</td><td>推算：提交时间 / 站结束 + 规则</td><td>负责人；点评期限也给提交的本人看</td><td>一期</td><td>R02 R08</td></tr>
+          <tr><td>阶段评估节点</td><td>时刻</td><td>推算：阶段结束日</td><td>受限（考核）</td><td>一期显示节点，二期接流程</td><td><span class="ev p">L79</span>；<span class="ev g">A-11</span></td></tr>
+          <tr><td>团队活动</td><td>时段</td><td>飞书共享日历（落库）</td><td>公开</td><td>二期</td><td><span class="ev p">L111</span><span class="ev p">L143</span></td></tr>
+          <tr><td>答辩、路演</td><td>时刻</td><td>管理员排定（或读共享日历）</td><td>时间公开，材料受限</td><td>二期</td><td><span class="ev p">L80</span>；<span class="ev g">T-10</span></td></tr>
+          <tr><td>带教 1:1、跟岗、陪访</td><td>时段</td><td>飞书：带教人日历中参会人含所带管培生的日程</td><td>只给带教本人和对应管培生</td><td>二期，待拍板 B6</td><td>PRD 未写；<span class="ev o">mock.ts:188-193</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>四个视图，各回答谁的什么问题</h3></div>
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>视图</th><th>谁用</th><th>回答什么问题</th><th>包含的日程项</th><th>粒度</th><th>期</th><th>原型</th></tr></thead>
+        <tbody>
+          <tr><td><b>我的本周</b></td><td>管培生（首页切片 + 日程默认视角）</td><td>这周哪天交什么？我在哪站、第几周，下一站哪天开始？这周有没有分享会？</td><td>本人的站、换站、截止、周报、轻测、团队活动；二期叠加跟岗、1:1</td><td>周（7 列），今天是其中一列</td><td>一期（推算部分）</td><td>P1</td></tr>
+          <tr><td><b>我带的人</b></td><td>带教人</td><td>这周我带的人谁哪天交？我哪天要评完？谁下周到我这站、谁要走？</td><td>行：在带、将到、刚交接出去；单元：提交、点评期限、截止、换站；二期一行「我的日程」</td><td>两周（14 列），看得到换站日</td><td>一期（推算部分）</td><td>P2</td></tr>
+          <tr><td><b>轮岗排期</b></td><td>管理员编辑；带教、管培生只读</td><td>每人现在在哪站？某一段某个岗位挤了几个人、空了几个？每位带教同时带几个？调整某人后会不会扎堆？评估节点集中在哪几周？</td><td>行：人 / 岗位 / 带教；条：站（按业务线着色）；标记：换站、阶段评估节点、假期</td><td>周</td><td>一期</td><td>P3</td></tr>
+          <tr><td><b>团队活动</b></td><td>全员</td><td>这个月有哪些分享会、路演、读书会？谁讲、在哪、回放在哪？哪天换站、哪天周报截止？</td><td>团队活动、公告发布、换站日、周报截止（公开部分）</td><td>月</td><td>二期（随飞书日历读取）</td><td>P4</td></tr>
+        </tbody>
+      </table></div>
+      <p class="fig-cap"><b>表 4</b>个人档案的成长时间线不算日程视图：它放的是已经发生的事件（事件日志），不是未来的安排。四个视图共用一个单元：<b>日程条</b>（类型、时间、状态色、来源标记），点开都跳回它所属对象的家（任务详情、站、活动）。<b>「我带的人」和带教看板不重复</b>：看板（成长板块）是人和进度的家，一行一个人，答「谁在哪站、做完几成、待我做什么、上一站怎样」；「我带的人」是时间切面，答「谁哪天交、我哪天要评完、谁哪天到」。带教首页把两者各取一个切片（P2）。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>和飞书日历的关系：按类型分开处理，不是三选一</h3></div>
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>日程项</th><th>读</th><th>写</th><th>跳转</th><th>推荐</th><th>理由</th></tr></thead>
+        <tbody>
+          <tr><td><b>团队活动</b></td><td>✓</td><td>—</td><td>✓</td><td><b>只读一本共享「管培生活动」日历</b>（应用身份读，不读个人日历）；活动卡「加入日历」改为在飞书中打开这条日程</td><td>PRD 已定「日程读飞书日历」<span class="ev p">L111</span>；按钮现在没有动作 <span class="ev o">Home.tsx:26</span>，写日历要额外权限</td></tr>
+          <tr><td><b>截止、换站、评估节点</b>（推算出来的）</td><td>—</td><td><b>不写</b></td><td>—</td><td>工作台自己展示；需要提醒的交给机器人推送</td><td>约 12 人一期 <span class="ev p">L14</span>，写进去会塞满日历；路径一调就要批量改删；有人在飞书里改了时间工作台不知道，违背「工作台是唯一数据源」<span class="ev p">L124</span>；机器人本来就负责推送 <span class="ev p">L150</span></td></tr>
+          <tr><td><b>带教 1:1、跟岗、陪访</b></td><td>二期</td><td>—</td><td>✓</td><td>一期不进；二期只读带教人日历中参会人含所带管培生的日程，本职时段只取忙闲、不取标题；点空白处跳到飞书建日程</td><td>牵涉个人授权和隐私 <span class="ev g">带教走查 Q16</span>；具体权限点要对照飞书开放平台核实 <span class="ev g">待验证</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- P1 -->
+  <div class="wrap">
+  <div class="blk band dark s3">
+    <div class="dm-head"><div><h4>P1 · 管培生首页「我的本周」</h4><p>林夏，2026-11-05 周四 10:24。焦点由规则从待办里挑两件；本周时间线把站、截止、测验、机器人交付和团队活动排在一起；跟岗、1:1 用虚线标二期。</p></div></div>
+    <div class="pscroll">
+    <div class="ap">
+      <aside class="ap-side">
+        <div class="ap-brand"><i></i><div>管培生工作台<small>TRAINEE HUB</small></div></div>
+        <div class="ap-nav on">首页</div><div class="ap-nav">成长</div><div class="ap-nav">知识<em>二期</em></div><div class="ap-nav">AI</div><div class="ap-nav">团队</div><div class="ap-nav">激励<em>三期</em></div>
+        <div class="ap-sg">我的</div><div class="ap-nav">我的档案</div><div class="ap-nav">我的提交<em>1</em></div><div class="ap-nav">收藏</div>
+      </aside>
+      <div class="ap-main">
+        <div class="ap-top"><div class="ap-crumb">首页 / <b>我的今天</b></div><div class="ap-tools"><span class="ap-tool">搜索 ⌘K</span><span class="ap-tool new">日程</span><span class="ap-tool new">待办 <span class="n">3</span></span><span class="ap-tool">通知</span><span class="ap-pri">提交产出</span></div></div>
+        <div class="ap-body">
+          <div><div class="ap-dt">2026-11-05 周四 · W45 · 培养第 57 / 180 天</div><div class="ap-h1">林夏，近两天有 <em>2 件事</em>要处理</div></div>
+          <div class="ap-grid">
+            <div class="ac soft c6"><div class="fc"><span class="fi acc">测</span><div><div class="kk">今天的测验 · 周期任务 · 机器人出题</div><h5>轻测 · 客服话术与流程</h5><div class="m">今天 20:00 · 成绩由机器人写回 · 未答记「未答」</div></div><span class="ab">去飞书作答</span></div></div>
+            <div class="ac soft c6"><div class="fc"><span class="fi warn">截</span><div><div class="kk">明天截止 · 路径任务 · 客服站</div><h5>一周来电归因复盘</h5><div class="m">11-06 周五 18:00 · 进行中</div></div><span class="ab pri">继续写</span></div></div>
+            <div class="ac c12">
+              <div class="ac-h"><b>我的本周 · W45 · 11-02 – 11-08</b><span><span class="tg warn">截止</span> <span class="tg acc">测验</span> <span class="tg neu">机器人收</span> <span class="tg ok">等待点评</span> <span class="tg p2">二期 · 飞书日程</span></span></div>
+              <div class="wk">
+                <div class="wk-h">周一<b>11-02</b></div><div class="wk-h">周二<b>11-03</b></div><div class="wk-h">周三<b>11-04</b></div><div class="wk-h today">周四 · 今天<b>11-05</b></div><div class="wk-h">周五<b>11-06</b></div><div class="wk-h">周六<b>11-07</b></div><div class="wk-h">周日<b>11-08</b></div>
+                <div class="wk-band"><div class="band-s" style="grid-column:1/-1">客服岗 · 第 3 / 6 站 · 第 2 周（10-29 – 11-11）· 站带教 周颖</div></div>
+                <div class="wk-c"></div>
+                <div class="wk-c"></div>
+                <div class="wk-c"><div class="it wait"><b>18:00 · 已提交</b>话术演练录音 · 等周颖点评，期限 11-06 16:50</div></div>
+                <div class="wk-c today"><div class="it p2" style="box-shadow:inset 3px 0 0 var(--a-acc)"><b>09:30–11:30 · 二期 · 现在 10:24</b>客服岗跟岗</div><div class="it p2" style="margin-top:14px"><b>16:00 · 二期</b>与周颖 1:1</div><div class="it quiz"><b>20:00 · 测验</b>轻测 · 去飞书作答</div></div>
+                <div class="wk-c"><div class="it due"><b>18:00 · 进行中</b>一周来电归因复盘</div></div>
+                <div class="wk-c"></div>
+                <div class="wk-c"><div class="it bot"><b>22:00 · 机器人收</b>第 45 周周报</div></div>
+              </div>
+              <div style="margin-top:8px;font-size:11.5px;color:var(--a-ink2)"><b>下周</b> · 11-11 周三 18:00 客服岗小结（站末）· <b>11-12 周四 换站 → 销售</b> · 19:30 分享会「用 Claude 做行业研究」</div>
+            </div>
+            <div class="ac c5">
+              <div class="ac-h"><b>我的进度</b><span>两个数并列</span></div>
+              <div class="prog2">
+                <div class="pg"><small>时间进度</small><b>57 / 180 天</b><div class="bar"><i style="width:32%"></i></div><small>32% · 只说明过了多久</small></div>
+                <div class="pg"><small>完成进度（路径任务）</small><b>5 / 6</b><div class="bar"><i style="width:83%;background:var(--a-ok)"></i></div><small>已通过 / 截至今天应完成 · 差 1（待点评）</small></div>
+              </div>
+              <div class="six"><div class="ok"><b>教研</b>已结清</div><div class="ok"><b>教学</b>已结清</div><div class="cur"><b>客服</b>第 2 周 · 0/3</div><div><b>销售</b>11-12</div><div><b>内容</b>11-26</div><div><b>投放</b>12-10</div></div>
+            </div>
+            <div class="ac c4">
+              <div class="ac-h"><b>待办 · 3</b><span>按规则排序</span></div>
+              <div class="li"><div><b>轻测 · 客服话术与流程</b><span>今天 20:00 · R04</span></div><span class="tg acc">测验</span></div>
+              <div class="li"><div><b>一周来电归因复盘</b><span>明天 18:00 · R04</span></div><span class="tg warn">截止</span></div>
+              <div class="li"><div><b>换站准备 · 下一站 销售</b><span>11-12 周四开站 · 先读资料、开通 CRM · R07</span></div><span class="tg neu">换站</span></div>
+              <div style="font-size:11px;color:var(--a-mute);padding:6px 0">周报（周日 22:00）、客服岗小结（11-11）不是今明截止，留在「我的本周」时间线上，到前一天才进待办（R04）。</div>
+              <div class="li" style="border-top:1px dashed var(--a-line)"><div><b>我在等 · 话术演练录音</b><span>周颖点评 · 期限 11-06 16:50</span></div><span class="tg ok">已提交</span></div>
+            </div>
+            <div class="ac dk c3"><div class="ac-h"><b>这一步可以用</b><span>AI 推荐</span></div><div style="font-size:12px;color:var(--k-a7aeba)">Skill</div><div style="font-weight:700;margin:2px 0 6px">通话记录归因</div><div style="font-size:11.5px;color:var(--k-d0d4db);line-height:1.55">按问题类型、课程、时段归类一周来电，给出前三大原因和原话样例。</div><div class="code-i">挂在任务「一周来电归因复盘」上</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="pnote">
+      <div><b>焦点由规则挑</b>已逾期 &gt; 需修改 &gt; 今天的测验 &gt; 今明截止 &gt; 换站预告 &gt; 答辩倒计时 &gt; 入职清单。今天命中「测验」和「明天截止」，换站预告排第三。<span class="ev g">优先级为推演</span></div>
+      <div><b>本周时间线是日程项切片</b>一期只有推算部分；周报、轻测按完成方式出按钮，不出现「去提交」。焦点卡沿用原型的位置和样式 <span class="ev o">Home.tsx:55</span>。</div>
+      <div><b>进度给两个数</b>示例数据只生成了部分路径任务，5 / 6 只演示算法 <span class="ev o">mock.ts:106-113</span>；站区分「时间到了」和「已结清」。</div>
+    </div>
+    <p class="fig-cap"><b>图 7</b>P1 对应需求：首页焦点规则、我的本周、进度两个数、换站预告、等待点评、周期任务分型（第 7 章需求对照 #3 #6 N1）。</p>
+  </div>
+  </div>
+
+  <!-- P2 -->
+  <div class="wrap">
+  <div class="blk panel dark s3">
+    <div class="dm-head"><div><h4>P2 · 带教人首页：「我带的人」切片 + 看板摘要</h4><p>周颖，示意为客户线客服、销售两站的站带教（示例数据里她是 3 人的固定带教，这里按「站带教」重排）。中间是日程「我带的人」的两周切片（时间），下面是带教看板摘要（人和进度）。</p></div></div>
+    <div class="pscroll">
+    <div class="ap nos">
+      <div class="ap-main">
+        <div class="ap-top"><div class="ap-crumb">首页 / <b>我的今天（带教人）</b></div><div class="ap-tools"><span class="ap-tool">日程 · 我带的人 →</span><span class="ap-tool">成长 · 带教看板 →</span><span class="ap-tool new">待办 <span class="n">2</span></span></div></div>
+        <div class="ap-body">
+          <div><div class="ap-dt">2026-11-05 周四 · 客户线 · 客服、销售两站站带教（示意）</div><div class="ap-h1">周颖，在带 <em>2 人</em> · 下周四到站 1 人 · 上一站未完 0 份</div></div>
+          <div class="ap-grid">
+            <div class="ac soft c6"><div class="fc"><span class="fi acc">评</span><div><div class="kk">待点评 · 离期限最近 · R02</div><h5>林夏 · 话术演练录音</h5><div class="m">11-04 16:50 提交 · 期限 11-06 16:50 · <b>剩 1 天 6 小时</b> · 说明：第 4 段投诉场景有点卡壳</div></div><span class="ab pri">去点评</span></div></div>
+            <div class="ac soft c6"><div class="fc"><span class="fi warn">换</span><div><div class="kk">下一个换站节点 · R06</div><h5>11-12 周四 · 赵一然到站（内容 → 销售）</h5><div class="m">上一站交接要点：待填写，期限 11-13（示例里内容站没有站带教，暂落管理员）· 林夏、许诺换站后仍由你带，不用交接</div></div><span class="ab">接人准备</span></div></div>
+            <div class="c12">
+              <div class="mg">
+                <div class="h"></div><div class="h">11-02 一</div><div class="h">03 二</div><div class="h">04 三</div><div class="h today">05 四 今天</div><div class="h">06 五</div><div class="h we">07 六</div><div class="h we">08 日</div><div class="h">09 一</div><div class="h">10 二</div><div class="h">11 三</div><div class="h sw">12 四 换站</div><div class="h">13 五</div><div class="h we">14 六</div><div class="h we">15 日</div>
+                <div class="gp">在带 · 2</div>
+                <div class="who"><span class="av" style="background:var(--a-acc)">林</span><div><b>林夏</b><span>客服 第 8/14 天 · 本站通过 0/3</span></div></div>
+                <div></div><div></div><div><span class="mk2 sub">交 话术录音</span></div><div class="tdc"><span class="mk2 gr">轻测（不评）</span></div><div><span class="mk2 rv">评 期限 16:50</span><span class="mk2 due">截 来电复盘</span></div><div></div><div><span class="mk2 gr">周报（只看）</span></div><div></div><div></div><div><span class="mk2 due">截 客服岗小结</span></div><div><span class="mk2 sw">→ 销售 仍由你带</span></div><div></div><div></div><div></div>
+                <div class="who"><span class="av" style="background:var(--k-5a6577)">许</span><div><b>许诺</b><span>销售 第 8/14 天 · 本站通过 0/2</span></div></div>
+                <div><span class="mk2 gr">W44 周报未交（11-01 截止）· 主带教跟进</span></div><div></div><div></div><div class="tdc"><span class="mk2 gr">轻测（不评）</span></div><div></div><div></div><div><span class="mk2 due">截 跟单记录 · 周日</span></div><div></div><div></div><div><span class="mk2 gr">站末</span></div><div><span class="mk2 sw">→ 客服 仍由你带</span></div><div></div><div></div><div></div>
+                <div class="gp">将到 · 1</div>
+                <div class="who"><span class="av" style="background:var(--k-8a6a3b)">赵</span><div><b>赵一然</b><span>内容站（其他带教）· 11-12 到站</span></div></div>
+                <div class="off"></div><div class="off"></div><div class="off"></div><div class="tdc"><span class="mk2 rv">可只读此前各站</span></div><div class="off"></div><div class="off"></div><div class="off"></div><div class="off"></div><div class="off"></div><div class="off"><span class="mk2 gr">内容站末</span></div><div><span class="mk2 sw">到站 销售</span></div><div></div><div></div><div></div>
+                <div class="gp">刚交接出去 · 0（10-28 离站的人没有未完事项）</div>
+                <div class="gp" style="background:var(--a-panel);border-top:1px dashed var(--a-line)">我的日程 · 二期从飞书日历读取（参会人含所带管培生的日程；本职时段只显示「忙」）</div>
+                <div class="who"><span class="av" style="background:var(--k-b0875a)">周</span><div><b>周颖</b><span>带教日程</span></div></div>
+                <div></div><div></div><div></div><div class="tdc"><span class="mk2 p2">09:30 林夏跟岗</span><span class="mk2 p2">16:00 林夏 1:1</span></div><div><span class="mk2 p2">14:00 许诺陪访</span></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+              </div>
+            </div>
+            <div class="ac c5"><div class="ac-h"><b>待点评 · 1</b><span>按离期限还有多久排，不再先到先评</span></div>
+              <div class="li"><div><b>林夏 · 话术演练录音</b><span>客服站 · 期限 11-06 16:50 · 剩 1 天 6 小时</span></div><span class="tg warn">2 个工作日内</span></div>
+              <div style="font-size:11px;color:var(--a-mute);margin-top:6px">原型这里有 3 条：另 2 条是赵一然的内容站选题（应归内容站带教）和周报（只看不评）。</div>
+            </div>
+            <div class="ac c7"><div class="ac-h"><b>带教看板 · 摘要</b><span>人和进度；完整版在成长板块</span></div>
+              <table class="tbl"><thead><tr><th>管培生</th><th>本站进度</th><th>待我做</th><th>上一站</th><th>状态</th></tr></thead><tbody>
+                <tr><td><b>林夏</b> · 在带</td><td>客服 8/14 天 · 0/3</td><td>评 1 份</td><td>教学：达标</td><td><span class="tg ok">正常</span></td></tr>
+                <tr><td><b>许诺</b> · 在带</td><td>销售 8/14 天 · 0/2</td><td>—</td><td>教研：无记录</td><td><span class="tg warn">周报未交</span></td></tr>
+                <tr><td><b>赵一然</b> · 将到</td><td>11-12 到站</td><td>接人准备</td><td>内容：要点待写</td><td><span class="tg neu">将到</span></td></tr>
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="pnote">
+      <div><b>人从「站带教关系」取</b>在带 = 当前站是我；将到 = 下一站是我（开站前 5 个工作日起）；刚交接出去 = 上一站是我且有未完事项。原型按 <code>user.mentorId</code> 取人 <span class="ev o">api.ts:186</span>。</div>
+      <div><b>三类标记分开</b>蓝 = 我要做（点评期限）；黄 = 他要交；黑 = 换站。周报、轻测灰色：带教只看不评（拍板 B4）。</div>
+      <div><b>二期叠加我的日程</b>示例里还有一条「轻测出题截止」<span class="ev o">mock.ts:191</span>，和「机器人出题」<span class="ev p">L78</span> 矛盾，这里不放。</div>
+    </div>
+    <p class="fig-cap"><b>图 8</b>P2 对应需求：带教首页三组、点评时效排序、换站节点焦点、跨站只读窗口、带教日程（二期）（需求对照 #3 #8 N2）。数字见 coverage.md 5.5、5.6。</p>
+  </div>
+  </div>
+
+  <!-- P3 -->
+  <div class="wrap">
+  <div class="blk band dark s3">
+    <div class="dm-head"><div><h4>P3 · 管理员「轮岗排期」甘特</h4><p>由 6 位示例管培生的个人路径直接生成，不需要任何新数据。切到「按岗位」能看到示例排法里 7 个格子挤了 2 人、7 个格子空岗；点色块在右侧抽屉里顺延或换站带教。</p></div></div>
+    <div class="pscroll">
+    <div class="ap nos">
+      <div class="ap-main">
+        <div class="ap-top"><div class="ap-crumb">日程 / <b>轮岗排期</b> · 2026 秋季班 · 轮岗阶段 10-01 – 12-23</div><div class="ap-tools"><span class="gsw" role="group" aria-label="视角"><button type="button" data-gv="person" aria-pressed="true">按人</button><button type="button" data-gv="station" aria-pressed="false">按岗位</button><button type="button" data-gv="mentor" aria-pressed="false">按带教</button></span><span class="ap-tool">导出</span></div></div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 250px">
+          <div class="ap-body">
+            <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--a-ink2)"><span class="gb t" style="display:inline-flex;min-height:0!important">老师线</span><span class="gb c" style="display:inline-flex;min-height:0!important">客户线</span><span class="gb m" style="display:inline-flex;min-height:0!important">市场</span><span>◆ 阶段评估节点（只给带教与管理员）</span><span>斜纹 = 假期（示意）</span><span style="color:var(--a-acc)">│ 今天 11-05</span></div>
+            <div class="gvw on" data-gview="person">
+              <div class="gt">
+                <div class="h"></div><div class="h">10-01</div><div class="h">10-08</div><div class="h">10-15</div><div class="h">10-22</div><div class="h">10-29</div><div class="h ix">11-05</div><div class="h">11-12</div><div class="h">11-19</div><div class="h">11-26</div><div class="h">12-03</div><div class="h">12-10</div><div class="h">12-17</div><div class="h">之后</div>
+                <div class="rl"><b>林夏</b><span>09-10 入职</span></div><div class="gb t past">教研</div><div class="gb t past">教学</div><div class="gb c sel">客服<small>当前</small></div><div class="gb c">销售</div><div class="gb m">内容</div><div class="gb m">投放</div><div class="tail"><span class="dia">◆ 12-23</span></div>
+                <div class="rl"><b>许诺</b><span>09-10 入职</span></div><div class="gb t past">教学</div><div class="gb t past">教研</div><div class="gb c">销售</div><div class="gb c">客服</div><div class="gb m">投放</div><div class="gb m">内容</div><div class="tail"><span class="dia">◆</span></div>
+                <div class="rl"><b>赵一然</b><span>09-10 入职</span></div><div class="gb t past">教研</div><div class="gb c past">客服</div><div class="gb m">内容</div><div class="gb c">销售</div><div class="gb t">教学</div><div class="gb m">投放</div><div class="tail"><span class="dia">◆</span></div>
+                <div class="rl"><b>陈默</b><span>09-10 入职</span></div><div class="gb m past">内容</div><div class="gb c past">销售</div><div class="gb m">投放</div><div class="gb t">教研</div><div class="gb c">客服</div><div class="gb t">教学</div><div class="tail"><span class="dia">◆</span></div>
+                <div class="rl"><b>孟川</b><span>09-10 入职</span></div><div class="gb c past">客服</div><div class="gb t past">教研</div><div class="gb t">教学</div><div class="gb m">投放</div><div class="gb m">内容</div><div class="gb c">销售</div><div class="tail"><span class="dia">◆</span></div>
+                <div class="rl"><b>宋知</b><span>09-10 入职</span></div><div class="gb c past">销售</div><div class="gb m past">投放</div><div class="gb t">教研</div><div class="gb t">教学</div><div class="gb c">客服</div><div class="gb m">内容</div><div class="tail"><span class="dia">◆</span></div>
+                <div class="g-hol" style="left:calc(116px);width:calc((100% - 180px)/12)"><b>国庆（示意）</b></div>
+                <div class="g-today" style="left:calc(116px + (100% - 180px)/12*5)"><b>今天</b></div>
+              </div>
+              <div style="font-size:11px;color:var(--a-mute);margin-top:6px">示例里 6 人全部在同一天换站（10-01、10-15、10-29、11-12、11-26、12-10），交接集中在同一天；第一站正好从国庆当天开始。</div>
+            </div>
+            <div class="gvw" data-gview="station">
+              <div class="gt" style="grid-template-columns:116px repeat(12,minmax(0,1fr))">
+                <div class="h"></div><div class="h" style="grid-column:span 2">第 1 段 10-01</div><div class="h" style="grid-column:span 2">第 2 段 10-15</div><div class="h ix" style="grid-column:span 2">第 3 段 10-29</div><div class="h" style="grid-column:span 2">第 4 段 11-12</div><div class="h" style="grid-column:span 2">第 5 段 11-26</div><div class="h" style="grid-column:span 2">第 6 段 12-10</div>
+                <div class="rl"><b>教研</b><span>老师线</span></div><div class="oc n2"><em>2 人</em><span>林夏</span><span>赵一然</span></div><div class="oc n2"><em>2 人</em><span>许诺</span><span>孟川</span></div><div class="oc"><em>1</em><span>宋知</span></div><div class="oc"><em>1</em><span>陈默</span></div><div class="oc n0"><em>空岗</em></div><div class="oc n0"><em>空岗</em></div>
+                <div class="rl"><b>教学</b><span>老师线</span></div><div class="oc"><em>1</em><span>许诺</span></div><div class="oc"><em>1</em><span>林夏</span></div><div class="oc"><em>1</em><span>孟川</span></div><div class="oc"><em>1</em><span>宋知</span></div><div class="oc"><em>1</em><span>赵一然</span></div><div class="oc"><em>1</em><span>陈默</span></div>
+                <div class="rl"><b>客服</b><span>客户线</span></div><div class="oc"><em>1</em><span>孟川</span></div><div class="oc"><em>1</em><span>赵一然</span></div><div class="oc"><em>1</em><span>林夏</span></div><div class="oc"><em>1</em><span>许诺</span></div><div class="oc n2"><em>2 人</em><span>陈默</span><span>宋知</span></div><div class="oc n0"><em>空岗</em></div>
+                <div class="rl"><b>销售</b><span>客户线</span></div><div class="oc"><em>1</em><span>宋知</span></div><div class="oc"><em>1</em><span>陈默</span></div><div class="oc"><em>1</em><span>许诺</span></div><div class="oc n2"><em>2 人</em><span>林夏</span><span>赵一然</span></div><div class="oc n0"><em>空岗</em></div><div class="oc"><em>1</em><span>孟川</span></div>
+                <div class="rl"><b>内容</b><span>市场</span></div><div class="oc"><em>1</em><span>陈默</span></div><div class="oc n0"><em>空岗</em></div><div class="oc"><em>1</em><span>赵一然</span></div><div class="oc n0"><em>空岗</em></div><div class="oc n2"><em>2 人</em><span>林夏</span><span>孟川</span></div><div class="oc n2"><em>2 人</em><span>许诺</span><span>宋知</span></div>
+                <div class="rl"><b>投放</b><span>市场</span></div><div class="oc n0"><em>空岗</em></div><div class="oc"><em>1</em><span>宋知</span></div><div class="oc"><em>1</em><span>陈默</span></div><div class="oc"><em>1</em><span>孟川</span></div><div class="oc"><em>1</em><span>许诺</span></div><div class="oc n2"><em>2 人</em><span>林夏</span><span>赵一然</span></div>
+              </div>
+              <div style="font-size:11px;color:var(--a-mute);margin-top:6px">同段同岗 2 人：7 格；空岗：7 格（coverage.md 5.3）。岗位容量上限是业务决定，未定前只标「≥2」和「空」。</div>
+            </div>
+            <div class="gvw" data-gview="mentor">
+              <div class="gt" style="grid-template-columns:116px repeat(12,minmax(0,1fr))">
+                <div class="h"></div><div class="h" style="grid-column:span 2">第 1 段</div><div class="h" style="grid-column:span 2">第 2 段</div><div class="h ix" style="grid-column:span 2">第 3 段</div><div class="h" style="grid-column:span 2">第 4 段</div><div class="h" style="grid-column:span 2">第 5 段</div><div class="h" style="grid-column:span 2">第 6 段</div>
+                <div class="rl"><b>吴桐</b><span>老师线 · 教研 + 教学</span></div><div class="oc n2"><em>3 人</em></div><div class="oc n2"><em>3 人</em></div><div class="oc"><em>2</em></div><div class="oc"><em>2</em></div><div class="oc"><em>1</em></div><div class="oc"><em>1</em></div>
+                <div class="rl"><b>周颖</b><span>客户线 · 客服 + 销售</span></div><div class="oc"><em>2</em></div><div class="oc"><em>2</em></div><div class="oc"><em>2</em></div><div class="oc n2"><em>3 人</em></div><div class="oc"><em>2</em></div><div class="oc"><em>1</em></div>
+                <div class="rl"><b>未指定</b><span>市场 · 内容 + 投放</span></div><div class="oc"><em>1</em></div><div class="oc"><em>1</em></div><div class="oc"><em>2</em></div><div class="oc"><em>1</em></div><div class="oc n2"><em>3 人</em></div><div class="oc n0"><em>4 人</em></div>
+              </div>
+              <div style="font-size:11px;color:var(--a-mute);margin-top:6px">示意：假设每条业务线一位站带教兼两站。示例数据没有市场线带教（M-25）；同时带几人算超载由常浩定，这里 3 人标黄、4 人标红只是演示。</div>
+            </div>
+          </div>
+          <div class="drawer">
+            <div style="font-size:11px;color:var(--a-mute)">已选 · 站</div>
+            <div style="font-size:15px;font-weight:600">林夏 · 客服站</div>
+            <div class="fld"><span>起止</span><div>10-29 周四 – 11-11 周三</div></div>
+            <div class="fld"><span>站带教</span><div class="inp">周颖 ▾</div></div>
+            <div class="fld"><span>本站</span><div>通过 0/3 · 待点评 1</div></div>
+            <div class="fld"><span>操作</span><div style="display:flex;gap:4px"><span class="ab pri">顺延</span><span class="ab">换站带教</span></div></div>
+            <div style="border:1px solid var(--a-line);border-radius:10px;padding:8px;font-size:11.5px;line-height:1.55;background:var(--a-soft)"><b>顺延 1 周 · 预览</b><br>客服站改为 10-29 – 11-18；销售、内容、投放三站和定岗各后移 1 周；本站未开始任务 1 条重排截止：客服岗小结 11-11 → 11-18。</div>
+            <div class="fld"><span>原因</span><div class="inp" style="color:var(--a-mute)">必填，例：请假一周</div></div>
+            <div style="font-size:10.5px;color:var(--a-mute);line-height:1.5">确认后写入：站起止、任务截止（原截止另存）、事件「路径调整」。已开始的站只能顺延，不能换顺序 <span style="font-family:var(--mono)">Admin.tsx:145</span>。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="pnote">
+      <div><b>取代「个人路径分配」页</b>原型是逐人上下挪顺序，日期不能改，也看不到全员分布 <span class="ev o">Admin.tsx:130-169</span>；这里同一份数据切三种视角，编辑放进抽屉。</div>
+      <div><b>调整是一个事件</b>原型调整后不重排任务 <span class="ev o">api.ts:106</span>，和 issue #5 验收不一致；这里写回站起止和任务截止，并留痕。拖拽编辑放二期。</div>
+      <div><b>只读角色看到的</b>带教：只高亮自己的站；管培生：只高亮自己那一行；其他人只看站和换站，看不到评估节点和任务级逾期（拍板 B2）。</div>
+    </div>
+    <p class="fig-cap"><b>图 9</b>P3 对应需求：轮岗日历改为轮岗排期、个人路径分配并入、工作日日历、评估节点、带教承载（需求对照 #9 #11 #33 N7）。</p>
+  </div>
+  </div>
+
+  <!-- P4 -->
+  <div class="wrap">
+  <div class="blk panel dark s3">
+    <div class="dm-head"><div><h4>P4 · 全员「团队活动」月历</h4><p>2026 年 11 月。只放公开的东西：团队活动、公告、换站日、周报截止。示例数据里只有一场活动，没有补编；其余活动二期从共享日历读进来。</p></div></div>
+    <div class="pscroll">
+    <div class="ap nos">
+      <div class="ap-main">
+        <div class="ap-top"><div class="ap-crumb">日程 / <b>团队活动</b> · 2026 年 11 月</div><div class="ap-tools"><span class="gsw"><button type="button">我的本周</button><button type="button">我带的人</button><button type="button">轮岗排期</button><button type="button" aria-pressed="true">团队活动</button></span><span class="ap-tool">‹ 10 月</span><span class="ap-tool">12 月 ›</span></div></div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 260px">
+          <div class="ap-body">
+            <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="tg ok" style="background:var(--l-m);color:var(--l-md)">团队活动 · 飞书</span><span class="tg neu">换站日</span><span class="tg neu">周报截止</span><span class="tg acc">公告</span><span class="tg warn">月度物料</span></div>
+            <div class="mo">
+              <div class="h">一</div><div class="h">二</div><div class="h">三</div><div class="h">四</div><div class="h">五</div><div class="h">六</div><div class="h">日</div>
+              <div class="d out"><b>26</b></div><div class="d out"><b>27</b></div><div class="d out"><b>28</b></div><div class="d out"><b>29</b><div class="it bot">换站日</div></div><div class="d out"><b>30</b></div><div class="d out"><b>31</b></div><div class="d"><b>1</b><div class="it bot">周报截止 22:00</div></div>
+              <div class="d"><b>2</b></div><div class="d"><b>3</b><div class="it quiz">公告 · 11 月分享会安排</div></div><div class="d"><b>4</b></div><div class="d today"><b>5 今天</b></div><div class="d"><b>6</b></div><div class="d"><b>7</b></div><div class="d"><b>8</b><div class="it bot">周报截止 22:00</div></div>
+              <div class="d"><b>9</b></div><div class="d"><b>10</b></div><div class="d"><b>11</b></div><div class="d" style="background:var(--k-fffbf5)"><b>12</b><div class="it bot">换站日</div><div class="it ev"><b>19:30</b>分享会 · 用 Claude 做行业研究 · 陈默</div><span class="conf">同日换站</span></div><div class="d"><b>13</b></div><div class="d"><b>14</b></div><div class="d"><b>15</b><div class="it bot">周报截止 22:00</div></div>
+              <div class="d"><b>16</b></div><div class="d"><b>17</b></div><div class="d"><b>18</b></div><div class="d"><b>19</b></div><div class="d"><b>20</b></div><div class="d"><b>21</b></div><div class="d"><b>22</b><div class="it bot">周报截止 22:00</div></div>
+              <div class="d"><b>23</b></div><div class="d"><b>24</b></div><div class="d"><b>25</b></div><div class="d"><b>26</b><div class="it bot">换站日</div></div><div class="d"><b>27</b></div><div class="d"><b>28</b></div><div class="d"><b>29</b><div class="it bot">周报截止 22:00</div></div>
+              <div class="d"><b>30</b><div class="it due">月度物料 22:00</div></div><div class="d out"><b>1</b></div><div class="d out"><b>2</b></div><div class="d out"><b>3</b></div><div class="d out"><b>4</b></div><div class="d out"><b>5</b></div><div class="d out"><b>6</b></div>
+            </div>
+          </div>
+          <div class="drawer">
+            <div style="font-size:11px;color:var(--a-mute)">活动详情 · 来自共享「管培生活动」日历</div>
+            <div style="font-size:15px;font-weight:600">分享会：用 Claude 做行业研究</div>
+            <div class="fld"><span>时间</span><div>11-12 周四 19:30</div></div>
+            <div class="fld"><span>主讲</span><div>陈默</div></div>
+            <div class="fld"><span>地点</span><div>3 楼大会议室 / 飞书会议</div></div>
+            <div class="fld"><span>操作</span><div><span class="ab pri">在飞书中打开</span></div></div>
+            <div style="border:1px solid var(--a-line);border-radius:10px;padding:8px;font-size:11.5px;line-height:1.6;background:var(--a-soft)"><b>听众当天所在站</b><br>教研 1 · 教学 1 · 客服 1 · 销售 2 · 内容 0 · 投放 1<br><span style="color:var(--a-bad)">当天是换站日，6 人都在开新站</span></div>
+            <div style="font-size:11px;color:var(--a-mute);line-height:1.55">回放：活动结束后由管理员挂妙记链接，确认后才记主讲贡献（R16，二期）。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="pnote">
+      <div><b>只读，不写</b>「加入日历」改为「在飞书中打开」，由本人决定接受 <span class="ev o">Home.tsx:26</span>。</div>
+      <div><b>只放公开层</b>周报只显示截止，不显示谁没交；轻测、评估节点受限，不进全员月历 <span class="ev p">L85</span>。</div>
+      <div><b>示例数据瑕疵</b>公告正文写「11.12 周三」，但 2026-11-12 是周四 <span class="ev o">mock.ts:183</span>；活动时间以日历为准。</div>
+    </div>
+    <p class="fig-cap"><b>图 10</b>P4 对应需求：团队活动（列表 + 月历）、活动读共享日历、主讲贡献确认（需求对照 #25）。听众分布取自轮岗排期第 4 段（coverage.md 5.3）。</p>
+  </div>
+  </div>
+</section>

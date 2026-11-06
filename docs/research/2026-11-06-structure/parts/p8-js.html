@@ -1,0 +1,91 @@
+
+<script>
+(function(){
+var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var RM=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* 角色标签 */
+$$('.tabs').forEach(function(bar){
+  var box=bar.parentNode;
+  $$('button',bar).forEach(function(b){b.addEventListener('click',function(){
+    $$('button',bar).forEach(function(x){x.setAttribute('aria-selected',x===b?'true':'false')});
+    $$('.tabp',box).forEach(function(p){p.classList.toggle('on',p.dataset.panel===b.dataset.tab)});
+  })});
+});
+
+/* 甘特视角切换 */
+$$('[data-gv]').forEach(function(b){b.addEventListener('click',function(){
+  var root=b.closest('.ap');
+  $$('[data-gv]',root).forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+  $$('.gvw',root).forEach(function(v){v.classList.toggle('on',v.dataset.gview===b.dataset.gv)});
+})});
+
+function Demo(root,cfg){
+  var st={k:0,mode:cfg.mode,timer:null,playing:false,touched:false}, stage=$('.dm-stage',root);
+  var bPlay=$('[data-act=play]',root), bLab=$('span',bPlay), prog=$('.dm-prog',root);
+  function total(){return cfg.total(st.mode)}
+  function draw(fwd){cfg.render(st.k,st.mode,!!fwd&&!RM);prog.textContent=st.k+' / '+total();root.classList.toggle('is-done',st.k>=total())}
+  function setPlay(p){st.playing=p;bLab.textContent=p?'暂停':'播放';bPlay.firstElementChild.innerHTML=p?'<path d="M2 1h3v10H2zM7 1h3v10H7z"/>':'<path d="M2 1l9 5-9 5z"/>'}
+  function stop(){clearTimeout(st.timer);setPlay(false)}
+  function tick(){if(st.k>=total()){stop();return}st.k++;draw(true);if(st.k>=total()){stop();return}st.timer=setTimeout(tick,cfg.delay)}
+  function play(){if(st.k>=total()){st.k=0;draw(false)}setPlay(true);clearTimeout(st.timer);st.timer=setTimeout(tick,st.k===0?600:250)}
+  bPlay.addEventListener('click',function(){st.touched=true;st.playing?stop():play()});
+  $('[data-act=replay]',root).addEventListener('click',function(){st.touched=true;stop();st.k=0;draw(false);play()});
+  $('[data-act=step]',root).addEventListener('click',function(){st.touched=true;stop();if(st.k>=total()){st.k=0;draw(false)}else{st.k++;draw(true)}});
+  $$('[data-mode]',root).forEach(function(b){b.addEventListener('click',function(){
+    st.touched=true;stop();st.mode=b.dataset.mode;
+    $$('[data-mode]',root).forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+    if(RM){st.k=total();draw(false)}else{st.k=0;draw(false);play()}
+  })});
+  function lock(){
+    stage.style.minHeight='';var h=0,keepK=st.k,keepM=st.mode;
+    (cfg.modes||[st.mode]).forEach(function(m){st.mode=m;for(var k=0;k<=cfg.total(m);k++){cfg.render(k,m,false);h=Math.max(h,stage.offsetHeight)}});
+    st.mode=keepM;st.k=keepK;draw(false);stage.style.minHeight=h+'px';
+  }
+  st.k=RM?total():0;lock();
+  var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(lock,200)});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(lock);
+  if(!RM&&'IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){io.disconnect();if(!st.touched&&!st.playing&&st.k===0)play()}})},{threshold:.35});
+    io.observe(stage);
+  }
+}
+
+/* 待办链路演示 */
+(function(){
+  var root=$('[data-demo=chain]'); if(!root)return;
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+  var D={
+    A:{title:'A · 一次提交 → 点评 → 写回',end:'一次提交走到写回，每一步都落在本体的一个字段上；哪一环断了，事件日志里看得出断在哪。',steps:[
+      {n:'数据源',tag:'网页',at:'11-04 16:50',d:'林夏在任务详情提交飞书链接（示例 sb-4）。',p:'POST /api/tasks/t-l-6/submissions\nurl   https://example.feishu.cn/docx/LinScriptRecording\nnote  5 段录音放在文档里，第 4 段投诉场景有点卡壳。\nat    2026-11-04 16:50（截止 11-04 18:00，按期）'},
+      {n:'事件',tag:'E10',at:'11-04 16:50',d:'追加一条事件，只追加不改写。',p:'event_log  +1\ntype         submission.created  (E10)\nsubject      task_instance t-l-6 话术演练录音\nperson_id    林夏        source  web\ndedup_key    submission.created:sb-4'},
+      {n:'规则',tag:'R02',at:'',d:'按规则决定谁、多久。',p:'R02 待点评\n条件    路径任务 ✓（客服站 · 话术演练录音）\n负责人  所属站（客服站）的站带教 = 周颖（示意；为空则落管理员）\n期限    提交 + 2 个工作日 = 11-06 16:50   ← 建议值\n推送    16:50 不是晚间 → 即时推给机器人'},
+      {n:'待办',tag:'todo',at:'11-04 16:50',d:'生成一条有负责人、有期限的待办。',p:'todo  +1\nowner    周颖         rule    R02\ntitle    点评 · 林夏 · 话术演练录音\ndue_at   2026-11-06 16:50     status  open'},
+      {n:'呈现',tag:'P2',at:'11-05 10:24',d:'在带教首页和飞书卡片里出现。',p:'周颖打开「我带的人」：焦点第一张，剩 1 天 6 小时。\n飞书卡片深链 /growth/tasks/t-l-6，落在点评表单，顶部是提交说明。\n林夏那边：「我在等 · 期限 11-06 16:50」。'},
+      {n:'写回',tag:'E11',at:'示意',d:'点评后写回，关闭待办。示例数据里还没有点评，这一步是示意。',p:'POST /api/submissions/sb-4/review\nreview          +1   grade 达标\ntask_instance   状态 → 已通过\nevent_log       review.created (E11)\ntodo R02        status → done   closed_by_event = E11\n若选「需改进」：写修改截止，生成 R03 给林夏'}
+    ]},
+    B:{title:'B · 一次换站 → 三个人的待办',end:'换站这件事没有任何人录入：个人路径 × 工作日日历 × 今天，就推出了每个人该做的事。',steps:[
+      {n:'数据源',tag:'系统推算',at:'11-05',d:'个人路径和工作日日历，不需要人操作。',p:'personal_module  赵一然 · 销售  2026-11-12 09:00 – 11-25 18:00\n上一站           内容  10-29 – 11-11\n新站带教         周颖（示意）\n今天             2026-11-05 = 开站前第 5 个工作日'},
+      {n:'事件',tag:'E05',at:'11-05',d:'推算事件同样写进事件日志。',p:'event_log  +1\ntype        module.switch_due  (E05 换站，开站前 5 个工作日)\nsubject     personal_module 赵一然·销售\nsource      system（推算）\ndedup_key   switch_due:{personal_module_id}'},
+      {n:'规则',tag:'R06 R07 R08',at:'',d:'这条事件触发 R06、R07；R08 等站结束事件；有一条反例。',p:'R06 换站接人  新站带教 ≠ 原站带教 ✓ → 周颖\nR07 换站预告  → 赵一然\nR08 交接要点  由 E34 站结束（11-11 18:00）触发，期限 11-13 18:00\n             示例里内容站没有站带教 → 暂落管理员\n可见性窗口    周颖自今天起可只读赵一然此前各站\n反例          林夏、许诺换站后仍是周颖：R06、R08 不生成'},
+      {n:'待办',tag:'todo',at:'11-05',d:'今天生成两条，第三条站结束时生成。',p:'todo  +2\n周颖     接人准备 · 赵一然 · 11-12 到站     due 11-12 09:00\n赵一然   换站准备 · 下一站 销售            due 11-12 09:00'},
+      {n:'呈现',tag:'P1 P2 P3',at:'11-05 10:24',d:'三个视图同时变化。',p:'周颖「我带的人」：将到组出现赵一然；焦点「下一个换站节点」。\n轮岗排期：11-12 那一列是换站线。\n赵一然「我的本周」：站带下方写「下一站 销售 · 11-12」。'},
+      {n:'写回',tag:'todo.done',at:'示意',d:'各自完成后写回，接人卡跟着变。',p:'POST /api/todos/{R06}/done                 → todo.done（E37）\nPUT  /api/personal-modules/{内容站}/handover\n     → handover_note +1 → E36 handover.created\n     → 关闭 R08；周颖的接人卡显示「上一站要点 · 已就绪」'}
+    ]}
+  };
+  var title=$('.ch-title',root), steps=$('.ch-steps',root), pay=$('.ch-pay',root), at=$('.ch-at',root), end=$('.ch-end',root);
+  function render(k,mode,fwd){
+    var S=D[mode]; title.textContent=S.title; end.textContent=S.end;
+    steps.innerHTML=S.steps.map(function(s,i){
+      var cls=i<k-1?'done':i===k-1?'now done':'pend';
+      return '<div class="tc '+cls+(fwd&&i===k-1?' enter':'')+'"><div class="tc-h"><i>'+(i+1)+'</i>'+s.n+'<small>'+s.tag+'</small></div><div class="tc-b">'+esc(s.d)+'</div></div>';
+    }).join('');
+    if(k===0){pay.innerHTML='<div class="ph-empty">点「播放」或「逐步」，看这一条示例数据每一步写了什么。</div>';at.textContent='';return}
+    var s=S.steps[k-1];
+    at.textContent=s.at;
+    pay.innerHTML='<div class="'+(fwd?'enter':'')+'"><div style="font-size:13px;font-weight:700;margin-bottom:8px">'+(k)+' · '+s.n+' · '+esc(s.tag)+'</div><pre class="code">'+esc(s.p)+'</pre></div>';
+  }
+  Demo(root,{mode:'A',modes:['A','B'],total:function(m){return D[m].steps.length},delay:1500,render:render});
+})();
+})();
+</script>

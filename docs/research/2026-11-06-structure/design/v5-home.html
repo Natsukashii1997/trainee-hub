@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>V5 素白 · 首页</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF;
+  --ink:#15191D;
+  --ink-2:#4A535C;
+  --ink-3:#616A73;
+  --mute:#A3AAB1;
+  --line:#ECEEF1;
+  --line-2:#F3F4F6;
+  --field:#F5F6F7;
+  --accent:#0E7A70;
+  --accent-ink:#0A5F57;
+  --accent-tint:#EAF5F3;
+  --accent-tint-2:#D6ECE8;
+  /* 日程五类：同一明度带 */
+  --c-due:#D2963A;   --c-due-t:#FBF4E8;  --c-due-d:#86560F;
+  --c-men:#5A8BCB;   --c-men-t:#EEF3FB;  --c-men-d:#2D5C97;
+  --c-team:#9583D3;  --c-team-t:#F3F0FB; --c-team-d:#5A47A0;
+  --c-exam:#DD7A62;  --c-exam-t:#FCEFEB; --c-exam-d:#A2432C;
+  --c-week:#8B97A3;  --c-week-t:#F2F4F6; --c-week-d:#4D5966;
+  --sans:"Geist","PingFang SC","Noto Sans SC","Hiragino Sans GB",system-ui,sans-serif;
+  --mono:"Geist Mono","SFMono-Regular",Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{width:1440px;height:900px;overflow:hidden;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;font-feature-settings:"tnum" 1;font-variant-numeric:tabular-nums}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+a{color:inherit;text-decoration:none}
+svg{display:block}
+.ic{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.num{font-family:var(--sans);font-variant-numeric:tabular-nums}
+
+/* ---------- 外壳 ---------- */
+.app{display:flex;height:900px}
+.side{width:232px;flex:none;border-right:1px solid var(--line);padding:24px 16px 20px;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:10px;padding:0 8px}
+.brand-mark{width:28px;height:28px;border-radius:8px;background:var(--ink);color:#fff;display:grid;place-items:center}
+.brand-name{font-size:14.5px;font-weight:600;letter-spacing:.01em;line-height:1.2}
+.brand-en{font-size:10px;letter-spacing:.18em;color:var(--ink-3);font-weight:500;margin-top:2px}
+.cohort{margin:18px 8px 0;font-size:12.5px;color:var(--ink-3);display:flex;align-items:center;gap:8px}
+.cohort i{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.search{margin:16px 0 0;position:relative}
+.search input{width:100%;height:34px;border:0;border-radius:8px;background:var(--field);padding:0 44px 0 34px;font-size:13px;outline:none}
+.search input::placeholder{color:var(--ink-3)}
+.search .ic{position:absolute;left:11px;top:9px;color:var(--ink-3);width:15px;height:15px}
+.search kbd{position:absolute;right:10px;top:8px;font-family:var(--sans);font-size:11px;color:var(--ink-3);line-height:18px}
+.nav{margin-top:22px;display:flex;flex-direction:column;gap:2px}
+.nav a{height:34px;display:flex;align-items:center;gap:11px;padding:0 10px;border-radius:8px;font-size:13.5px;color:var(--ink-2)}
+.nav a .ic{color:var(--ink-3)}
+.nav a.on{background:var(--accent-tint);color:var(--accent-ink);font-weight:500}
+.nav a.on .ic{color:var(--accent)}
+.nav .tag{margin-left:auto;font-size:11px;color:var(--ink-3)}
+.nav .tag.new{color:var(--accent-ink);font-weight:500}
+.nav-h{margin:22px 10px 6px;font-size:11.5px;color:var(--ink-3);letter-spacing:.04em}
+.me{margin-top:auto;border-top:1px solid var(--line);padding:16px 8px 0;display:flex;align-items:center;gap:10px}
+.av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:500;flex:none}
+.av-lin{background:#E4EEF9;color:#2D5C97}
+.av-zhou{background:#F6EEE3;color:#7A5222}
+.av-chen{background:#E4F1EC;color:#1E5446}
+.av-zhao{background:#F4EEE4;color:#6E5228}
+.me-name{font-size:13.5px;font-weight:500;line-height:1.3}
+.me-sub{font-size:12px;color:var(--ink-3)}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.top{height:60px;flex:none;display:flex;align-items:center;padding:0 40px 0 48px;gap:14px}
+.crumb{font-size:13px;color:var(--ink-3);display:flex;align-items:center;gap:8px}
+.crumb b{color:var(--ink);font-weight:500}
+.crumb .sep{color:#C5CBD1}
+.top .sp{flex:1}
+.persp{display:flex;align-items:center;gap:2px;font-size:12.5px}
+.persp span{color:var(--ink-3);margin-right:8px}
+.persp button{height:28px;padding:0 10px;border-radius:7px;color:var(--ink-2)}
+.persp button.on{background:var(--field);color:var(--ink);font-weight:500}
+.ib{width:34px;height:34px;border-radius:8px;display:grid;place-items:center;color:var(--ink-2);position:relative}
+.ib .dot{position:absolute;top:8px;right:9px;width:6px;height:6px;border-radius:50%;background:#E0533D;box-shadow:0 0 0 2px #fff}
+.btn{height:34px;padding:0 14px;border-radius:8px;display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;white-space:nowrap}
+.btn-p{background:var(--accent);color:#fff}
+.btn-g{color:var(--accent-ink);box-shadow:inset 0 0 0 1px var(--accent-tint-2)}
+.btn-t{color:var(--accent-ink);padding:0 4px;height:auto}
+.vr{width:1px;height:18px;background:var(--line)}
+
+/* ---------- 首页 ---------- */
+.page{padding:12px 40px 0 48px;flex:1;position:relative}
+.hello-meta{font-size:13px;color:var(--ink-3);display:flex;gap:14px;align-items:center}
+.hello-meta i{width:3px;height:3px;border-radius:50%;background:#C3C9CF}
+.hello{margin:8px 0 0;font-size:34px;font-weight:300;letter-spacing:-.005em;line-height:1.25}
+.hello em{font-style:normal;color:var(--accent);font-weight:300}
+
+.grid{position:absolute;left:48px;right:40px;top:116px;display:grid;grid-template-columns:512px 272px 1fr;column-gap:48px}
+.h{display:flex;align-items:baseline;gap:10px;height:20px}
+.h h2{margin:0;font-size:13px;font-weight:500;color:var(--ink);letter-spacing:.02em}
+.h .meta{font-size:12.5px;color:var(--ink-3)}
+.h .more{margin-left:auto;font-size:12.5px;color:var(--ink-3);display:flex;align-items:center;gap:2px}
+.h .more .ic{width:13px;height:13px}
+
+/* 今日焦点 */
+.focus{padding-top:18px}
+.f-meta{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-3)}
+.dotc{width:7px;height:7px;border-radius:50%;flex:none}
+.f-title{margin:6px 0 0;font-size:22px;font-weight:400;letter-spacing:.005em}
+.f-row{display:flex;align-items:flex-end;margin-top:6px}
+.count{display:flex;align-items:baseline;gap:6px}
+.count b{font-family:var(--sans);font-weight:200;font-size:88px;line-height:.95;letter-spacing:-.045em;color:var(--ink)}
+.count span{font-size:15px;color:var(--ink-3);margin-right:12px}
+.f-side{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:12px;padding-bottom:8px}
+.f-due{font-size:13px;color:var(--c-exam-d)}
+.f-due b{font-weight:500}
+.f2{margin-top:16px;padding-top:16px;border-top:1px solid var(--line);display:flex;align-items:center;gap:20px}
+.f2-l{flex:1;min-width:0}
+.f2-t{font-size:16px;font-weight:400;margin-top:3px}
+.f2-p{display:flex;align-items:center;gap:12px}
+.f2-p b{font-size:30px;font-weight:300;letter-spacing:-.03em;line-height:1}
+.f2-p b small{font-size:14px;color:var(--ink-3);font-weight:400;margin-left:1px;letter-spacing:0}
+.bar{height:2px;background:var(--line);border-radius:2px;position:relative;overflow:hidden}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--accent);border-radius:2px}
+
+/* 本周任务 */
+.tasks{margin-top:28px}
+.tl{margin-top:8px}
+.tr{display:grid;grid-template-columns:22px 1fr 44px 96px 52px;align-items:center;height:34px;border-bottom:1px solid var(--line-2);font-size:13.5px}
+.tr:last-child{border-bottom:0}
+.ck{width:16px;height:16px;border-radius:50%;box-shadow:inset 0 0 0 1.25px #C4CAD0;display:grid;place-items:center}
+.ck.done{background:var(--accent);box-shadow:none;color:#fff}
+.ck.doing{box-shadow:inset 0 0 0 1.25px var(--accent)}
+.ck.doing::after{content:"";width:8px;height:8px;border-radius:50%;background:conic-gradient(var(--accent) 0 50%,transparent 0)}
+.ck .ic{width:10px;height:10px;stroke-width:2.2}
+.tr .t-done{color:var(--ink-3)}
+.tr .ty{font-size:12px;color:var(--ink-3)}
+.tr .du{font-size:12.5px;color:var(--ink-2)}
+.tr .du.hot{color:var(--c-exam-d);font-weight:500}
+.tr .ts{font-size:12px;color:var(--ink-3);text-align:right}
+.tr .ts.ok{color:var(--accent-ink)}
+.tr .ts.go{color:var(--c-men-d)}
+
+/* 这一步可以用 */
+.ai{position:absolute;left:0;bottom:0;width:512px;background:var(--accent-tint);border-radius:16px;padding:18px 22px 18px}
+.ai-k{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--accent-ink);font-weight:500;letter-spacing:.02em}
+.ai-k .ic{width:14px;height:14px}
+.ai-k .fit{margin-left:auto;font-weight:400;color:var(--accent-ink)}
+.ai-t{display:flex;align-items:baseline;gap:10px;margin-top:10px}
+.ai-t h3{margin:0;font-size:22px;font-weight:400;color:#0B2E2A}
+.ai-t .sk{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--accent-ink);box-shadow:inset 0 0 0 1px #B8DCD5;border-radius:4px;padding:1px 6px}
+.ai-t .by{margin-left:auto;font-size:12.5px;color:#2F5A55;display:flex;align-items:center;gap:6px}
+.ai-t .by b{font-weight:500;color:#0B2E2A}
+.ai-d{margin:6px 0 0;font-size:13px;color:#2F5A55}
+.cmd{margin-top:12px;height:40px;background:#fff;border-radius:10px;display:flex;align-items:center;padding:0 6px 0 14px;gap:10px;box-shadow:0 1px 2px rgba(14,60,55,.06)}
+.cmd code{font-family:var(--mono);font-size:12.5px;color:var(--ink);flex:1}
+.cmd code span{color:var(--accent);margin-right:8px}
+.cmd button{height:28px;padding:0 10px;border-radius:7px;font-size:12.5px;color:var(--accent-ink);display:flex;align-items:center;gap:6px;font-weight:500}
+.cmd button .ic{width:14px;height:14px}
+
+/* 今日日程 */
+.sch{margin-top:18px;position:relative}
+.ev{display:grid;grid-template-columns:46px 14px 1fr;column-gap:10px;position:relative;padding-bottom:22px}
+.ev:last-child{padding-bottom:0}
+.ev .tm{font-size:13px;color:var(--ink);text-align:right;line-height:20px}
+.ev .tm small{display:block;font-size:12px;color:var(--ink-3)}
+.ev .rail{position:relative}
+.ev .rail::before{content:"";position:absolute;left:6px;top:0;bottom:-1px;width:1px;background:var(--line)}
+.ev:last-child .rail::before{display:none}
+.ev .rail i{position:absolute;left:2px;top:6px;width:9px;height:9px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 1.75px currentColor}
+.ev .rail i.fill{background:currentColor}
+.ev .tt{font-size:14px;font-weight:500;line-height:20px}
+.ev .ss{font-size:12px;color:var(--ink-3);margin-top:2px}
+.now{display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:12px;color:var(--accent-ink)}
+.now .bar{flex:1}
+.ev.cur .rail::before{background:linear-gradient(var(--accent) 0 46%,var(--line) 46%)}
+.nowtag{position:absolute;left:0;width:46px;text-align:right;font-size:12px;color:var(--accent);font-weight:500}
+.nowline{position:absolute;left:56px;right:0;height:1px;background:var(--accent)}
+.nowline::before{content:"";position:absolute;left:-3px;top:-3px;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+
+/* 点评 */
+.rev{margin-top:36px}
+.rev-who{display:flex;align-items:center;gap:10px;margin-top:14px}
+.rev-who .n{font-size:13.5px;font-weight:500;line-height:1.3}
+.rev-who .s{font-size:12px;color:var(--ink-3)}
+.pass{margin-left:auto;font-size:12px;color:var(--accent-ink);display:flex;align-items:center;gap:4px}
+.pass .ic{width:13px;height:13px;stroke-width:2}
+.quote{margin:12px 0 0;font-size:15px;line-height:1.75;color:var(--ink);font-weight:300}
+
+/* 资料 */
+.res{margin-top:32px}
+.res a{display:flex;align-items:center;gap:10px;height:46px;border-bottom:1px solid var(--line-2)}
+.res a:last-child{border-bottom:0}
+.res a .ic{color:var(--ink-3)}
+.res .rt{font-size:13.5px;line-height:1.3}
+.res .rs{font-size:11.5px;color:var(--ink-3)}
+.res a .ext{margin-left:auto;width:14px;height:14px}
+
+/* 进度 */
+.prog{display:flex;align-items:center;gap:20px;margin-top:18px}
+.ring{position:relative;width:104px;height:104px;flex:none}
+.ring svg{position:absolute;inset:0}
+.ring .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .c b{font-size:34px;font-weight:200;letter-spacing:-.04em;line-height:1}
+.ring .c b small{font-size:14px;font-weight:300;color:var(--ink-3);letter-spacing:0;margin-left:1px}
+.ring .c span{font-size:11.5px;color:var(--ink-3);margin-top:4px}
+.pm{display:flex;flex-direction:column;gap:10px}
+.pm div{font-size:12px;color:var(--ink-3);line-height:1.35}
+.pm div b{display:block;font-size:14px;color:var(--ink);font-weight:400}
+.stages{margin-top:22px;display:flex;align-items:center;font-size:12.5px}
+.stages span{display:flex;align-items:center;gap:4px;color:var(--ink-2);white-space:nowrap}
+.stages span .ic{width:12px;height:12px;stroke-width:2;color:var(--accent)}
+.stages span.on{color:var(--accent-ink);font-weight:500}
+.stages span.off{color:var(--ink-3)}
+.stages i{flex:1;height:1px;background:var(--line);margin:0 7px;min-width:8px}
+.stages i.d{background:var(--accent-tint-2)}
+
+.rot{margin-top:30px}
+.rl{margin-top:12px;position:relative}
+.rl::before{content:"";position:absolute;left:4px;top:8px;bottom:8px;width:1px;background:var(--line)}
+.rl::after{content:"";position:absolute;left:4px;top:8px;height:64px;width:1px;background:var(--accent)}
+.st{display:flex;align-items:center;gap:12px;height:26px;position:relative;font-size:13px}
+.st>i{width:9px;height:9px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 1.25px #C4CAD0;flex:none;position:relative;z-index:1}
+.st.d>i{background:var(--accent);box-shadow:none}
+.st.d .sn{color:var(--ink-2)}
+.st .sd{margin-left:auto;font-size:12px;color:var(--ink-3)}
+.st.f .sn{color:var(--ink-3)}
+.st.c{height:auto;align-items:flex-start;padding:5px 0 9px}
+.st.c>i{box-shadow:0 0 0 3px var(--accent-tint);background:var(--accent);margin-top:5px}
+.st.c .sn{font-weight:500;color:var(--ink)}
+.st.c .sn small{font-weight:400;color:var(--accent-ink);font-size:12px;margin-left:6px}
+.st.c .wrap{flex:1}
+.st.c .row{display:flex;align-items:baseline}
+.st.c .sub{font-size:12px;color:var(--ink-3);display:flex;justify-content:space-between;margin-top:8px}
+.st.c .bar{margin-top:7px}
+
+.board{margin-top:30px}
+.br{display:flex;align-items:center;gap:10px;height:36px;font-size:13.5px}
+.br .rk{width:14px;font-size:12px;color:var(--ink-3)}
+.br .av{width:24px;height:24px;font-size:11px}
+.br b{margin-left:auto;font-weight:400;font-size:13.5px}
+.br small{font-size:12px;color:var(--ink-3);margin-left:3px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="i-grow" viewBox="0 0 24 24"><path d="M12 20v-8"/><path d="M12 12c0-4 2.6-6.5 7-6.5 0 4.2-2.7 6.5-7 6.5Z"/><path d="M12 14.5C12 11 9.8 9 6 9c0 3.6 2.3 5.5 6 5.5Z"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14.5" rx="2.5"/><path d="M8 3.5v4M16 3.5v4M4 10h16"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4.5 5.5c2.7-.9 5.2-.6 7.5 1 2.3-1.6 4.8-1.9 7.5-1V18c-2.7-.9-5.2-.6-7.5 1-2.3-1.6-4.8-1.9-7.5-1z"/><path d="M12 6.5V19"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 4c.6 3.9 2.1 5.4 6 6-3.9.6-5.4 2.1-6 6-.6-3.9-2.1-5.4-6-6 3.9-.6 5.4-2.1 6-6Z"/><path d="M18.5 15.5c.3 1.7.8 2.2 2.5 2.5-1.7.3-2.2.8-2.5 2.5-.3-1.7-.8-2.2-2.5-2.5 1.7-.3 2.2-.8 2.5-2.5Z"/></symbol>
+    <symbol id="i-team" viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.2"/><path d="M3.5 19c.6-3.2 2.6-5 5.5-5s4.9 1.8 5.5 5"/><path d="M15.5 6.2a3 3 0 0 1 0 5.6M17.5 14.4c1.6.6 2.6 2.1 3 4.6"/></symbol>
+    <symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="9.5" r="5"/><path d="m9 14-1.5 6 4.5-2.3 4.5 2.3L15 14"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 19.5c.8-3.5 3.5-5.5 7-5.5s6.2 2 7 5.5"/></symbol>
+    <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M4 13.5 6.2 6a1.5 1.5 0 0 1 1.4-1h8.8a1.5 1.5 0 0 1 1.4 1L20 13.5V18a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18z"/><path d="M4 13.5h4.5l1.2 2h4.6l1.2-2H20"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 4.5 2.3 4.7 5.2.7-3.8 3.6.9 5.1L12 16.2l-4.6 2.4.9-5.1-3.8-3.6 5.2-.7z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6.5 16.5V11a5.5 5.5 0 0 1 11 0v5.5l1.5 1.5H5z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 15.5V4.5M7.5 9 12 4.5 16.5 9"/><path d="M5 15v3.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V15"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 8.5V6A1.5 1.5 0 0 0 14 4.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-ext" viewBox="0 0 24 24"><path d="M13.5 5.5H18.5V10.5M18.5 5.5 11 13"/><path d="M17 14v3.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 5 17.5v-9A1.5 1.5 0 0 1 6.5 7H10"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M7 3.5h7l4 4V19a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z"/><path d="M14 3.5V8h4M9 12.5h6M9 16h4"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5z"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24"><path d="M5 19l1-4L15.5 5.5a2.1 2.1 0 0 1 3 3L9 18z"/><path d="M13.5 7.5l3 3"/></symbol>
+    <symbol id="i-logo" viewBox="0 0 24 24"><path d="M12 20V11"/><path d="M12 11c0-3.6 2.3-6 6-6 0 3.7-2.4 6-6 6Z"/><path d="M12 13.5c0-3-1.9-5-5-5 0 3 2 5 5 5Z"/></symbol>
+  </defs>
+</svg>
+
+<div class="app">
+  <aside class="side">
+    <div class="brand">
+      <div class="brand-mark"><svg class="ic" style="width:16px;height:16px;stroke-width:1.75" aria-hidden="true"><use href="#i-logo"/></svg></div>
+      <div><div class="brand-name">管培生工作台</div><div class="brand-en">TRAINEE HUB</div></div>
+    </div>
+    <div class="cohort"><i></i>2026 秋季班 · 6 人</div>
+    <label class="search"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg><input type="search" placeholder="搜索" aria-label="搜索"><kbd>⌘K</kbd></label>
+    <nav class="nav" aria-label="主导航">
+      <a href="#" class="on" aria-current="page"><svg class="ic" aria-hidden="true"><use href="#i-home"/></svg>首页</a>
+      <a href="#"><svg class="ic" aria-hidden="true"><use href="#i-grow"/></svg>成长</a>
+      <a href="#"><svg class="ic" aria-hidden="true"><use href="#i-cal"/></svg>日历<span class="tag new">新增</span></a>
+      <a href="#"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg>知识<span class="tag">二期</span></a>
+      <a href="#"><svg class="ic" aria-hidden="true"><use href="#i-spark"/></svg>AI<span class="tag new">新 2</span></a>
+      <a href="#"><svg class="ic" aria-hidden="true"><use href="#i-team"/></svg>团队</a>
+      <a href="#"><svg class="ic" aria-hidden="true"><use href="#i-award"/></svg>激励<span class="tag">三期</span></a>
+    </nav>
+    <div class="nav-h">我的</div>
+    <nav class="nav" style="margin-top:0" aria-label="我的">
+      <a href="#"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg>我的档案</a>
+      <a href="#"><svg class="ic" aria-hidden="true"><use href="#i-inbox"/></svg>我的提交</a>
+      <a href="#"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg>收藏</a>
+    </nav>
+    <div class="me">
+      <div class="av av-lin">林</div>
+      <div><div class="me-name">林夏</div><div class="me-sub">管培生 · 带教 周颖</div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="top">
+      <div class="crumb"><span>工作台</span><span class="sep">/</span><b>首页</b></div>
+      <div class="sp"></div>
+      <div class="persp" role="group" aria-label="演示视角"><span>演示视角</span><button class="on" aria-pressed="true">管培生</button><button>带教人</button><button>管理员</button><button>同事</button></div>
+      <div class="vr"></div>
+      <button class="ib" aria-label="通知，有未读"><svg class="ic" aria-hidden="true"><use href="#i-bell"/></svg><span class="dot"></span></button>
+      <button class="btn btn-p"><svg class="ic" style="width:15px;height:15px" aria-hidden="true"><use href="#i-up"/></svg>提交产出</button>
+    </header>
+
+    <div class="page">
+      <div class="hello-meta"><span>11 月 5 日 周四 10:24</span><i></i><span>第 45 周</span><i></i><span>培养第 57 / 180 天</span></div>
+      <h1 class="hello">林夏，今天有 <em class="num">2</em> 件事要处理</h1>
+
+      <div class="grid">
+        <!-- 左：焦点 + 任务 -->
+        <section style="position:relative;height:676px">
+          <div class="h"><h2>今日焦点</h2></div>
+          <div class="focus">
+            <div class="f-meta"><span class="dotc" style="background:var(--c-exam)"></span>周期任务 · 考核</div>
+            <h3 class="f-title">轻测 · 客服话术与流程</h3>
+            <div class="f-row">
+              <div class="count" aria-label="距截止还剩 9 小时 36 分"><b>9</b><span>小时</span><b>36</b><span>分</span></div>
+              <div class="f-side">
+                <div class="f-due">今天 <b class="num">20:00</b> 截止</div>
+                <button class="btn btn-p" style="padding:0 18px"><svg class="ic" style="width:13px;height:13px" aria-hidden="true"><use href="#i-play"/></svg>开始</button>
+              </div>
+            </div>
+          </div>
+          <div class="f2">
+            <div class="f2-l">
+              <div class="f-meta"><span class="dotc" style="background:var(--c-due)"></span>路径任务 · 明天 18:00 截止</div>
+              <div class="f2-t">一周来电归因复盘</div>
+            </div>
+            <div class="f2-p">
+              <b class="num">50<small>%</small></b>
+              <div style="width:96px"><div class="bar"><i style="width:50%"></i></div></div>
+            </div>
+            <button class="btn btn-g"><svg class="ic" style="width:14px;height:14px" aria-hidden="true"><use href="#i-pen"/></svg>继续写</button>
+          </div>
+
+          <div class="tasks">
+            <div class="h"><h2>本周任务</h2><span class="meta">W45 · 5 项，已完成 1</span><a href="#" class="more">全部任务<svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></a></div>
+            <div class="tl">
+              <div class="tr"><span class="ck done"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t-done">话术演练录音</span><span class="ty">路径</span><span class="du">昨天 18:00</span><span class="ts ok">已提交</span></div>
+              <div class="tr"><span class="ck"></span><span>轻测 · 客服话术与流程</span><span class="ty">周期</span><span class="du hot">今天 20:00</span><span class="ts">未开始</span></div>
+              <div class="tr"><span class="ck doing"></span><span>一周来电归因复盘</span><span class="ty">路径</span><span class="du">明天 18:00</span><span class="ts go">进行中</span></div>
+              <div class="tr"><span class="ck"></span><span>第 45 周周报</span><span class="ty">周期</span><span class="du">11.08 周日</span><span class="ts">未开始</span></div>
+              <div class="tr"><span class="ck"></span><span>客服岗小结</span><span class="ty">路径</span><span class="du">11.11 周三</span><span class="ts">未开始</span></div>
+            </div>
+          </div>
+
+          <aside class="ai" aria-label="这一步可以用">
+            <div class="ai-k"><svg class="ic" aria-hidden="true"><use href="#i-spark"/></svg>这一步可以用 · AI 推荐<span class="fit">适合正在写的「一周来电归因复盘」</span></div>
+            <div class="ai-t"><h3>通话记录归因</h3><span class="sk">SKILL</span><span class="by"><span class="av av-chen" style="width:20px;height:20px;font-size:10px;background:#fff">陈</span><b>陈默</b> · <span class="num">23</span> 人用过</span></div>
+            <p class="ai-d">按问题类型、课程、时段归类一周来电，给出前三大原因和原话样例。</p>
+            <div class="cmd"><code><span>$</span>npx skills add trainee-hub/call-attribution</code><button aria-label="复制安装指令"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg>复制</button></div>
+          </aside>
+        </section>
+
+        <!-- 中：日程 + 点评 + 资料 -->
+        <section>
+          <div class="h"><h2>今日日程</h2><span class="meta">11.05 周四</span><a href="#" class="more">日历<svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></a></div>
+          <div class="sch">
+            <div class="ev cur">
+              <div class="tm num">09:30<small>11:30</small></div>
+              <div class="rail" style="color:var(--c-men)"><i class="fill"></i></div>
+              <div>
+                <div class="tt">客服跟岗 · 周颖</div>
+                <div class="ss">带教安排</div>
+                <div class="now"><span class="num" style="font-weight:500">10:24</span><div class="bar"><i style="width:45%"></i></div><span>还剩 66 分</span></div>
+              </div>
+            </div>
+            <div class="ev">
+              <div class="tm num">14:00<small>14:30</small></div>
+              <div class="rail" style="color:var(--c-men)"><i></i></div>
+              <div><div class="tt">与周颖 1:1</div><div class="ss">带教安排</div></div>
+            </div>
+            <div class="ev">
+              <div class="tm num">16:00<small>17:00</small></div>
+              <div class="rail" style="color:var(--c-team)"><i></i></div>
+              <div><div class="tt">分享会<br><span style="margin-left:-.5em">「用 Claude 做行业研究」</span></div><div class="ss">主讲 陈默 · 团队活动 · 飞书日历</div></div>
+            </div>
+            <div class="ev">
+              <div class="tm num">20:00</div>
+              <div class="rail" style="color:var(--c-exam)"><i></i></div>
+              <div><div class="tt">轻测截止</div><div class="ss">考核</div></div>
+            </div>
+          </div>
+
+          <div class="rev">
+            <div class="h"><h2>最新点评</h2><a href="#" class="more">全部<svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></a></div>
+            <div class="rev-who"><div class="av av-zhou">周</div><div><div class="n">周颖</div><div class="s">教学岗 · 试讲复盘</div></div><span class="pass"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>达标</span></div>
+            <p class="quote">结构清楚，节奏也稳。下次把学生反馈的数据放到最前面，结论会更有说服力。</p>
+          </div>
+
+          <div class="res">
+            <div class="h"><h2>客服岗资料</h2><span class="meta">当前站</span></div>
+            <div style="margin-top:6px">
+              <a href="#"><svg class="ic" aria-hidden="true"><use href="#i-doc"/></svg><div><div class="rt">客服 SOP（第 3 版）</div><div class="rs">管培生知识库 · 10.21 更新</div></div><svg class="ic ext" aria-hidden="true"><use href="#i-ext"/></svg></a>
+              <a href="#"><svg class="ic" aria-hidden="true"><use href="#i-doc"/></svg><div><div class="rt">来电问题分类标准</div><div class="rs">管培生知识库 · 10.12 更新</div></div><svg class="ic ext" aria-hidden="true"><use href="#i-ext"/></svg></a>
+            </div>
+          </div>
+        </section>
+
+        <!-- 右：进度 -->
+        <section>
+          <div class="h"><h2>我的进度</h2><a href="#" class="more">成长<svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></a></div>
+          <div class="prog">
+            <div class="ring">
+              <svg viewBox="0 0 104 104" aria-hidden="true">
+                <circle cx="52" cy="52" r="49" fill="none" stroke="#ECEEF1" stroke-width="2"/>
+                <circle cx="52" cy="52" r="49" fill="none" stroke="#0E7A70" stroke-width="2" stroke-linecap="round" stroke-dasharray="98.5 307.9" transform="rotate(-90 52 52)"/>
+                <circle cx="52" cy="3" r="0" />
+              </svg>
+              <div class="c"><b class="num">32<small>%</small></b><span>整体完成</span></div>
+            </div>
+            <div class="pm">
+              <div>按计划<b class="num">31%</b></div>
+              <div>当前阶段<b>轮岗 · 第 3 站</b></div>
+            </div>
+          </div>
+          <div class="stages">
+            <span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>入职</span><i class="d"></i>
+            <span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>通识</span><i class="d"></i>
+            <span class="on">轮岗</span><i></i>
+            <span class="off">定岗</span>
+          </div>
+
+          <div class="rot">
+            <div class="h"><h2>轮岗六站</h2><span class="meta">2 / 6 已完成</span></div>
+            <div class="rl">
+              <div class="st d"><i></i><span class="sn">教研</span><span class="sd num">10.01–10.14</span></div>
+              <div class="st d"><i></i><span class="sn">教学</span><span class="sd num">10.15–10.28</span></div>
+              <div class="st c"><i></i><div class="wrap">
+                <div class="row"><span class="sn">客服<small>第 3 站 · 第 2 周</small></span><span class="sd num" style="margin-left:auto;font-size:12px;color:var(--ink-3)">10.29–11.11</span></div>
+                <div class="bar"><i style="width:57%"></i></div>
+                <div class="sub"><span>第 <span class="num">8</span> / 14 天</span><span>还剩 6 天</span></div>
+              </div></div>
+              <div class="st f"><i></i><span class="sn">销售</span><span class="sd num">11.12–11.25</span></div>
+              <div class="st f"><i></i><span class="sn">内容</span><span class="sd num">11.26–12.09</span></div>
+              <div class="st f"><i></i><span class="sn">投放</span><span class="sd num">12.10–12.23</span></div>
+            </div>
+          </div>
+
+          <div class="board">
+            <div class="h"><h2>11 月贡献榜</h2><a href="#" class="more">激励<svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></a></div>
+            <div style="margin-top:8px">
+              <div class="br"><span class="rk num">1</span><span class="av av-chen">陈</span>陈默<b class="num">2<small>项</small></b></div>
+              <div class="br"><span class="rk num">2</span><span class="av av-zhao">赵</span>赵一然<b class="num">2<small>项</small></b></div>
+              <div class="br"><span class="rk num">3</span><span class="av av-zhou">周</span>周颖<b class="num">2<small>项</small></b></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

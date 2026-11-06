@@ -1,0 +1,213 @@
+
+<!-- 03 根因 + 数据从哪来 -->
+<section class="stage s1" id="s3">
+  <div class="wrap">
+    <div class="st-head rev">
+      <div class="st-num">03</div>
+      <div><span class="k">根因与数据从哪来</span><h2>时间数据从哪来，<em>断在哪里</em></h2><p>轮岗日历的数据 PRD 已经有，断在分期表；「本周」「我带的人」要的安排类时间，断在本体。先顺着 PRD 行号找断点，再看六处结构性矛盾，每处推出一个设计决定。</p></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>表层：一个页面掉进了分期的缝里</h3></div>
+      <div class="chain">
+        <div><small>PRD L39</small><b>页面表列了「轮岗日历」</b><span>和带教看板、任务详情并列在「成长」下</span></div>
+        <div><small>PRD L66</small><b>写明由个人路径汇总生成</b><span>数据现成：每站已有起止日期 <span class="ev o">types.ts:36-37</span></span></div>
+        <div><small>PRD L170–174</small><b>分期表三期都没列它</b><span>一期只写「成长路径（模板、个人路径、任务、提交、点评、带教看板）」</span></div>
+        <div><small>原型 main.tsx:25-28</small><b>原型按分期做</b><span>成长只有 4 个路由；带教首页「本周带教安排」是写死数据 <span class="ev o">Home.tsx:197</span></span></div>
+        <div class="end"><small>结果</small><b>整个工作台没有一个时间视图</b><span>通知中心同样不在任何一期 <span class="ev o">Layout.tsx:105</span></span></div>
+      </div>
+      <p class="fig-cap"><b>图 3</b>对轮岗日历，主因就是漏排进分期：个人路径带每站起止 <span class="ev p">L65</span><span class="ev p">L131</span>，补排一期就能做出轮岗排期，不需要新数据。但补上它，管培生要的「今天几点在哪」、带教要的「这周我带的人谁哪天交、我哪天要评完」仍然推不出来——这一半断在本体（C2），另外还有四处结构性矛盾。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>深层：六处结构性矛盾，各推出一个设计决定</h3></div>
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>#</th><th>矛盾</th><th>PRD 依据</th><th>原型里的表现</th><th>推出的设计决定</th></tr></thead>
+        <tbody>
+          <tr><td class="id">C1</td><td><b>分期表没有覆盖页面表</b></td><td>轮岗日历、通知中心在页面表里 <span class="ev p">L37</span><span class="ev p">L39</span>，不在 <span class="ev p">L170–174</span></td><td>两者都没做；铃铛点了提示「二期上线」<span class="ev o">Layout.tsx:105</span></td><td>分期表逐页挂期（第 10 章）；轮岗排期、我的本周进一期</td></tr>
+          <tr><td class="id">C2</td><td><b>本体只有起止和截止两类时间，缺「安排」和工作日口径</b></td><td>第 9 节有个人路径和站的起止 <span class="ev p">L131</span>、任务截止 <span class="ev p">L132</span>、周报周次 <span class="ev p">L136</span>、活动日历 id <span class="ev p">L143</span>；没有任务开放日，没有跟岗、1:1、答辩这类安排，没有点评、交接期限，也没有工作日口径</td><td><code>CalendarItem</code> 只有所属人、标题、起止 <span class="ev o">types.ts:88</span>；跟岗、1:1 挂在带教名下 <span class="ev o">mock.ts:189-190</span>；模板有天数、实例没有开放日 <span class="ev o">types.ts:42-55</span></td><td>统一成<b>日程项</b>查询视图（时段 / 截止 / 时刻）；任务加开放日；加工作日日历；跟岗、1:1 二期读飞书。轮岗排期不依赖这一条，「我的本周」「我带的人」依赖（第 6 章）</td></tr>
+          <tr><td class="id">C3</td><td><b>带教关系挂错了层级</b></td><td>按模块挂 <span class="ev p">L65</span><span class="ev p">L131</span>，又在 <code>user</code> 上挂一个 <span class="ev p">L109</span><span class="ev p">L129</span>，两处并存</td><td>每站都填主带教 <span class="ev o">mock.ts:71</span>；看板按 <code>user.mentorId</code> 取人 <span class="ev o">api.ts:186</span>；改带教把所有未通过任务整体转走 <span class="ev o">api.ts:43</span>；可见性也只认它 <span class="ev o">Team.tsx:49</span></td><td><b>站带教为唯一来源</b>，主带教可选；任务的负责带教跟着所属站走，换站不转；跨站可见性重写（第 4 章，拍板 B1、B2）</td></tr>
+          <tr><td class="id">C4</td><td><b>页面按板块列，跨板块的视图没有家</b></td><td>页面表按六板块组织 <span class="ev p">L35–44</span>，但搜索、通知已经放在「全局」<span class="ev p">L37</span></td><td>待点评、审核队列散在侧栏 <span class="ev o">Layout.tsx:36-46</span>；首页焦点只覆盖逾期、待点评、审核三类</td><td>顶栏加<b>日程</b>、<b>待办</b>；板块装东西，顶栏放切面（第 7 章）</td></tr>
+          <tr><td class="id">C5</td><td><b>一套状态机套所有任务</b></td><td>状态流转只有一条 <span class="ev p">L73</span>；周期任务含轻测、周报 <span class="ev p">L71</span>，但它们由机器人写入 <span class="ev p">L78</span><span class="ev p">L112</span><span class="ev p">L155</span></td><td>轻测写成交「文档」<span class="ev o">mock.ts:114</span>；周报出现「已通过」<span class="ev o">mock.ts:117</span>，进了带教的待点评队列 <span class="ev o">api.ts:176-182</span></td><td>周期任务按<b>完成方式</b>分四型，周报、轻测成绩是完成凭证（第 4 章，拍板 B4）；同时修订 issue #6 验收「周期任务与路径任务共用状态流转和提交方式」</td></tr>
+          <tr><td class="id">C6</td><td><b>指标量的是代理</b></td><td>主指标是按时提交率 <span class="ev p">L178</span>，但 L179 又要「进度与计划的差距」</td><td>按时率含周期任务，状态「已通过」但没有提交记录的也算按时 <span class="ev o">api.ts:200-206</span>；进度环量的是入职第几天 <span class="ev o">api.ts:59-64</span></td><td>主指标改为<b>路径任务按期达标率</b>；进度给两个数（第 10 章，拍板 B9）</td></tr>
+        </tbody>
+      </table></div>
+      <p class="fig-cap"><b>图 4</b>拿掉任何一行，对应的决定就站不住：比如不认 C3，带教多人视图就只能按「人」画，换站那天看板不会切换，下一站带教看不到上一站。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>数据从哪来：一线到底在处理什么信息</h3><span class="k">事件编号沿用本体走查 E01–E33</span></div>
+      <p class="lead">工作台自己不产生业务，只记录和推算。六类来源里，<b>系统推算</b>是这次补出来的一类：个人路径 × 周期规则 × 工作日日历 × 当前时间，就能算出开放、即将截止、逾期、换站、阶段结束，不需要任何人录入。</p>
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>来源</th><th>进来的东西</th><th>产生的事件</th><th>写入方</th><th>谁做</th></tr></thead>
+        <tbody>
+          <tr><td><b>管理员后台</b></td><td>期次、个人路径、站带教、周期任务规则、工作日日历</td><td>E02 路径生成 · E03 路径调整</td><td>管理员</td><td>人</td></tr>
+          <tr><td><b>系统推算</b>（新）</td><td>路径 × 规则 × 日历 × 当前时间</td><td>E04 周期实例生成 · E05 换站 · E06 离站有遗留 · E07 任务开放 · E08 即将截止 · E09 逾期 · E15 周报未交 · E16 阶段结束 · E34 站结束（新增）</td><td>系统</td><td>自动</td></tr>
+          <tr><td><b>网页操作</b></td><td>提交、点评、交接要点、资产、审核</td><td>E10 提交 · E11 点评 · E17–E18 评估 · E20–E25 资产与作品集</td><td>本人 / 带教 / 管理员</td><td>人</td></tr>
+          <tr><td><b>带教机器人</b></td><td>周报、轻测成绩、FAQ、经飞书的提交</td><td>E12–E14 · E27</td><td>机器人（接口）<span class="ev p">L150–155</span></td><td>机器出题、收周报；人作答</td></tr>
+          <tr><td><b>飞书日历</b></td><td>团队活动；二期：带教日程</td><td>E29 活动出现或变更 · E30 活动结束</td><td>飞书（只读）<span class="ev p">L111</span></td><td>自动读取</td></tr>
+          <tr><td><b>飞书登录 / 知识库</b></td><td>首次登录；资料目录（二期）</td><td>E01 首次登录 · E26 新资料</td><td>飞书</td><td>自动</td></tr>
+        </tbody>
+      </table></div>
+      <div class="two" style="margin-top:20px">
+        <div class="fig"><div class="k" style="margin-bottom:8px">交给机器和规则</div><p style="font-size:14px;color:var(--ink2)">截止、换站、逾期、阶段结束的推算；轻测出题和判分 <span class="ev p">L78</span>；周报收集 <span class="ev p">L112</span>；FAQ 入库 <span class="ev p">L97</span>；提醒推送 <span class="ev p">L150</span>。</p></div>
+        <div class="fig"><div class="k" style="margin-bottom:8px">必须人做，让人做得快</div><p style="font-size:14px;color:var(--ink2)">点评、交接要点、阶段评估、排期决定、批准延期。机器人项目已定「专业成果评阅」不是机器人职能 <span class="ev x">旁证 · 业务共识第 13 行</span>。让人快的办法是把上下文推到面前：再交时并排上次评语，接人时给交接卡。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 本体 -->
+<section class="stage s1" id="s4">
+  <div class="wrap">
+    <div class="st-head">
+      <div class="st-num">04</div>
+      <div><span class="k">数据本体 · 数据怎么串、怎么流转</span><h2>37 个对象，<em>新增 7 个、修订 14 个</em></h2><p>PRD 第 9 节的 30 个实体里保留 16 个、修订 14 个，再新增 7 个，让本体动得起来；日程项是查询视图，单独标注，不建表、不计数。四份走查对同一件事有不同提法，下面先写取舍，再给字段、关系、状态和可见性。</p></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>对象字段表（新增与修订）</h3><span class="k">写入方：管理员 / 系统 / 本人 / 带教 / 机器人 / 飞书</span></div>
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>对象</th><th></th><th>关键字段（新增或改动的加粗）</th><th>写入方</th><th>依据</th></tr></thead>
+        <tbody>
+          <tr class="grp"><td colspan="5">人与期次</td></tr>
+          <tr><td class="id">cohort 期次</td><td><span class="st new">新增</span></td><td><b>名称、模板版本、开学日、结束日、状态（筹备 → 进行中 → 已结束）、预置名单（飞书 open_id）</b></td><td>管理员</td><td><span class="ev p">L14</span><span class="ev p">L128</span> 只有字段；<span class="ev o">mock.ts:13</span> 写死字符串；<span class="ev g">A-02</span></td></tr>
+          <tr><td class="id">user</td><td><span class="st rev">修订</span></td><td>飞书 open_id、姓名、角色、<b>期次</b>；「带教人」<b>改为派生值</b>（当前所在站的站带教）</td><td>飞书 / 管理员</td><td><span class="ev p">L129</span>；<span class="ev g">M-01</span></td></tr>
+          <tr class="grp"><td colspan="5">路径与时间</td></tr>
+          <tr><td class="id">path_template</td><td><span class="st rev">修订</span></td><td>层级、顺序、<b>版本号；已被期次绑定的版本只读，改动另存新版本（阶段、模块、任务模板一起冻结）</b></td><td>管理员</td><td><span class="ev o">Admin.tsx:88</span>；<span class="ev g">A-13</span></td></tr>
+          <tr><td class="id">task_template</td><td><span class="st rev">修订</span></td><td>要求、产出形式、建议用时（天）、<b>截止规则（锚点：站开始或站结束；偏移 N 个工作日；时刻）</b>、关联资料、推荐资产</td><td>管理员</td><td><span class="ev o">Admin.tsx:118</span> 只有建议用时；<span class="ev g">A-08</span></td></tr>
+          <tr><td class="id">personal_path</td><td><span class="st rev">修订</span></td><td>用户、<b>期次</b>、起止、<b>主带教（可空，空 = 管理员）</b>、状态（待分配 → 进行中 → 已结束）</td><td>管理员 / 系统</td><td><span class="ev p">L65</span>；拍板 B1</td></tr>
+          <tr><td class="id">personal_module 站</td><td><span class="st rev">修订</span></td><td>模块、顺序、起止、<b>站带教（带教关系唯一来源）</b>、<b>时间位置（待开始 / 在站 / 已离站，推算）</b>、<b>结清（本站路径任务已通过数 / 总数，推算）</b></td><td>管理员；推算字段由系统</td><td><span class="ev p">L65</span><span class="ev p">L131</span>；<span class="ev o">api.ts:81-88</span> 过了日期就算完成</td></tr>
+          <tr><td class="id">recurring_rule 周期任务规则</td><td><span class="st new">新增</span></td><td><b>名称、频率（每日 / 每周几 / 每月末 / 指定日期）、截止时刻、适用阶段或期次、完成方式（提交链接 / 机器人收周报 / 机器人写成绩 / 本人声明 + 管理员确认）、是否需要带教点评</b></td><td>管理员</td><td><span class="ev p">L71</span>；issue #6 验收「按日、按周、按月最后一天、按指定日期生成」</td></tr>
+          <tr><td class="id">task_instance</td><td><span class="st rev">修订</span></td><td>个人路径、<b>来源（模板 / 周期规则）</b>、所属站、<b>开放日</b>、截止、<b>原截止</b>、<b>调整原因</b>、<b>修改截止</b>、<b>负责带教（不单存：路径任务取所属站的站带教，周期任务取主带教，空 = 管理员）</b>、<b>完成方式</b>、状态；逾期是查询时算的标记</td><td>系统生成；状态由本人、带教、机器人推动</td><td><span class="ev p">L70–73</span><span class="ev p">L132</span>；<span class="ev o">types.ts:42-55</span></td></tr>
+          <tr><td class="id">workday_calendar</td><td><span class="st new">新增</span></td><td><b>日期、是否工作日、名称（假期、调休）</b></td><td>管理员</td><td>示例第一站 10-01 开站 <span class="ev o">mock.ts:68</span>；16 条路径任务里 7 条截止落在周末（coverage 5.4）</td></tr>
+          <tr><td class="id">schedule_item 日程项</td><td><span class="st keep">视图</span></td><td><b>类型、形状（时段 / 截止 / 时刻）、开始、结束、所属人、关联对象、来源、可见级别、状态（继承关联对象，用于着色）</b>；<b>接口返回的查询视图，不建表</b>。飞书团队活动已存在 <code>team_event</code>；二期带教日程引用存进 <code>team_event</code> 加类型，或另建 <code>external_calendar_event</code>（待定）</td><td>系统（查询时算）</td><td>C2；第 6 章</td></tr>
+          <tr class="grp"><td colspan="5">产出与考核（全部受限）</td></tr>
+          <tr><td class="id">submission</td><td><span class="st rev">修订</span></td><td>任务、飞书链接、提交时间、版本、<b>提交渠道（网页 / 机器人）</b>、<b>修改说明（再交必填）</b></td><td>本人 / 机器人</td><td><span class="ev p">L133</span>；<span class="ev g">M-13</span></td></tr>
+          <tr><td class="id">quiz_result · weekly_report</td><td><span class="st rev">修订</span></td><td>原字段 + <b>对应的周期任务实例</b>（作为完成凭证）</td><td>机器人</td><td><span class="ev p">L135–136</span>；C5</td></tr>
+          <tr><td class="id">stage_assessment</td><td><span class="st rev">修订</span></td><td>用户、阶段、<b>填写人（主带教，空则管理员）</b>、三档、评语、确认人、<b>状态（未到期 → 待填写 → 待确认 → 已确认）</b></td><td>主带教 / 管理员</td><td><span class="ev p">L79</span>；拍板 B3</td></tr>
+          <tr><td class="id">handover_note 交接要点</td><td><span class="st new">新增</span></td><td><b>个人模块、作者（原站带教）、要点（最多 3 条）、写于；站评三档、评语（二期）</b></td><td>站带教</td><td><span class="ev g">M-04</span><span class="ev g">A-17</span></td></tr>
+          <tr class="grp"><td colspan="5">团队</td></tr>
+          <tr><td class="id">team_event（原 event）</td><td><span class="st rev">修订</span></td><td>飞书日历事件 id、<b>类型（分享会 / 路演 / 读书会）、主讲、主题、受众期次、关联资产、状态（预告 → 已结束待挂回放 → 已挂回放）</b>、妙记链接</td><td>飞书（时间）/ 管理员（其余）</td><td><span class="ev p">L111</span><span class="ev p">L143</span>；<span class="ev g">A-10</span></td></tr>
+          <tr class="grp"><td colspan="5">运行层（让本体动起来）</td></tr>
+          <tr><td class="id">event_log 事件日志</td><td><span class="st new">新增</span></td><td><b>事件类型、主体对象、发生时间、来源、操作人、可见级别、载荷、去重键；只追加</b></td><td>系统</td><td>动态「自动生成」<span class="ev p">L110</span>、档案时间线 <span class="ev p">L56</span>、贡献「按历史补算」<span class="ev p">L120</span> 都要它</td></tr>
+          <tr><td class="id">todo 待办</td><td><span class="st new">新增</span></td><td><b>负责人、规则、来源事件、关联对象、出现时间、期限、优先级、状态（待处理 / 已完成 / 已撤销）、关闭事件</b></td><td>系统</td><td>第 5 章</td></tr>
+          <tr><td class="id">notification 通知</td><td><span class="st new">新增</span></td><td><b>接收人、事件、渠道（站内 / 机器人推送）、合并批次、已读</b></td><td>系统</td><td><span class="ev p">L33</span><span class="ev p">L37</span> 有通知中心，没写什么事通知谁</td></tr>
+          <tr><td class="id">activity_feed · contribution</td><td><span class="st rev">修订</span></td><td>不再各自存：动态 = 事件日志的公开投影；贡献 = 指定事件的派生（管理员加权另存）</td><td>系统</td><td><span class="ev p">L104</span><span class="ev p">L141</span><span class="ev p">L143</span>；<span class="ev o">types.ts:85-86</span></td></tr>
+        </tbody>
+      </table></div>
+      <p class="fig-cap"><b>表 1</b>保留不动的 16 个：stage、module、review、resource_card、faq、asset、asset_version、asset_usage、favorite、point_ledger、redemption、badge、announcement、tag、portfolio_item、bot_client。计数见 coverage.md 第 3 节。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>四份走查的提法怎么合并</h3></div>
+      <div class="tw"><table class="t min">
+        <thead><tr><th>走查里的提法</th><th>采用</th><th>理由</th></tr></thead>
+        <tbody>
+          <tr><td>管理员走查另建 <code>mentorship</code> 表（管培生、带教、类型、起止）</td><td>不单建；用 <code>personal_module.站带教</code> + <code>personal_path.主带教</code></td><td>站本来就有起止，带教关系的时间范围直接取站的起止，少一份会对不上的数据</td></tr>
+          <tr><td><code>schedule_change</code> 改期记录、<code>followup</code> 跟进记录</td><td>做成 <code>event_log</code> 的事件类型；任务上存原截止和调整原因</td><td>改期、催办本来就是只追加的事件，再建两张表等于重复</td></tr>
+          <tr><td>带教走查 <code>mentor_session</code>、管培生走查「日程」对象、本体走查 <code>schedule_item</code></td><td>统一为 <code>schedule_item</code> 查询视图；飞书来源的只存日程 id（在 team_event 或二期新表）</td><td>同一个东西三个名字；名字先统一，界面和规则才对得上</td></tr>
+          <tr><td>站状态四值（未开始 / 进行中 / 已结束未结清 / 已结清）</td><td>拆成两个推算字段：时间位置、结清</td><td>和四值等价，但两件事各自独立：时间到了不等于做完了</td></tr>
+          <tr><td>任务加「受阻 / 申请延期」状态</td><td>不加状态，用「调整截止 + 原因 + 留痕」覆盖</td><td>少一种状态，主指标口径一致；受阻多常见要真人记录验证</td></tr>
+          <tr><td>草稿提交</td><td>不支持</td><td>飞书文档本身就是活文档；示例里的草稿让按时率分不清 <span class="ev o">mock.ts:147</span><span class="ev o">mock.ts:154</span></td></tr>
+          <tr><td>跟岗师傅角色、1:1 记录、站评里「推荐定岗到本线」</td><td>一期都不做</td><td>都是推演，录入负担和公平性要先确认（第 12 章）</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>关系图</h3><span class="k">ER · 带基数</span></div>
+      <div class="fig"><pre class="mermaid">
+erDiagram
+  cohort ||--o{ personal_path : "本期成员"
+  path_template ||--o{ cohort : "绑定版本"
+  path_template ||--|{ stage : "含"
+  stage ||--|{ module : "含站"
+  module ||--o{ task_template : "含"
+  user ||--o| personal_path : "管培生"
+  user ||--o{ personal_path : "主带教(可空)"
+  personal_path ||--|{ personal_module : "站(起止)"
+  user ||--o{ personal_module : "站带教"
+  module ||--o{ personal_module : "排进"
+  personal_path ||--o{ task_instance : "生成"
+  task_template ||--o{ task_instance : "路径任务"
+  recurring_rule ||--o{ task_instance : "周期任务"
+  personal_module ||--o{ task_instance : "所属站"
+  task_instance ||--o{ submission : "多版本"
+  submission ||--o| review : "点评"
+  task_instance ||--o| quiz_result : "凭证"
+  task_instance ||--o| weekly_report : "凭证"
+  personal_module ||--o| handover_note : "站末"
+  personal_path ||--o{ stage_assessment : "每阶段"
+  team_event }o--o{ user : "主讲"
+  event_log }o--|| user : "主体或操作人"
+  event_log ||--o{ todo : "按规则生成"
+  event_log ||--o{ notification : "按规则生成"
+  event_log ||--o| contribution : "派生"
+  user ||--o{ todo : "负责"
+  workday_calendar ||--o{ task_instance : "推算截止"
+      </pre></div>
+      <p class="fig-cap"><b>图 5</b>带教人有三条关系线：主带教（挂在个人路径上，可空）、站带教（挂在站上，唯一的点评关系）、负责带教（不单存：路径任务取所属站的站带教，所以站带教后补或更换时，这一站未关闭的待办随之重派；管培生换到下一站时，上一站的任务仍归上一站）。日程项不在图里，它是从这些对象查询时推出来的视图。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>关键状态机</h3></div>
+      <div class="figrow">
+        <div class="fig"><div class="k" style="margin-bottom:8px">任务实例（路径任务；提交链接型周期任务同）</div><pre class="mermaid">
+stateDiagram-v2
+  [*] --> 未开始: 系统生成
+  未开始 --> 进行中: 到开放日(系统) 或 本人点开始
+  进行中 --> 已提交: 本人或机器人提交
+  未开始 --> 已提交: 直接提交
+  已提交 --> 需修改: 负责带教评「需改进」，同时写修改截止
+  已提交 --> 已通过: 负责带教评「优秀/达标」
+  需修改 --> 已提交: 再交(版本+1, 修改说明必填)
+  已通过 --> [*]
+        </pre></div>
+        <div class="fig"><div class="k" style="margin-bottom:8px">阶段评估（二期）</div><pre class="mermaid">
+stateDiagram-v2
+  [*] --> 未到期: 生成个人路径时按阶段建立
+  未到期 --> 待填写: 到阶段结束日(系统)
+  待填写 --> 待确认: 主带教填三档与评语，轮岗阶段依据各站站评
+  待确认 --> 已确认: 管理员确认
+  待确认 --> 待填写: 管理员退回(待拍板)
+  已确认 --> [*]: 动态只写「通过某阶段」
+        </pre></div>
+      </div>
+      <div class="tw" style="margin-top:16px"><table class="t min">
+        <thead><tr><th>标记与推算字段</th><th>怎么算</th><th>依据</th></tr></thead>
+        <tbody>
+          <tr><td><b>逾期</b>（标记，不是状态）</td><td>状态为未开始 / 进行中，且当前时间晚于截止；需修改时看修改截止；轻测未答不算</td><td><span class="ev p">L73</span>；<span class="ev x">旁证 · 业务共识第 107 行</span></td></tr>
+          <tr><td><b>迟交</b>（标记）</td><td>首次正式提交晚于截止（截止被调整过的，以调整后的为准，留痕）</td><td>主指标口径（第 10 章）</td></tr>
+          <tr><td><b>站 · 时间位置</b></td><td>待开始 → 在站（到开始日）→ 已离站（过结束日）</td><td><span class="ev o">api.ts:81-88</span> 已这样算</td></tr>
+          <tr><td><b>站 · 结清</b></td><td>本站路径任务已通过数 / 总数；离站时未结清触发 E06</td><td><span class="ev g">T-04</span>；ontology 3.4</td></tr>
+        </tbody>
+      </table></div>
+      <div class="tw" style="margin-top:16px"><table class="t min">
+        <thead><tr><th>周期任务完成方式</th><th>状态</th><th>带教要不要评</th><th>依据</th></tr></thead>
+        <tbody>
+          <tr><td><b>机器人收周报</b>（周报）</td><td>未交 → 已交（机器人写入）；过截止未交 = 逾期未交</td><td>只看不评</td><td><span class="ev p">L112</span>「只显示谁交了、谁没交」；拍板 B4</td></tr>
+          <tr><td><b>机器人写成绩</b>（轻测）</td><td>未开始 → 已出题 → 已出分 / 未答</td><td>不评，机器人判</td><td><span class="ev p">L78</span>；<span class="ev x">旁证 · 业务共识第 99、107 行：每周一次 2—3 道；未答只记未答</span></td></tr>
+          <tr><td><b>本人声明 + 管理员确认</b>（月度物料）</td><td>未声明 → 已声明待确认 → 已通过 / 退回</td><td>管理员确认</td><td><span class="ev x">旁证 · 业务共识第 111–126 行</span></td></tr>
+          <tr><td><b>提交链接</b>（日报，通道待定）</td><td>同任务实例</td><td>待定</td><td><span class="ev p">L71</span> 有日报，<span class="ev p">L155</span> 写接口没有</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>可见性规则（服务端执行）</h3><span class="k">推荐值 · 待拍板 B2</span></div>
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>数据</th><th>本人</th><th>本站站带教</th><th>路径上其他站带教</th><th>主带教</th><th>管理员</th><th>其他管培生、同事</th></tr></thead>
+        <tbody>
+          <tr><td><b>站、换站、走到哪一步</b></td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓ <span class="ev p">L84</span></td></tr>
+          <tr><td><b>任务名称与状态</b></td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>只看站，不看任务级逾期</td></tr>
+          <tr><td><b>产出与点评</b></td><td>✓</td><td>本站全部</td><td>开站前 5 个工作日起只读此前各站；离站后保留本站只读</td><td>✓</td><td>✓</td><td>✗ <span class="ev p">L85</span></td></tr>
+          <tr><td><b>交接要点</b></td><td>待定</td><td>写本站的</td><td>只读</td><td>✓</td><td>✓</td><td>✗</td></tr>
+          <tr><td><b>考核：轻测成绩、站评三档、阶段评估</b></td><td>✓</td><td>只看自己写的站评</td><td>✗</td><td>✓</td><td>✓</td><td>✗</td></tr>
+          <tr><td><b>带教日程（二期）</b></td><td>参会的那条</td><td>自己的</td><td>✗</td><td>✗</td><td>✗</td><td>✗</td></tr>
+        </tbody>
+      </table></div>
+      <p class="fig-cap"><b>表 2</b>原型的 <code>canSeePrivate</code> 只认「本人、管理员、带教 id 列表」<span class="ev o">types.ts:92-94</span>，按站分配后要把「路径上的站带教 + 时间窗口」算进列表；多人视图里不满足条件的条目直接不返回，不是置灰 <span class="ev p">L29</span>。</p>
+    </div>
+  </div>
+</section>

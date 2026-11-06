@@ -1,0 +1,311 @@
+
+<!-- 10 指标与分期 -->
+<section class="stage s2" id="s10">
+  <div class="wrap">
+    <div class="st-head">
+      <div class="st-num">10</div>
+      <div><span class="k">评级与推进 · 先做什么，做到什么算完</span><h2>指标改成量结果，<em>时间结构进一期</em></h2><p>主指标从「交没交、准不准时」改成「按期交、而且被认可」；分期按依赖排：站带教、工作日日历和事件不先立，后面每一期都要迁移数据。</p></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>主指标：从按时提交率到按期达标率</h3></div>
+      <div class="metric">
+        <div>
+          <span class="k">PRD v1.0 · L178</span><h4>阶段产出按时提交率</h4>
+          <dl>
+            <dt>分母</dt><dd>本周已到截止的全部任务，<b>含周期任务</b> <span class="ev o">api.ts:202</span></dd>
+            <dt>分子</dt><dd>截止前有任何一次提交，<b>或状态已通过（哪怕没有提交记录）</b> <span class="ev o">api.ts:204</span></dd>
+            <dt>问题</dt><dd>量的是交没交，不量行不行；草稿、被退回的都算按时；12 人一周只有十几条，单周比率大起大落 <span class="ev g">A 问 6–7</span></dd>
+          </dl>
+          <div class="res"><b>50%</b><span>示例数据第 45 周复算：8 条里 6 条是周期任务；4 条「按时」里 3 条没有任何提交记录（coverage.md 5.1）</span></div>
+        </div>
+        <div>
+          <span class="k">建议 · 拍板 B9</span><h4>路径任务按期达标率（滚动 4 周）</h4>
+          <dl>
+            <dt>分母</dt><dd>截止落在窗口内且已过截止的<b>路径任务</b>；剔除已中止培养的人</dd>
+            <dt>分子</dt><dd>首次正式提交不晚于截止，<b>且最终评为优秀或达标</b>（需修改后再交通过的也算；首轮即达标的比例放在悬停明细）</dd>
+            <dt>待定</dt><dd>已提交没点评的、被评需修改还没出最终结论的，都单列「待定」，不进分母；点评慢由带教侧指标管</dd>
+            <dt>截止</dt><dd>以调整后的截止为准；站带教可调本站截止，必须写原因，管理员可撤销；指标旁并列调整过的条数和调整人</dd>
+            <dt>显示</dt><dd>n / N 和滚动四周趋势</dd>
+          </dl>
+          <div class="res"><b>1 / 2</b><span>同一份示例数据，窗口 10-12 – 11-08：试讲复盘（林夏）按期达标；试讲复盘（孟川）逾期；话术演练录音待定 1（coverage.md 5.2）</span></div>
+        </div>
+      </div>
+      <div class="tw" style="margin-top:16px"><table class="t wide">
+        <thead><tr><th>指标</th><th>层级</th><th>定义</th><th>出处</th><th>期</th></tr></thead>
+        <tbody>
+          <tr><td><b>路径任务按期达标率</b></td><td>主指标 · 周看</td><td>见上</td><td><span class="ev p">L178</span> 改口径；<span class="ev g">A-05</span></td><td>一期</td></tr>
+          <tr><td><b>阶段评估达标率</b></td><td>结果 · 期看</td><td>已确认的阶段评估中三档 ≥ 达标 ÷ 已确认的阶段评估</td><td><span class="ev p">L79</span>；<span class="ev g">A-06</span></td><td>二期</td></tr>
+          <tr><td><b>定岗结果</b></td><td>结果 · 期末</td><td>定岗方向确认且答辩通过的人 ÷ 进入定岗的人（需新增定岗方向字段）</td><td><span class="ev g">A-06 推演</span></td><td>二期</td></tr>
+          <tr><td><b>计划进度差距</b></td><td>辅助</td><td>截至今天应完成的路径任务 − 已通过的；完成进度 = 已通过 ÷ 应完成（示例林夏 5 / 6）</td><td><span class="ev p">L179</span>；<span class="ev g">T-04</span></td><td>一期</td></tr>
+          <tr><td><b>点评时效达标率</b></td><td>带教侧</td><td>期限内完成的点评 ÷ 窗口内到期的点评待办（R02）</td><td><span class="ev g">M-23</span></td><td>二期（数据一期就存）</td></tr>
+          <tr><td><b>需修改后再交通过率</b></td><td>带教侧</td><td>需修改后再交并通过的任务 ÷ 被评需改进的任务；看点评有没有让产出变好</td><td><span class="ev g">M-23</span></td><td>二期</td></tr>
+          <tr><td><b>资产被非作者使用的人数</b></td><td>AI 侧</td><td>「我用过」里使用人 ≠ 作者的去重人数；自报，有偏差，标注口径</td><td><span class="ev p">L104</span>；<span class="ev g">A-18</span></td><td>一期可算</td></tr>
+          <tr><td>本月新上架资产 · 周活跃人数</td><td>参考</td><td>保留但降级：一个量供给、一个量登录 <span class="ev o">api.ts:46</span></td><td><span class="ev p">L179</span></td><td>一期</td></tr>
+        </tbody>
+      </table></div>
+      <p class="fig-cap"><b>表 6</b>不做带教排行：带教是兼职，排行会伤积极性 <span class="ev g">带教走查 Q22</span>。机器人项目也定了「不以系统活动量代替」<span class="ev x">旁证 · 业务共识第 154 行</span>。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>分期重排</h3><span class="k">加粗 = 这次补进来的</span></div>
+      <div class="ph3">
+        <div class="s1"><h4>一期<small>立结构</small></h4><ul>
+          <li><span class="st keep">原有</span><span>飞书登录与角色、档案（基础，含成长时间线）、成长路径、AI 资产库与审核、Tidings、三种首页、后台基础、机器人接口</span></li>
+          <li><span class="st new">新</span><span><b>期次与最简期次启动</b>（含预置名单）</span></li>
+          <li><span class="st new">新</span><span><b>站带教关系与跨站可见性</b></span></li>
+          <li><span class="st new">新</span><span><b>工作日日历、截止推算、路径调整重排</b></span></li>
+          <li><span class="st new">新</span><span><b>周期任务规则</b>（四种完成方式）</span></li>
+          <li><span class="st new">新</span><span><b>事件日志与待办</b>（12 条规则）</span></li>
+          <li><span class="st new">新</span><span><b>我的本周、我带的人</b>（推算部分）</span></li>
+          <li><span class="st new">新</span><span><b>轮岗排期</b>（三视角只读 + 抽屉调整）</span></li>
+          <li><span class="st new">新</span><span><b>交接要点</b>；<b>主指标新口径</b>；机器人接口补读写</span></li>
+        </ul><p class="why">除了预置名单要用飞书通讯录读取权限查 open_id（待验证；备选：按手机号或邮箱预置，首次登录再匹配），都不依赖外部授权，数据现成（每站起止已在 <span class="ev o">types.ts:36-37</span>）；贡献要「从一期就开始存」<span class="ev p">L120</span>，事件同理。</p></div>
+        <div class="s2"><h4>二期<small>接飞书、上考核</small></h4><ul>
+          <li><span class="st keep">原有</span><span>知识库同步、资料与标签、FAQ、考核、全局搜索、团队板块、作品集；机器人过渡切换</span></li>
+          <li><span class="st new">新</span><span><b>飞书日历读取</b>：团队活动月历、带教日程叠加与忙闲</span></li>
+          <li><span class="st new">新</span><span><b>通知中心与推送规则</b></span></li>
+          <li><span class="st new">新</span><span><b>站评三档、轮岗阶段评估汇总</b>、答辩日程与材料包完整度</span></li>
+          <li><span class="st new">新</span><span><b>结果指标、带教侧指标</b></span></li>
+          <li><span class="st new">新</span><span>轮岗排期拖拽编辑、代理带教、汇报（推演）</span></li>
+        </ul><p class="why">读个人日历涉及授权和隐私，和团队活动一起做，接口只接一次；考核本来就在二期 <span class="ev p">L173</span>。</p></div>
+        <div class="s3"><h4>三期<small>激励与跨期</small></h4><ul>
+          <li><span class="st keep">原有</span><span>积分、排行、兑换、徽章、用例墙、AI 学习路径</span></li>
+          <li><span class="st new">新</span><span>跨期对比与模板回看（上一期哪些任务最常逾期、最常需修改）</span></li>
+          <li><span class="st new">新</span><span>老带教效率：批量处理、评语复用</span></li>
+          <li><span class="st keep">待定</span><span>1:1 结论要不要沉淀</span></li>
+        </ul><p class="why">积分按历史补算 <span class="ev p">L120</span>，前提是一期起事件就在存。</p></div>
+      </div>
+      <div class="fig" style="margin-top:16px"><pre class="mermaid">
+flowchart LR
+  A[期次] --> B[个人路径 + 站带教]
+  W[工作日日历] --> C[截止推算 / 开放日]
+  R[周期任务规则] --> C
+  B --> C
+  B --> V[跨站可见性]
+  C --> E[推算事件]
+  E --> T[待办 · 一期 12 条]
+  C --> S[日程项]
+  S --> V1[我的本周]
+  S --> V2[我带的人]
+  B --> V3[轮岗排期]
+  T --> H[首页焦点]
+  E --> M[主指标 n/N]
+  F[飞书共享日历 · 二期] --> V4[团队活动月历]
+  F --> V2
+  T --> N[通知中心 · 二期]
+  K[考核 · 二期] --> X[结果指标]
+      </pre></div>
+      <p class="fig-cap"><b>图 13</b>依赖关系：左边三样（期次、工作日日历、周期任务规则）是一期一切推算的输入；飞书日历和考核是二期的两个入口。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>能力评级与一期验收</h3></div>
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>能力</th><th>涉及对象</th><th>本期必需</th><th>数据代价</th><th>能否用现有数据验收</th><th>主要风险</th></tr></thead>
+        <tbody>
+          <tr><td><b>站带教关系 + 跨站可见性</b></td><td>personal_module、task_instance</td><td>一期</td><td>低：字段已在 <span class="ev o">types.ts:36</span></td><td>能：周颖待点评 3 → 1</td><td>B1、B2 未拍板</td></tr>
+          <tr><td><b>期次 + 期次启动</b></td><td>cohort、personal_path</td><td>一期</td><td>中</td><td>能：6 人示例</td><td>预置名单要拿到 open_id</td></tr>
+          <tr><td><b>工作日日历 + 截止推算 + 路径重排</b></td><td>workday_calendar、task_template、task_instance</td><td>一期</td><td>低：每年维护一次假期</td><td>能：话术演练录音 = 站开始第 5 个工作日 = 11-04</td><td>假期由谁维护</td></tr>
+          <tr><td><b>周期任务规则</b></td><td>recurring_rule</td><td>一期</td><td>低</td><td>能：示例 4 类</td><td>日报通道未定</td></tr>
+          <tr><td><b>事件日志 + 待办</b></td><td>event_log、todo</td><td>一期</td><td>中：规则引擎、去重</td><td>能：示例事件回放</td><td>阈值多为建议值</td></tr>
+          <tr><td><b>我的本周 / 我带的人（推算）</b></td><td>schedule_item</td><td>一期</td><td>低：纯查询</td><td>能</td><td>跟岗、1:1 缺位，和期待有落差</td></tr>
+          <tr><td><b>轮岗排期</b></td><td>personal_module</td><td>一期</td><td>中：抽屉编辑 + 重排</td><td>能：2 人同岗 7 格、空岗 7 格</td><td>拖拽留二期</td></tr>
+          <tr><td><b>交接要点</b></td><td>handover_note</td><td>一期</td><td>低</td><td>不能：没有真实记录</td><td>带教愿不愿写 <span class="ev g">推演</span></td></tr>
+          <tr><td><b>主指标新口径</b></td><td>task_instance、review</td><td>一期</td><td>低</td><td>能：示例 1 / 2，待定 1</td><td>小样本波动</td></tr>
+          <tr><td><b>机器人接口补读写</b></td><td>bot API</td><td>一期</td><td>中：跨项目</td><td>不能：要和机器人项目对齐</td><td>改造在机器人仓库做 <span class="ev p">L160</span></td></tr>
+          <tr><td>飞书日历读取</td><td>team_event、schedule_item</td><td>二期</td><td>中高：授权、隐私</td><td>待验证</td><td>权限点未核实</td></tr>
+          <tr><td>通知中心</td><td>notification</td><td>二期</td><td>中</td><td>—</td><td>打扰过多</td></tr>
+          <tr><td>站评三档 + 阶段评估汇总</td><td>handover_note、stage_assessment</td><td>二期</td><td>中</td><td>—</td><td>公平性、可见性</td></tr>
+          <tr><td>结果指标</td><td>stage_assessment</td><td>二期</td><td>依赖考核</td><td>—</td><td>约 12 人一期 <span class="ev p">L14</span>，样本小</td></tr>
+        </tbody>
+      </table></div>
+      <div class="two" style="margin-top:20px">
+        <div class="fig"><div class="k" style="margin-bottom:8px">一期验收（先用示例数据，导入 project_base 后再回放）</div>
+          <ol style="margin:0;padding-left:18px;font-size:13.5px;color:var(--ink2);line-height:1.75">
+            <li>6 人示例路径生成甘特；按岗位视角标出 7 个 2 人格、7 个空岗格。</li>
+            <li>周颖的待点评从 3 条变 1 条：周报不评，内容站选题归内容站带教。</li>
+            <li>11-05 生成 R06 两条（赵一然 → 周颖、陈默 → 吴桐）；孟川的投放站未指定站带教，R06 落管理员；林夏、许诺不生成。</li>
+            <li>无站带教时 R02、R06 落管理员：示意分配下管理员待办 7 条（审核 3、R02 2、R06 1、R05 1）；补指定站带教后，这一站未关闭的待办改派过去。</li>
+            <li>林夏待办 3 条（轻测、来电归因复盘、换站准备），周报和小结只在本周时间线上。</li>
+            <li>林夏「话术演练录音」点评期限算出 11-06 16:50。</li>
+            <li>主指标在示例上算出 1 / 2、待定 1；旧算法同期 50%，两者并列可对照。</li>
+            <li>顺延林夏客服站 1 周：客服岗小结 11-11 → 11-18，原截止留存，写入路径调整事件（issue #5）。</li>
+            <li>其他管培生调日程接口拿不到任务级逾期和评估节点（服务端过滤）。</li>
+          </ol>
+        </div>
+        <div class="fig"><div class="k" style="margin-bottom:8px">上线前必须补的数据</div>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;color:var(--ink2);line-height:1.75">
+            <li>正式培养路径内容（阶段 → 模块 → 任务 → 要求 → 产出）<span class="ev p">L186</span></li>
+            <li>每站站带教名单；是否设主带教</li>
+            <li>一期管培生名单与飞书 open_id（预置）</li>
+            <li>当年法定假期与调休</li>
+            <li>共享「管培生活动」飞书日历（二期前）</li>
+            <li>周期任务正式参数：周报截止时刻、轻测时刻、日报通道</li>
+            <li><code>project_base</code> 字段清单（导入与历史回放）<span class="ev p">L157</span></li>
+            <li>第 5 章所有「建议值」的拍板结果</li>
+          </ul>
+        </div>
+      </div>
+      <p class="fig-cap"><b>说明</b>没有过程数据，历史回放的指标和阈值现在定不了：<code>project_base</code> 导入后，先用历史任务算一遍新旧主指标对照，再定一期上线的达标线。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>二期、三期验收要点，和现有 19 张票的关系</h3></div>
+      <div class="two">
+        <div class="fig"><div class="k" style="margin-bottom:8px">二期验收</div>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;color:var(--ink2);line-height:1.75">
+            <li>共享「管培生活动」日历里新建一场，月历和团队动态都出现；改时间后工作台跟着变，工作台不能改时间。</li>
+            <li>带教日程只返回参会人含所带管培生的条目，其他时段只返回「忙」，不带标题。</li>
+            <li>阶段结束日自动生成「待填写」；轮岗阶段评估页列出 6 站站评，主带教填、管理员确认。</li>
+            <li>通知中心：同一事件不重复推；晚间提交合并到次日早上一次推。</li>
+            <li>导入 <code>project_base</code> 历史任务，新旧主指标并列算一遍，定上线达标线。</li>
+          </ul></div>
+        <div class="fig"><div class="k" style="margin-bottom:8px">三期验收</div>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;color:var(--ink2);line-height:1.75">
+            <li>积分按一期起存下的事件补算，和贡献记录逐条对得上 <span class="ev p">L120</span>。</li>
+            <li>模板回看：每个任务模板旁显示上一期按期达标率和「需修改」次数。</li>
+            <li>跨期对比：两期的主指标、阶段评估达标率并列。</li>
+          </ul></div>
+      </div>
+      <div class="tw" style="margin-top:16px"><table class="t wide">
+        <thead><tr><th>票</th><th>标题</th><th>要改什么</th><th>对应拍板</th></tr></thead>
+        <tbody>
+          <tr><td class="id">#3</td><td>角色与成员管理</td><td>带教权限由站带教关系起止推出；新人走期次预置名单</td><td>B1 B10</td></tr>
+          <tr><td class="id">#4</td><td>路径模板与路径总览</td><td>模板版本只读另存；任务截止规则（锚点 + 工作日偏移）</td><td>B5 B10</td></tr>
+          <tr><td class="id">#5</td><td>个人路径分配与「我的路径」</td><td>编辑面改到轮岗排期抽屉；站带教唯一来源；调整重排未开始任务；进度两个数</td><td>B1 B5 B7</td></tr>
+          <tr><td class="id">#6</td><td>周期任务</td><td>验收「共用状态流转和提交方式」改为四种完成方式</td><td>B4</td></tr>
+          <tr><td class="id">#7</td><td>提交产出与状态流转</td><td>开放日自动进行中；修改截止；改截止留痕；不支持草稿</td><td>B5</td></tr>
+          <tr><td class="id">#8</td><td>带教点评</td><td>点评人 = 所属站站带教；时效与超时抄送；再交并排上次评语</td><td>B1 B4</td></tr>
+          <tr><td class="id">#9</td><td>带教看板</td><td>按站关系取人，分在带 / 将到 / 刚交接三组，只管人和进度</td><td>B1 B2</td></tr>
+          <tr><td class="id">#10</td><td>成员列表与个人档案</td><td>成长时间线 = 事件投影；交接卡；跨站可见性</td><td>B2 B3</td></tr>
+          <tr><td class="id">#14–#16</td><td>三种首页</td><td>焦点取待办前两条；加本周 / 我带的人切片；管理员加本周排期、新主指标</td><td>B8 B9</td></tr>
+          <tr><td class="id">#17</td><td>带教机器人接口</td><td>补读：今日日程、待点评、待推送；补写：催办回执</td><td>B4 B6</td></tr>
+          <tr><td class="id">新票</td><td>—</td><td>期次与启动、工作日日历、事件日志与待办、日程视图、轮岗排期、交接要点</td><td>B3 B5 B7 B8 B10</td></tr>
+        </tbody>
+      </table></div>
+      <p class="fig-cap"><b>说明</b>#1 #2 #11 #12 #13 #18 #19 不受这次重排影响。票的标题取自仓库 GitHub Issues；改票是常浩拍板之后的事，这里只列影响面。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 拍板 -->
+<section class="sec white s1" id="s11">
+  <div class="wrap">
+    <div class="sec-k"><span class="k">11 · 待常浩拍板 · 回答「是」即按推荐</span></div>
+    <h2 class="h2" style="margin-bottom:36px">10 项决定，<span style="color:var(--s1)">第一项最要紧</span></h2>
+    <div class="dec">
+      <div class="dc"><div class="dc-h"><i>B1</i><h4>每个轮岗站有没有固定带教？要不要一位贯穿全期的主带教？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">每站一位站带教，是唯一的点评关系（挂在站上）；任务的负责带教跟着所属站走：站带教后补或更换时，这一站未关闭的待办改派，管培生换到下一站时不转。入职、通识、定岗也各算一站，站带教可以是主带教或管理员。可选设一位主带教贯穿全期，不设时由管理员担任；同一人可挂多站。</dd>
+        <dt>理由</dt><dd>PRD 本来按模块挂 <span class="ev p">L65</span><span class="ev p">L131</span>，原型只用了 user 上那一个 <span class="ev o">api.ts:186</span>；机器人项目现状导师就是常浩 <span class="ev x">旁证</span>，默认主带教 = 管理员正好对上。</dd>
+        <dt>不拍板</dt><dd>看板、待点评、可见性、我带的人、排期的按带教视角都没法写；上线后第一次换站就会出错。</dd></dl>
+        <div class="src">合并自：本体 Q1 · 带教 Q1 · 管理员 问题 2 · 管培生 4</div></div>
+      <div class="dc"><div class="dc-h"><i>B2</i><h4>跨站可见性怎么定？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">路径上的各站带教自开站前 5 个工作日起，只读此前各站的产出和点评，离站后保留本站只读；考核只给本人、主带教、写站评的站带教和管理员；其他管培生在排期里只看站和换站。</dd>
+        <dt>理由</dt><dd>下一站看不到上一站，交接就断；对路径上的带教公开比对全体同事公开风险小 <span class="ev g">推演</span>。备选：只看交接要点（更保守，交接质量全靠上一站写）。</dd>
+        <dt>不拍板</dt><dd>服务端可见性规则写不了 <span class="ev p">L29</span>，P2、P3 的接口定不下来。</dd></dl>
+        <div class="src">合并自：本体 Q2、Q8 · 带教 Q2 · 管理员 问题 2</div></div>
+      <div class="dc"><div class="dc-h"><i>B3</i><h4>要不要站评和交接要点？轮岗阶段评估谁出？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">一期上交接要点（站后 2 个工作日内、最多 3 条，连续两站同一带教免写）；站评三档随考核二期；轮岗阶段评估由主带教依据站评汇总、管理员确认。</dd>
+        <dt>理由</dt><dd>「阶段结束时带教人填写」<span class="ev p">L79</span> 在轮岗 6 站这里找不到填写人；站评同时是交接材料和定岗依据。</dd>
+        <dt>不拍板</dt><dd>R08 没有对象；二期考核开工时缺填写人。</dd></dl>
+        <div class="src">合并自：本体 Q3 · 带教 Q3</div></div>
+      <div class="dc"><div class="dc-h"><i>B4</i><h4>点评范围、时效，周期任务怎么算完成？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">站带教只评路径任务，时效 2 个工作日（建议值），再过 3 个工作日抄送管理员；周报只在机器人交、只看不评；轻测机器人判，未答不判逾期；月度物料本人声明 + 管理员确认；日报通道另定。</dd>
+        <dt>理由</dt><dd>周期任务都要评，工作量翻倍，带教是兼职 <span class="ev g">推演</span>；机器人项目已定周期任务走「提醒、本人声明、导师确认」<span class="ev x">旁证</span>；原型周颖的待点评 3 条里 1 条是周报。</dd>
+        <dt>不拍板</dt><dd>R02 期限、待点评队列、周期任务按钮都定不了；原型的轻测「贴链接」会被照着实现。</dd></dl>
+        <div class="src">合并自：带教 Q4 · 本体 Q12 · 管培生 Q16</div></div>
+      <div class="dc"><div class="dc-h"><i>B5</i><h4>任务的时间规则怎么定？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">到开放日自动转进行中（开放日 = 截止 − 建议用时）；需改进时给修改截止（默认 3 个工作日，建议值）；本站带教和管理员可调截止，必须写原因并留痕；截止、换站按工作日日历推算；不支持草稿。</dd>
+        <dt>理由</dt><dd>「未开始 → 进行中」PRD 没写触发 <span class="ev p">L73</span>；打回即逾期会污染指标；示例 16 条路径任务里 7 条截止落在周末。</dd>
+        <dt>不拍板</dt><dd>逾期口径不稳，主指标和带教的「需要跟进」都会失真。</dd></dl>
+        <div class="src">合并自：本体 Q4、Q5 · T-12 T-14 · A-08 A-09</div></div>
+      <div class="dc"><div class="dc-h"><i>B6</i><h4>日程管到哪，和飞书日历怎么分？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">团队活动只读一本共享「管培生活动」日历；推算的截止、换站不写飞书，提醒交给机器人；「加入日历」改跳转；跟岗、1:1 一期不进，二期只读带教日历中参会人含所带管培生的日程，本职只取忙闲。</dd>
+        <dt>理由</dt><dd>PRD 已定读 <span class="ev p">L111</span>，没说读哪本；写进去会和「唯一数据源」冲突 <span class="ev p">L124</span>；个人日历涉及授权和隐私。</dd>
+        <dt>不拍板</dt><dd>二期飞书接口范围和权限申请没法开始；首页「加入日历」继续没有动作。</dd></dl>
+        <div class="src">合并自：本体 Q6、Q7 · 管培生 1 · 带教 Q5 · 管理员 问题 5</div></div>
+      <div class="dc"><div class="dc-h"><i>B7</i><h4>轮岗排期放一期吗？做到哪？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">一期上：按人 / 按岗位 / 按带教三视角，管理员点色块在抽屉里顺延、换站带教（取代个人路径分配页），带假期灰带和评估节点；拖拽编辑、活动叠加放二期。</dd>
+        <dt>理由</dt><dd>PRD 写了没排期；数据现成；示例排法里 7 格挤了 2 人、7 格空岗，现有页面看不出来。</dd>
+        <dt>不拍板</dt><dd>工作台仍然没有日历，最初的问题没有回答。</dd></dl>
+        <div class="src">合并自：本体 Q9 · 管培生 2 · 带教 Q5 · 管理员 问题 3</div></div>
+      <div class="dc"><div class="dc-h"><i>B8</i><h4>顶栏加「日程」「待办」，通知中心几期？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">一级导航 6 个不动，顶栏在搜索、通知旁加「日程」「待办」；通知中心和机器人推送规则一起放二期。</dd>
+        <dt>理由</dt><dd>跨板块的东西放全局，PRD 已经在这么用 <span class="ev p">L37</span>；待办来自 19 条规则，首页焦点只装得下两条 <span class="ev p">L50–52</span>。</dd>
+        <dt>不拍板</dt><dd>日程、待办又会被拆进各板块，下一个跨板块视图还会漏。</dd></dl>
+        <div class="src">合并自：本体 Q10、Q9</div></div>
+      <div class="dc"><div class="dc-h"><i>B9</i><h4>主指标用什么口径？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">主指标改为路径任务按期达标率（滚动 4 周、显示 n/N）：首次提交按期且最终评为达标以上才算，需修改后再交通过也算；未出结论的单列待定；按调整后的截止算，并列调整条数和调整人。期末看阶段评估达标率和定岗结果；进度给时间、完成两个数。</dd>
+        <dt>理由</dt><dd>按时提交率量交没交，不量行不行；原型算法在示例上 4 条「按时」里 3 条没有提交记录。</dd>
+        <dt>不拍板</dt><dd>管理员首页首位数字口径不定，会偏乐观。</dd></dl>
+        <div class="src">合并自：管理员 问题 1 · 管培生 3</div></div>
+      <div class="dc"><div class="dc-h"><i>B10</i><h4>新人入职第一天，要不要不经管理员操作就直接看到自己的路径？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">一期建期次对象和模板版本号，做最简期次启动向导；预置名单里的人首次飞书登录直接成为本期管培生。</dd>
+        <dt>理由</dt><dd>期次现在只是 team 的一个字段 <span class="ev p">L128</span>，一期按「没有期次」存，第二期要迁移；按 <span class="ev p">L28</span> 新人第一天看到的是同事首页。</dd>
+        <dt>不拍板</dt><dd>第二期开期要做数据迁移；新人首日体验断。</dd></dl>
+        <div class="src">合并自：管理员 问题 4 · 管培生 5</div></div>
+    </div>
+    <div class="blk-k" style="margin-top:40px"><h3>阈值一览：回答「是」即按推荐</h3></div>
+    <div class="tw"><table class="t min">
+      <thead><tr><th>规则</th><th>阈值</th><th>出处</th><th>推荐</th></tr></thead>
+      <tbody>
+        <tr><td class="id">R02</td><td>点评时效；超时后再过多久抄送管理员</td><td><span class="ev g">带教走查 Q4</span></td><td>2 个工作日；再 3 个工作日</td></tr>
+        <tr><td class="id">R03</td><td>需改进后的修改截止</td><td><span class="ev g">T-24</span></td><td>3 个工作日</td></tr>
+        <tr><td class="id">R06 R07</td><td>换站提醒提前量</td><td><span class="ev g">带教走查 Q10；管培生走查提 3 个</span></td><td>5 个工作日</td></tr>
+        <tr><td class="id">R08</td><td>交接要点期限</td><td><span class="ev g">带教走查 Q3</span></td><td>站结束后 2 个工作日</td></tr>
+        <tr><td class="id">R09</td><td>站末遗留兜底</td><td><span class="ev g">带教走查 Q12</span></td><td>站后 3 个工作日，转管理员</td></tr>
+        <tr><td class="id">B2</td><td>下一站带教只读窗口</td><td><span class="ev g">带教走查 Q2</span></td><td>开站前 5 个工作日起</td></tr>
+        <tr><td class="id">催办</td><td>同一任务催办限频</td><td><span class="ev g">M-14</span></td><td>24 小时一次</td></tr>
+        <tr><td class="id">推送</td><td>晚间提交合并推送的时刻</td><td><span class="ev g">带教走查 2.1 推演的晨报时刻</span></td><td>次日 08:30</td></tr>
+        <tr><td class="id">B9</td><td>主指标统计窗口</td><td><span class="ev g">管理员走查 问 7</span></td><td>滚动 4 周</td></tr>
+        <tr><td class="id">R01 R10 R11 R13–R17 R19</td><td>期限</td><td>无</td><td>没有依据，不给推荐，由常浩定</td></tr>
+      </tbody>
+    </table></div>
+    <p class="fig-cap" style="margin-top:20px"><b>可推迟</b>这 6 项到对应期次再定，不进清单：作品集由谁提名（二期）；资产上架后改版是否重审；站评是否含「推荐定岗到本线」；1:1 结论是否沉淀；结业后的角色与档案；代理带教（二期）。四份走查共 27 个拍板问题，合并对照见 coverage.md 第 4 节。</p>
+  </div>
+</section>
+
+<!-- 12 局限 -->
+<section class="stage" id="s12">
+  <div class="wrap">
+    <div class="st-head rev">
+      <div class="st-num" style="color:var(--ink3)">12</div>
+      <div><span class="k">口径与局限 · 哪些能信</span><h2>这是一份推演出来的结构，<em style="color:var(--ink)">要真实材料来验</em></h2><p>结构上的判断（分期缝、本体缺对象、带教关系挂错层）有 PRD 原文和原型代码作证；业务上的判断（一天怎么过、带教怎么做、量有多大）全部是推演。</p></div>
+    </div>
+    <div class="blk">
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>哪一块</th><th>现在靠什么</th><th>局限</th><th>要什么真实材料验证</th></tr></thead>
+        <tbody>
+          <tr><td><b>三类人的一天、一周、一站</b></td><td>三份角色走查（AI 自问自答）</td><td>没有真人访谈；作息、跟岗排法、1:1 频率、晚上集中提交都是推断</td><td><b>一位站带教完整带一站（两周）的记录</b>：每天做了什么、在哪看到提交、怎么写评语、交接说了什么；上一期 1–2 位管培生访谈</td></tr>
+          <tr><td><b>站带教分工</b></td><td><span class="ev p">L65</span> + 推演</td><td>机器人项目现状只有常浩一位导师、管培生 2 人 <span class="ev x">旁证 · CONTEXT.md 第 31 行</span>，每站一位带教还没人跑过</td><td>常浩确认每站带教名单；第一次换站后回看交接</td></tr>
+          <tr><td><b>量级</b>（每站几份、点评多久、同时在站几人）</td><td>原型示例数据</td><td>示例是虚构的 <span class="ev o">mock.ts:1</span>，只生成了部分任务实例；本报告只用它验证规则算得通</td><td><code>project_base</code> 导出（项目、任务、成员、时间），回放主指标新旧口径</td></tr>
+          <tr><td><b>规则阈值</b></td><td>走查建议值</td><td>2 个工作日、5 个工作日、3 个工作日等都没有业务出处</td><td>常浩拍板；试运行一站后按点评时效回看</td></tr>
+          <tr><td><b>飞书日历读取</b></td><td>推演</td><td>共享日历、应用身份读取、带教个人授权的权限点未核实</td><td>对照飞书开放平台核实；先建共享活动日历</td></tr>
+          <tr><td><b>现有工具</b></td><td>推演</td><td>常浩现在怎么排轮岗、管培生怎么记跟岗和截止，没有查</td><td>常浩现在用的排期表；管培生的备忘或自建表格</td></tr>
+          <tr><td><b>呈现</b></td><td>按 PRD 附录 A 色板手绘原型</td><td>不是可运行代码；关系图、状态机用 mermaid，由页面宿主渲染</td><td>拍板后改 <code>web/src</code> 再演示</td></tr>
+          <tr><td><b>原型示例数据瑕疵</b></td><td>只记录，不改仓库</td><td>许诺第 44 周周报截止写成周三 18:00 <span class="ev o">mock.ts:121</span>，和其他人的周日 22:00 不一致，P5 已按规则改为 11-01 周日；公告写「11.12 周三」，实为周四 <span class="ev o">mock.ts:183</span>；轻测写「带教人出题」<span class="ev o">mock.ts:114</span>；每站带教都填成主带教 <span class="ev o">mock.ts:71</span>；路径任务只生成了一部分实例</td><td>下一轮修原型时按拍板结果重做示例数据（M-25）</td></tr>
+          <tr><td><b>审查建议里没做的</b></td><td>—</td><td>没补站带教周颖的一天时间线（场景只有管培生一条）；没把各段各岗位人数、带教承载画成热力图（只在 P3 里以格子呈现）</td><td>下一轮补；周颖那条要等真人带教一站的记录再写，免得再推演一遍</td></tr>
+        </tbody>
+      </table></div>
+      <p class="fig-cap"><b>口径</b>页面上的计数和示例代入都由 <code>analysis.py</code> 生成到 <code>coverage.md</code>，同一个数两处一致。走查文件里少数 PRD 行号差一行（如「默认同事」写成第 29 行），本报告已按 PRD 原文重核；旁证行号也已核对（「未答」在业务共识第 107 行）。原型里发现的示例数据瑕疵（公告写周三、轻测写带教出题）只记录，不改仓库。</p>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="next"><p>下一步：常浩逐条回答第 11 章的 10 项（回答「是」即按推荐），把 prd-changes.md 里认可的条目落进 PRD，再按新分期拆票；同时找一位站带教把一站带完、留下记录，用来验第 2 章的推演。</p><div class="bars" aria-hidden="true"><b style="background:var(--s1)">1</b><b style="background:var(--s2)">2</b><b style="background:var(--s3)">3</b></div></div>
+    <div class="foot-grid">
+      <div><h4>依据与产出</h4><ul>
+        <li><i>01</i><div>PRD v1.0<small>docs/PRD.md · 235 行</small></div></li>
+        <li><i>02</i><div>一期前端原型<small>web/src · 示例数据 data/mock.ts</small></div></li>
+        <li><i>03</i><div>四份走查：管培生、带教人、管理员与同事、本体<small>scratchpad/redesign/roles/*.md</small></div></li>
+        <li><i>04</i><div>带教机器人项目文档（旁证）<small>管培生带教-AI协同 · CONTEXT.md、业务共识 v1.0</small></div></li>
+        <li><i>05</i><div>分析留痕与 PRD 修订提案<small>report/coverage.md · report/prd-changes.md · report/analysis.py</small></div></li>
+      </ul></div>
+      <div><h4>说明</h4><p>这是 AI 落地三步法第二步的技术方案，读者是产品和技术：看系统整体怎么建。它不代替常浩的业务确认，也不代替开发后的验收。所有人名、日期来自原型示例数据，均为虚构；标「推演」的都还没有被真人材料验证。</p><p class="disc">没有改动项目仓库里的任何文件。</p></div>
+    </div>
+  </div>
+</footer>
+</main>

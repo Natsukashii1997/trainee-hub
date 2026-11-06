@@ -1,0 +1,120 @@
+<title>管培生工作台视觉三选一</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* 布局：顶部一条控制带（方向 × 屏幕），下面是按宽度等比缩放的 1440×900 画布，画布下是这一版的说明 */
+:root {
+  --bg: #EEF0F3; --surface: #FFFFFF; --ink: #15171B; --ink2: #464B54; --mute: #646A74; --line: #DCDFE5; --chip: #E4E7EC; --accent: #3446E0; --accent-ink: #FFFFFF;
+  --sans: "Geist", "PingFang SC", "Noto Sans SC", "Hiragino Sans GB", system-ui, sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0E0F12; --surface: #17191D; --ink: #ECEDEF; --ink2: #B9BDC5; --mute: #9399A3; --line: #2A2D33; --chip: #23262C; --accent: #7C8BFF; --accent-ink: #0E0F12; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0E0F12; --surface: #17191D; --ink: #ECEDEF; --ink2: #B9BDC5; --mute: #9399A3; --line: #2A2D33; --chip: #23262C; --accent: #7C8BFF; --accent-ink: #0E0F12; color-scheme: dark }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 14px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 40px; }
+.wrap { max-width: 1480px; margin: 0 auto; display: grid; gap: 16px; }
+header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; }
+h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -.01em; text-wrap: balance; }
+.sub { margin: 2px 0 0; color: var(--mute); font-size: 13px; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; }
+.seg { display: inline-flex; padding: 3px; gap: 2px; background: var(--chip); border-radius: 10px; }
+.seg button { font: inherit; font-size: 13px; border: 0; background: transparent; color: var(--ink2); padding: 6px 12px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: background .2s, color .2s; }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 0 0 1px var(--line); }
+.seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.seg .k { font-family: var(--mono); font-size: 11px; color: var(--mute); }
+.stage { position: relative; width: 100%; aspect-ratio: 1440 / 900; max-width: 100%; border-radius: 14px; overflow: hidden; background: var(--surface); box-shadow: 0 0 0 1px var(--line), 0 12px 32px -12px rgba(0,0,0,.25); }
+.stage iframe { position: absolute; top: 0; left: 0; width: 1440px; height: 900px; border: 0; transform-origin: 0 0; background: #fff; }
+.notes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+@media (max-width: 760px) { .notes { grid-template-columns: minmax(0, 1fr); } }
+.note { background: var(--surface); border-radius: 14px; padding: 18px 20px; box-shadow: 0 0 0 1px var(--line); min-width: 0; }
+.note h2 { margin: 0 0 6px; font-size: 14px; font-weight: 600; }
+.note p, .note li { color: var(--ink2); font-size: 13.5px; }
+.note p { margin: 0; }
+.note ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.hint { color: var(--mute); font-size: 12.5px; }
+@media (prefers-reduced-motion: reduce) { .seg button { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>管培生工作台 · 视觉方向（亮色第二轮）</h1>
+      <p class="sub">以你倾向的 V3 为基准，新出 V4–V6 三版亮色方向，V3、V1 留作对照。同一套内容，只比较视觉；每版两屏：管培生首页、日历周视图。画布按 1440×900 等比缩放。</p>
+    </div>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="视觉方向">
+        <button type="button" id="d-v4" data-dir="v4"><span class="k">V4</span>雾光</button>
+        <button type="button" id="d-v5" data-dir="v5"><span class="k">V5</span>素白</button>
+        <button type="button" id="d-v6" data-dir="v6"><span class="k">V6</span>色块</button>
+        <button type="button" id="d-v3" data-dir="v3"><span class="k">V3</span>柔光 · 上一轮</button>
+        <button type="button" id="d-v1" data-dir="v1"><span class="k">V1</span>精工 · 上一轮</button>
+      </div>
+      <div class="seg" role="group" aria-label="屏幕">
+        <button type="button" id="s-home" data-scr="home">首页</button>
+        <button type="button" id="s-cal" data-scr="cal">日历</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="stage" id="stage"><iframe id="frame" title="视觉预览" src="v1-home.html" loading="eager"></iframe></div>
+
+  <div class="notes">
+    <section class="note">
+      <h2 id="n-title">V1 精工</h2>
+      <p id="n-body"></p>
+    </section>
+    <section class="note">
+      <h2>怎么看</h2>
+      <ul>
+        <li>上方切换方向和屏幕；键盘 ← → 换方向，↑ ↓ 换屏幕。</li>
+        <li>三版内容完全相同，差别只在面、线、色、字和组件的处理。</li>
+        <li>选定一版后，整套原型按这一版重做，并补上新梳理出的页面。</li>
+      </ul>
+      <p class="hint" style="margin-top:8px">只做电脑版。在手机上看是缩小后的整屏。</p>
+    </section>
+  </div>
+</div>
+
+<script>
+const NOTES = {
+  v1: ['V1 精工 · 细线浅色', '从现行「01 器」进化：冷灰底上一整块白色精工面板，用发丝线分区，不再卡片套卡片；数字、刻度、轨道都按仪器的精度打磨。气质克制、信息密度高，适合每天高频使用。'],
+  v3: ['V3 柔光 · 上一轮（你倾向的基准）', '雾面浅底上的半透明大圆角面板，Bento 式分区；每个领域一种柔和主题色，只用在小色块和日历事件上。通透、有温度，同时保持高对比的文字。'],
+  v4: ['V4 雾光 · V3 深化', '保留 V3 的雾面、大圆角和 Bento 分区，底下铺了几块极淡的柔光，让磨砂面真正透出层次；面板有白色内描边和顶边高光。数字统一用一种字体的轻字重。日历工作日列加宽、周末收窄，事件标题完整显示；详情里加了一条「现在 → 截止」的时间轨。'],
+  v5: ['V5 素白 · 留白与字体', '白底，几乎不用卡片，模块之间只靠留白和细线分开；标题大而细，首页主角是超细的大号倒计时。全页只有一个深青绿强调色，日程类型只用小圆点和浅色小块。最安静、最轻，适合每天长时间开着。'],
+  v6: ['V6 色块 · 领域色面', '每个模块直接落在自己领域的浅色色面上：成长蓝、带教青绿、团队兰紫、考核珊瑚、周报沙黄。倒计时、完成度、天数做成色块里的粗重大数字；AI 推荐是全屏唯一的靛色实面。色彩识别感最强，最有活力。'],
+};
+const ORDER = ['v4', 'v5', 'v6', 'v3', 'v1'];
+const frame = document.getElementById('frame');
+const stage = document.getElementById('stage');
+let dir = 'v4', scr = 'home';
+function fit() { frame.style.transform = 'scale(' + (stage.clientWidth / 1440) + ')'; }
+function render(push) {
+  frame.src = dir + '-' + scr + '.html';
+  document.querySelectorAll('[data-dir]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.dir === dir)));
+  document.querySelectorAll('[data-scr]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.scr === scr)));
+  document.getElementById('n-title').textContent = NOTES[dir][0];
+  document.getElementById('n-body').textContent = NOTES[dir][1];
+  if (push && location.hash !== '#' + dir + '-' + scr) location.hash = dir + '-' + scr;
+}
+function fromHash() {
+  const m = /^#(v[13456])-(home|cal)$/.exec(location.hash);
+  if (m) { dir = m[1]; scr = m[2]; }
+  render(false);
+}
+document.querySelectorAll('[data-dir]').forEach(b => b.addEventListener('click', () => { dir = b.dataset.dir; render(true); }));
+document.querySelectorAll('[data-scr]').forEach(b => b.addEventListener('click', () => { scr = b.dataset.scr; render(true); }));
+document.addEventListener('keydown', e => {
+  const ds = ORDER, n = ds.length;
+  if (e.target.closest && e.target.closest('input,textarea')) return;
+  if (e.key === 'ArrowRight') { dir = ds[(ds.indexOf(dir) + 1) % n]; render(true); }
+  else if (e.key === 'ArrowLeft') { dir = ds[(ds.indexOf(dir) + n - 1) % n]; render(true); }
+  else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') { scr = scr === 'home' ? 'cal' : 'home'; render(true); e.preventDefault(); }
+});
+window.addEventListener('hashchange', fromHash);
+new ResizeObserver(fit).observe(stage);
+fit(); fromHash();
+</script>
