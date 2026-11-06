@@ -20,6 +20,8 @@ const LISTEN_OK = /\.listen\(\s*[\w.]+\s*,\s*['"]127\.0\.0\.1['"]/;
 const ALLOWED_DEPS = [
   // 前端运行时（2026-11-06 UI 原型）：React 19、路由、自托管 Geist 字体（国内访问不依赖 Google Fonts）
   'react', 'react-dom', 'react-router-dom', '@fontsource/geist-sans', '@fontsource/geist-mono',
+  // V3「柔光」数字字体（2026-11-06 第 2 批）：Manrope 自托管，只用 latin 子集，同样为国内访问不走 Google Fonts
+  '@fontsource/manrope',
   // 开发与测试
   'vite', '@vitejs/plugin-react', 'typescript', 'vitest', 'jsdom', '@testing-library/react', '@types/react', '@types/react-dom',
 ];

@@ -1,6 +1,17 @@
 # 当前状态
 
-更新：2026-11-06。常浩不满意原型的视觉和需求结构，已用 AI 落地三步法第二步重排需求，B1–B10 全部按推荐拍板，PRD 升到 v1.1（未提交）；视觉方向第二轮 V4 雾光、V5 素白、V6 色块已出，等常浩选定。唯一下一步：常浩选定视觉后，按 PRD v1.1 和选定视觉重做原型（含日程、待办、轮岗排期等新页面），再更新 PR #20。
+更新：2026-11-06。原型已按 PRD v1.1 和选定的 V3 柔光视觉重做（含日程、待办、轮岗排期、期次启动、工作日日历、交接要点等新页面），`npm test`、类型检查、构建都通过，四视角 × 30 个路由无头扫描无溢出、无报错；已本地提交，未推送。唯一下一步：用户同意后推送分支、更新 PR #20 说明。
+
+## 原型按 PRD v1.1 与 V3 柔光重做（2026-11-06，Claude，用户选 V3 并同意分批计划「按计划开工」；已本地提交、未推送、无需发布）
+
+- 时间：开工 `2026-11-06 13:40`（`date '+%F %H:%M'` 记录）。来由：常浩选定视觉 V3 柔光，要求按 PRD v1.1 重做原型并补新页面。
+- 改了哪些文件：数据层按 v1.1 本体重建（`web/src/data/` 拆成 model、store、generate、rules、visibility、schedule、metrics、actions 等，`README.md` 列全部导出；`web/src/lib/workday.ts` 工作日推算）；V3 设计系统与外壳（`web/src/styles/app.css` 重写、`fonts.css` 加 Manrope、`components/ui.tsx`、`components/schedule.tsx`、`components/Layout.tsx`、`components/README.md`、`pages/Kit.tsx` 组件示例页 `/dev/kit`）；页面全部重写（`pages/Home.tsx`、`Schedule.tsx`、`Todo.tsx`、`Growth.tsx`、`Admin.tsx`、`Team.tsx`、`AI.tsx`、`Misc.tsx`）；`main.tsx` 路由（删 `/admin/assign`，新增 `/schedule/*`、`/todo`、`/growth/handoff/:stationId`、`/admin/cohort|rotation|calendar|rules`、`/dev/kit`）；`ui.tsx` 演示视角支持地址参数 `?as=`；`package.json` 新增 `@fontsource/manrope`（`scripts/check-rules.mjs` 已登记，理由：V3 数字字体）；`docs/PRD.md` 附录 A 改为 V3 柔光规范、文首视觉说明；`AGENTS.md` 导航表与结构；本文件。
+- 测试：`npm test` 原样结果：vitest `Tests  85 passed (85)`；`node --test` 为 `ℹ pass 4` / `ℹ fail 0`；`通用规则检查通过`。`npx tsc --noEmit` 无报错；`npm run build` 通过（验证后已删 `dist/`）。
+- 验证：分 4 批做，第 1、2 批和第 3 批三组页面由子 agent 并行（文件互不重叠），各自无头截图自检。主会话复核：组件示例页、各组关键截图逐张看过；写了无头 Chrome + 调试协议的扫描脚本，四视角 × 30 个路由共 120 页，查横向溢出、文字溢出、截断、错误边界和控制台报错，修完后只剩登录页装饰光晕超出（不撑宽页面，忽略）。修了「我带的人」和带教首页标签被省略号截断（改为换行）。首页在 1440×900 与 1440×1250 下外壳正常。交互：各组用脚本或 jsdom 测试触发写操作（提交、点评、改截止、交接要点、已准备、催办、审核、轮岗顺延与换带教），`pages/Growth.test.tsx` 收进仓库；主会话未逐个手点。
+- 截图：在 scratchpad，未入库。
+- 发布与回读：无需发布。
+- 与授权不一致之处、遗留问题、范围外发现：①第 1、2 批原说由主会话做数据层，实际也交给子 agent，主会话负责接口约定与审查；②各页面自带 `<style>`（前缀 hm-、sx-、ad-、tm-、ai-、lg-、sn-），建议以后并入 app.css；③数据层建议补：`canSeeHandoverOf`、`reviewDueOf`、`canNudge`、`rotationPlan` 按查看人过滤、建期次与日历与周期规则的写函数（向导「发布」现在只演示）；④带教首页焦点卡「5 天 16 小时」与待点评队列「超时 6 天」取整口径不一致；⑤甘特按周对齐，顺延后不在周四的站显示是近似；⑥改 GitHub issue（PRD 第 12 节）仍未做，待用户同意；⑦推送待用户同意。
+- 本轮新坑：无。
 
 ## 需求结构重排与视觉重选（2026-11-06，Claude，用户要求用三步法深挖需求、出新视觉，拍板「B1–B10 全部按推荐」；未提交、未发布代码、报告与视觉稿已发布为 Artifact）
 
