@@ -1,0 +1,1988 @@
+<title>管培生工作台结构重排</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+:root{
+  --bg:#F3F4F6; --surface:#FFFFFF; --surface2:#FAFAFB; --surface3:#F1F2F4; --grid:#E4E6EA; --hl:#E2E5EA;
+  --ink:#101318; --ink2:#434A55; --ink3:#5F6672; --thin:#7A818C; --rule:#D7DAE0; --rule2:#E6E8EC; --topbg:rgba(243,244,246,.94);
+  --band:#15181D; --band2:#1D2128; --band3:#262B33; --bandrule:#2E343D; --dink:#ECEEF2; --dink2:#A7AEBA; --dink3:#8D95A2; --dstrong:#FFFFFF;
+  --s1:#DD5129; --s1t:#FBE8E1; --s1d:#AE3714;
+  --s2:#2D53D2; --s2t:#E6ECFB; --s2d:#1D3BA3;
+  --s3:#0A8470; --s3t:#DBF0EA; --s3d:#05604F;
+  --onc:#FFFFFF;
+  --c:var(--ink); --ct:var(--rule2); --cd:var(--ink);
+  /* 原型窗口：沿用 PRD 附录 A「01 器」色板，浅色截图在深浅两种主题下都保持原样 */
+  --a-bg:#E8EAEE; --a-panel:#FFFFFF; --a-soft:#F5F6F8; --a-line:#E7E9ED; --a-ink:#14161A; --a-ink2:#3B4048; --a-mute:#6B707A;
+  --a-acc:#3446E0; --a-acct:#ECEEFD; --a-ok:#2F7A58; --a-okt:#E3F1E9; --a-warn:#A8670C; --a-warnt:#F8ECD8; --a-bad:#BF3F2C; --a-badt:#F9E3DF; --a-neu:#62666D; --a-neut:#EEF0F2; --a-dark:#14161A;
+  --l-t:#DCE2F8; --l-td:#2F428F; --l-c:#F4E4D2; --l-cd:#7A4A1C; --l-m:#DCEFE4; --l-md:#235E45;
+  /* 固定色：浅色原型窗口、演示窗口与色块用，深浅主题下不变 */
+  --k-000000:#000; --k-101318:#101318; --k-1d2128:#1D2128; --k-434a55:#434A55; --k-5a6577:#5A6577; --k-5f6672:#5F6672; --k-8a6a3b:#8A6A3B; --k-a7adb6:#A7ADB6; --k-a7aeba:#A7AEBA; --k-ae3714:#AE3714; --k-b0875a:#B0875A; --k-c9d3f5:#C9D3F5; --k-d0d4db:#D0D4DB; --k-d5d8dd:#D5D8DD; --k-d7dae0:#D7DAE0; --k-dd5129:#DD5129; --k-e6e8ec:#E6E8EC; --k-f2f4f7:#F2F4F7; --k-f7f8f9:#F7F8F9; --k-fafbff:#FAFBFF; --k-fffbf5:#FFFBF5; --k-rgba-98-102-109-12:rgba(98,102,109,.12);
+  --ease:cubic-bezier(.22,.7,.2,1);
+  --sans:'Noto Sans SC',-apple-system,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+  --mono:'JetBrains Mono','SFMono-Regular',Menlo,Consolas,'Noto Sans SC',monospace;
+  --num:'Archivo','Helvetica Neue',Arial,'Noto Sans SC',sans-serif;
+  --w:1240px; --g:40px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F1114; --surface:#171A1F; --surface2:#1B1F25; --surface3:#20242B; --grid:#1C2026; --hl:#2A3038;
+  --ink:#ECEEF2; --ink2:#B9BFC9; --ink3:#9AA1AD; --thin:#8D95A2; --rule:#2E343D; --rule2:#252A31; --topbg:rgba(15,17,20,.92);
+  --band:#08090B; --band2:#14171C; --band3:#1D2128; --bandrule:#2A2F37;
+  --s1:#F0714C; --s1t:#3A1F16; --s1d:#F5A285; --s2:#6D8DF0; --s2t:#1A2443; --s2d:#A9BCF7; --s3:#2FB89D; --s3t:#0E2E28; --s3d:#7BD8C4;
+}}
+:root[data-theme="dark"]{
+  --bg:#0F1114; --surface:#171A1F; --surface2:#1B1F25; --surface3:#20242B; --grid:#1C2026; --hl:#2A3038;
+  --ink:#ECEEF2; --ink2:#B9BFC9; --ink3:#9AA1AD; --thin:#8D95A2; --rule:#2E343D; --rule2:#252A31; --topbg:rgba(15,17,20,.92);
+  --band:#08090B; --band2:#14171C; --band3:#1D2128; --bandrule:#2A2F37;
+  --s1:#F0714C; --s1t:#3A1F16; --s1d:#F5A285; --s2:#6D8DF0; --s2t:#1A2443; --s2d:#A9BCF7; --s3:#2FB89D; --s3t:#0E2E28; --s3d:#7BD8C4;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.75;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+main{overflow-x:clip}
+h1,h2,h3,h4,h5,p{margin:0}
+a{color:inherit}
+button{font:inherit;color:inherit}
+code{font-family:var(--mono);font-size:.86em;background:var(--surface3);padding:1px 5px;border-radius:2px;overflow-wrap:anywhere}
+:focus-visible{outline:2px solid var(--c,var(--ink));outline-offset:3px}
+.wrap{max-width:var(--w);margin:0 auto;padding-left:max(var(--g),env(safe-area-inset-left,0px));padding-right:max(var(--g),env(safe-area-inset-right,0px))}
+.k{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.s1{--c:var(--s1);--ct:var(--s1t);--cd:var(--s1d)}
+.s2{--c:var(--s2);--ct:var(--s2t);--cd:var(--s2d)}
+.s3{--c:var(--s3);--ct:var(--s3t);--cd:var(--s3d)}
+.cap{font-size:12.5px;color:var(--ink3);line-height:1.6}
+.fig-cap{margin-top:12px;font-size:12.5px;color:var(--ink3);line-height:1.65}
+.fig-cap>b:first-child{font-family:var(--mono);font-weight:700;color:var(--cd);white-space:nowrap;margin-right:10px}
+.fig-cap b{color:var(--ink2)}
+.dark .fig-cap{color:var(--dink3)}
+.dark .fig-cap b{color:var(--dink2)}
+.dark .fig-cap>b:first-child{color:var(--dink)}
+/* 依据标签 */
+.ev{display:inline-block;font-family:var(--mono);font-size:11px;line-height:1.5;padding:0 6px;margin:0 2px;border-radius:2px;white-space:nowrap;vertical-align:1px;font-weight:500}
+.ev.p{background:var(--s2t);color:var(--s2d)}
+.ev.o{background:var(--surface3);color:var(--ink2);border:1px solid var(--rule)}
+.ev.g{color:var(--s1d);border:1px dashed var(--s1);background:transparent}
+.ev.x{color:var(--ink2);border:1px dotted var(--ink3)}
+.dark .ev.o{background:var(--band3);color:var(--dink2);border-color:var(--bandrule)}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:20;background:var(--topbg);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--rule)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:56px;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;text-decoration:none;white-space:nowrap}
+.brand i{display:inline-flex;gap:2px}
+.brand i b{width:6px;height:16px;display:block}
+.top nav{display:flex;gap:2px;overflow:hidden}
+.top nav a{text-decoration:none;font-size:13px;color:var(--ink2);padding:6px 9px;border-radius:3px;white-space:nowrap;transition:background .2s var(--ease),color .2s var(--ease)}
+.top nav a:hover{background:var(--rule2);color:var(--ink)}
+.top nav a span{font-family:var(--mono);font-size:11px;margin-right:5px;color:var(--ink3);font-weight:700}
+
+/* hero */
+.hero{position:relative;padding:72px 0 80px;border-bottom:1px solid var(--rule);background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:40px 40px;background-position:-1px -1px}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,color-mix(in srgb,var(--bg) 60%,transparent) 55%,var(--bg) 100%);pointer-events:none}
+.hero .wrap{position:relative;z-index:1}
+.hero-head{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:56px;align-items:end}
+.eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:28px;flex-wrap:wrap}
+.eyebrow .bars{display:flex;gap:3px}
+.eyebrow .bars b{width:22px;height:4px;display:block}
+.hero h1{font-weight:900;font-size:clamp(42px,6.4vw,86px);line-height:1.06;letter-spacing:-.02em}
+.hero h1 .thin{font-weight:400;color:var(--thin)}
+.hero .sub{margin-top:28px;font-size:clamp(18px,1.7vw,22px);line-height:1.6;font-weight:500;color:var(--ink2)}
+.hero .sub b{color:var(--ink);font-weight:700;background:linear-gradient(transparent 62%,var(--hl) 62%)}
+.quote{border-top:2px solid var(--ink);padding-top:20px;margin:0 0 6px}
+.quote p{font-size:17px;line-height:1.75;color:var(--ink)}
+.quote .who{margin-top:14px;font-size:13px;color:var(--ink3);line-height:1.6}
+.quote .who b{font-weight:700;color:var(--ink);font-size:14px;display:block}
+.spine{margin-top:64px;display:grid;grid-template-columns:minmax(0,1fr) 48px minmax(0,1fr) 48px minmax(0,1fr)}
+.sp-col{display:flex;flex-direction:column;text-decoration:none;background:var(--surface);border:1px solid var(--rule);border-top:4px solid var(--c);transition:border-color .25s var(--ease),transform .25s var(--ease)}
+.sp-col:hover{border-color:var(--c);transform:translateY(-3px)}
+.sp-sec{padding:18px 20px}
+.sp-sec+.sp-sec{border-top:1px solid var(--rule2)}
+.sp-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.sp-num{font-family:var(--num);font-weight:800;font-size:44px;line-height:1;color:var(--c);letter-spacing:-.02em}
+.sp-top .k{color:var(--cd)}
+.sp-col h3{margin-top:12px;font-size:22px;font-weight:900;letter-spacing:-.01em}
+.sp-col .what{margin-top:4px;font-size:14px;color:var(--ink2);line-height:1.6}
+.sp-lab{margin-bottom:8px}
+.sp-lab .k{font-size:11px}
+.sp-chips{display:flex;flex-wrap:wrap;gap:6px}
+.sp-chips span{font-size:12.5px;padding:2px 9px;background:var(--ct);color:var(--cd);font-weight:500}
+.sp-chips span.n{background:transparent;border:1px solid var(--c)}
+.sp-link{display:flex;align-items:center;justify-content:center}
+.sp-link .arr{width:100%;height:12px;position:relative}
+.sp-link .arr::before{content:"";position:absolute;left:8px;right:12px;top:5px;height:2px;background:var(--ink)}
+.sp-link .arr::after{content:"";position:absolute;right:6px;top:1px;border:5px solid transparent;border-left:8px solid var(--ink);border-right:0}
+.loop{margin-top:10px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;border:1px dashed var(--rule);padding:10px 16px;font-size:13.5px;color:var(--ink2);background:var(--surface2)}
+.loop b{color:var(--ink)}
+.nums{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-top:2px solid var(--ink);border-bottom:1px solid var(--rule);margin-top:48px}
+.nums>div{padding:18px 18px 18px 0}
+.nums>div+div{padding-left:18px;border-left:1px solid var(--rule2)}
+.nums b{font-family:var(--num);font-weight:800;font-size:clamp(28px,3vw,40px);line-height:1;letter-spacing:-.02em;display:block}
+.nums b small{font-size:.5em;font-weight:700;margin-left:2px}
+.nums span{display:block;margin-top:10px;font-size:13.5px;line-height:1.55;color:var(--ink)}
+.nums .cap{margin-top:4px}
+.nums .hl b{color:var(--c)}
+.basis{margin-top:28px;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:28px;font-size:13.5px;color:var(--ink2);line-height:1.7}
+.basis h4{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--ink3);font-weight:500;margin-bottom:8px}
+.basis ul{margin:0;padding-left:18px}
+.legend{display:flex;flex-direction:column;gap:6px}
+.legend div{display:flex;gap:10px;align-items:baseline}
+
+/* sections */
+.sec{padding:112px 0}
+.sec-k{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.sec-k::before{content:"";width:28px;height:2px;background:var(--ink)}
+h2.h2{font-size:clamp(30px,3.6vw,46px);line-height:1.18;font-weight:900;letter-spacing:-.015em}
+.white{background:var(--surface);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.concl{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,2.4fr);gap:56px}
+.concl-lead p{margin-top:20px;color:var(--ink2);font-size:15px}
+.concl ol{list-style:none;margin:0;padding:0;border-top:2px solid var(--ink);counter-reset:c;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.concl li{counter-increment:c;padding:18px 22px 18px 0;border-bottom:1px solid var(--rule2);font-size:15px;line-height:1.7;color:var(--ink2);display:grid;grid-template-columns:34px minmax(0,1fr)}
+.concl li:nth-child(even){padding-left:22px;border-left:1px solid var(--rule2)}
+.concl li::before{content:counter(c,decimal-leading-zero);font-family:var(--num);font-weight:800;font-size:15px;color:var(--ink3);padding-top:2px}
+.concl li b{color:var(--ink)}
+
+.stage{padding:120px 0 40px}
+.st-head{display:grid;grid-template-columns:auto minmax(0,1fr);gap:48px;align-items:end;padding-bottom:36px;border-bottom:1px solid var(--ink)}
+.st-head.rev{grid-template-columns:minmax(0,1fr) auto}
+.st-head.rev .st-num{order:2}
+.st-num{font-family:var(--num);font-weight:800;font-size:clamp(96px,13vw,180px);line-height:.78;color:var(--c);letter-spacing:-.05em}
+.st-head .k{color:var(--cd);display:block;margin-bottom:14px}
+.st-head h2{font-size:clamp(28px,3.6vw,48px);line-height:1.15;font-weight:900;letter-spacing:-.015em}
+.st-head h2 em{font-style:normal;color:var(--c)}
+.st-head p{margin-top:14px;font-size:15.5px;color:var(--ink2);max-width:760px}
+.blk{padding:64px 0;border-bottom:1px solid var(--rule2)}
+.blk:last-child{border-bottom:0}
+.blk-k{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.blk-k::before{content:"";width:16px;height:2px;background:var(--c);flex:none}
+.blk-k h3{font-size:21px;font-weight:900;letter-spacing:-.01em}
+.blk-k .k{margin-left:auto}
+.lead{font-size:16.5px;line-height:1.8;color:var(--ink);max-width:880px;margin-bottom:24px}
+.lead+.lead{margin-top:-12px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px}
+
+/* tables */
+.tw{overflow-x:auto;border:1px solid var(--rule);background:var(--surface)}
+table.t{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.6}
+.t th{font-family:var(--mono);font-size:11px;letter-spacing:.05em;font-weight:500;color:var(--ink3);text-align:left;padding:10px 12px;background:var(--surface2);border-bottom:1px solid var(--rule);white-space:nowrap}
+.t td{padding:10px 12px;border-bottom:1px solid var(--rule2);vertical-align:top;color:var(--ink2);overflow-wrap:anywhere}
+.t tr:last-child td{border-bottom:0}
+.t td b{color:var(--ink)}
+.t td.nw{white-space:nowrap}
+.t td.id{font-family:var(--mono);font-size:12px;color:var(--cd);white-space:nowrap;font-weight:700}
+.t .grp td{background:var(--surface3);font-weight:700;color:var(--ink);font-size:12.5px}
+.t.min{min-width:860px}
+.t.wide{min-width:1080px}
+.st{display:inline-block;font-size:11.5px;font-weight:700;padding:0 7px;border-radius:2px;white-space:nowrap}
+.st.keep{background:var(--surface3);color:var(--ink2)}
+.st.rev{background:var(--s2t);color:var(--s2d)}
+.st.new{background:var(--s1t);color:var(--s1d)}
+.st.del{background:transparent;color:var(--ink3);border:1px solid var(--rule);text-decoration:line-through}
+.mk{font-family:var(--mono);font-weight:700}
+.mk.no{color:var(--s1d)} .mk.half{color:var(--ink3)} .mk.yes{color:var(--s3d)}
+details.more{margin-top:14px;border:1px solid var(--rule);background:var(--surface)}
+details.more summary{cursor:pointer;padding:12px 16px;font-size:14px;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:12px}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::after{content:"展开";font-family:var(--mono);font-size:11px;color:var(--ink3);font-weight:500}
+details.more[open] summary::after{content:"收起"}
+details.more .tw{border:0;border-top:1px solid var(--rule)}
+
+/* chain (root cause) */
+.chain{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;border:1px solid var(--rule);background:var(--surface)}
+.chain>div{padding:16px 16px 18px;position:relative}
+.chain>div+div{border-left:1px solid var(--rule2)}
+.chain>div+div::before{content:"";position:absolute;left:-7px;top:22px;border:6px solid transparent;border-left:7px solid var(--ink);border-right:0}
+.chain small{display:block;font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.04em}
+.chain b{display:block;margin-top:6px;font-size:15px;line-height:1.5}
+.chain span{display:block;margin-top:6px;font-size:12.5px;color:var(--ink3);line-height:1.55}
+.chain .end{background:var(--c);color:var(--onc)}
+.chain .end small,.chain .end span{color:color-mix(in srgb,var(--onc) 85%,transparent)}
+
+/* code blocks / schema */
+.code{font-family:var(--mono);font-size:12.5px;background:var(--surface);border:1px solid var(--rule);padding:14px 16px;line-height:1.8;color:var(--ink);overflow-x:auto;white-space:pre;margin:0}
+.code .c{color:var(--ink3)}
+.code .kw{color:var(--cd);font-weight:700}
+.fig{background:var(--surface);border:1px solid var(--rule);padding:18px;overflow-x:auto}
+.fig pre.mermaid{margin:0;background:transparent;font-family:var(--mono);font-size:12px;line-height:1.5;color:var(--ink2);white-space:pre;min-width:640px}
+.figrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+
+/* tabs (scene matrix) */
+.tabs{display:flex;border:1px solid var(--rule);border-bottom:0;background:var(--surface2);overflow-x:auto}
+.tabs button{background:none;border:0;border-right:1px solid var(--rule2);padding:12px 18px;font-size:14px;color:var(--ink3);cursor:pointer;white-space:nowrap;transition:color .2s var(--ease),background .2s var(--ease)}
+.tabs button span{font-family:var(--mono);font-size:11px;margin-right:6px}
+.tabs button:hover{color:var(--ink);background:var(--surface)}
+.tabs button[aria-selected=true]{color:var(--ink);font-weight:700;background:var(--surface);box-shadow:inset 0 3px 0 var(--c)}
+.tabp{display:none}
+.tabp.on{display:block}
+.cell-q{font-weight:700;color:var(--ink);display:block}
+.cell-now{display:block;margin-top:4px;font-size:12.5px;color:var(--ink3)}
+.cell-new{display:block;margin-top:4px;font-size:12.5px;color:var(--cd);font-weight:500}
+
+/* day compare (scene figure) */
+.day{display:grid;grid-template-columns:86px minmax(0,1fr) minmax(0,1fr);border:1px solid var(--rule);background:var(--surface)}
+.day>div{padding:12px 14px;border-bottom:1px solid var(--rule2);font-size:13.5px;line-height:1.6;color:var(--ink2)}
+.day .hd{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--ink3);background:var(--surface2)}
+.day .tm{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700}
+.day .now{border-left:1px solid var(--rule2)}
+.day .aft{border-left:1px solid var(--rule2);background:color-mix(in srgb,var(--ct) 45%,transparent);color:var(--ink)}
+.day .lst{border-bottom:0}
+
+/* demo surfaces */
+.dark{background:var(--band);color:var(--dink)}
+.dark .blk-k h3{color:var(--dstrong)}
+.dark .blk-k .k{color:var(--dink3)}
+.dark .lead{color:var(--dink)}
+.blk.band{margin:0 calc(50% - 50vw);padding:64px calc(50vw - 50%) 72px;border-bottom:0}
+.blk.panel{margin:8px 0 0;padding:40px 40px 44px;border-bottom:0}
+.dm-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:24px}
+.dm-head h4{font-size:clamp(22px,2.4vw,30px);font-weight:900;line-height:1.3;color:var(--dstrong);letter-spacing:-.01em}
+.dm-head p{margin-top:8px;font-size:14px;color:var(--dink2);max-width:760px}
+.dm-ctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.seg-sw{display:inline-flex;border:1px solid var(--bandrule);padding:3px;gap:3px;background:var(--band2)}
+.seg-sw button{background:none;border:0;color:var(--dink2);padding:6px 14px;font-size:13px;cursor:pointer;border-radius:2px;transition:background .2s var(--ease),color .2s var(--ease)}
+.seg-sw button:hover{color:var(--dstrong)}
+.seg-sw button[aria-pressed=true]{background:var(--s1d);color:var(--a-panel);font-weight:700}
+.btn{display:inline-flex;align-items:center;gap:6px;background:var(--band2);border:1px solid var(--bandrule);color:var(--dink);padding:7px 12px;font-size:13px;cursor:pointer;border-radius:2px;transition:border-color .2s var(--ease),background .2s var(--ease)}
+.btn:hover{border-color:var(--dink3);background:var(--band3)}
+.btn svg{width:12px;height:12px;fill:currentColor}
+.btn.pri{background:var(--a-panel);color:var(--k-101318);border-color:var(--a-panel);font-weight:700}
+.dm-prog{font-family:var(--mono);font-size:12px;color:var(--dink3);min-width:58px;text-align:right}
+.dm-end{margin-top:22px;display:flex;align-items:center;gap:14px;font-size:16px;font-weight:700;color:var(--dstrong);opacity:0;transform:translateY(6px);transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.dm-end::before{content:"";width:4px;align-self:stretch;background:var(--s1);flex:none}
+.is-done .dm-end{opacity:1;transform:none}
+.enter{animation:enter .42s var(--ease) both}
+@keyframes enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.win{background:var(--a-panel);color:var(--k-101318);border-radius:8px;overflow:hidden;border:1px solid var(--k-000000)}
+.win-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 14px;border-bottom:1px solid var(--k-e6e8ec);background:var(--k-f7f8f9);font-size:12.5px;color:var(--k-434a55)}
+.win-bar b{color:var(--k-101318);font-weight:700}
+.win-bar .dots{display:flex;gap:5px}
+.win-bar .dots i{width:9px;height:9px;border-radius:50%;background:var(--k-d5d8dd);display:block}
+.pscroll{overflow-x:auto}
+.pnote{margin-top:14px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+.pnote div{padding:12px 14px;background:var(--band2);border-top:2px solid var(--bandrule);font-size:13px;color:var(--dink2);line-height:1.6}
+.pnote div b{display:block;color:var(--dstrong);font-size:13.5px;margin-bottom:2px}
+.pnote div .ev{margin:0}
+
+/* chain demo */
+.d1{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);gap:16px;align-items:stretch}
+.steps{padding:14px;display:flex;flex-direction:column;gap:8px;background:var(--k-f7f8f9);flex:1}
+.tc{background:var(--a-panel);border:1px solid var(--k-d7dae0);padding:10px 12px;transition:border-color .25s var(--ease),opacity .25s var(--ease)}
+.tc.pend{opacity:.5;background:transparent;border-style:dashed}
+.tc.now{border-color:var(--k-dd5129);box-shadow:inset 3px 0 0 var(--k-dd5129)}
+.tc-h{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:var(--k-101318)}
+.tc-h i{font-style:normal;font-family:var(--mono);font-size:11px;width:20px;height:20px;display:grid;place-items:center;border:1px solid var(--k-d7dae0);color:var(--k-5f6672);flex:none}
+.tc.done .tc-h i{background:var(--k-ae3714);border-color:var(--k-ae3714);color:var(--a-panel)}
+.tc-h small{margin-left:auto;font-family:var(--mono);font-size:10.5px;font-weight:500;color:var(--k-5f6672)}
+.tc-b{margin-top:6px;font-size:12.5px;line-height:1.6;color:var(--k-434a55)}
+.tc.pend .tc-b{display:none}
+.pay{padding:14px;display:flex;flex-direction:column;gap:10px;flex:1;background:var(--a-panel)}
+.pay .code{font-size:11.5px;background:var(--k-f2f4f7);border-color:var(--k-e6e8ec);color:var(--k-101318);white-space:pre-wrap;word-break:break-word}
+.pay .code .kw{color:var(--k-ae3714)}
+.pay .code .c{color:var(--k-5f6672)}
+.ph-empty{font-size:13px;color:var(--k-5f6672);text-align:center;padding:36px 10px;border:1px dashed var(--k-d7dae0)}
+
+/* ---------- 原型（01 器） ---------- */
+.ap{background:var(--a-bg);color:var(--a-ink);font-family:'Noto Sans SC',-apple-system,'PingFang SC',sans-serif;font-size:13px;line-height:1.55;border-radius:8px;display:grid;grid-template-columns:168px minmax(0,1fr);min-width:1060px;padding:8px 8px 8px 0}
+.ap.nos{grid-template-columns:minmax(0,1fr);padding:8px}
+.ap-side{padding:14px 12px;display:flex;flex-direction:column;gap:2px}
+.ap-brand{display:flex;gap:8px;align-items:center;font-weight:700;font-size:13px;margin-bottom:14px}
+.ap-brand i{width:22px;height:22px;border-radius:7px;background:var(--a-dark);display:block}
+.ap-brand small{display:block;font-family:var(--mono);font-size:9px;color:var(--a-mute);letter-spacing:.08em;font-weight:500}
+.ap-nav{padding:6px 10px;border-radius:8px;color:var(--a-ink2);font-size:13px;display:flex;justify-content:space-between}
+.ap-nav.on{background:var(--a-panel);color:var(--a-ink);font-weight:700}
+.ap-nav em{font-style:normal;font-family:var(--mono);font-size:10.5px;color:var(--a-mute)}
+.ap-sg{margin-top:12px;font-family:var(--mono);font-size:10px;color:var(--a-mute);letter-spacing:.08em;padding:0 10px 4px}
+.ap-main{background:var(--a-panel);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.ap-top{height:48px;border-bottom:1px solid var(--a-line);display:flex;align-items:center;justify-content:space-between;padding:0 16px;gap:12px}
+.ap-crumb{font-size:12.5px;color:var(--a-mute)}
+.ap-crumb b{color:var(--a-ink)}
+.ap-tools{display:flex;gap:6px;align-items:center}
+.ap-tool{border:1px solid var(--a-line);border-radius:8px;padding:4px 10px;font-size:12px;color:var(--a-ink2);display:flex;gap:6px;align-items:center;white-space:nowrap}
+.ap-tool.new{border-color:var(--a-acc);color:var(--a-acc);background:var(--a-acct);font-weight:700}
+.ap-tool .n{font-family:var(--mono);font-size:10.5px;background:var(--a-bad);color:var(--a-panel);border-radius:8px;padding:0 5px}
+.ap-pri{background:var(--a-dark);color:var(--a-panel);border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;white-space:nowrap}
+.ap-body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:12px}
+.ap-dt{font-family:var(--mono);font-size:11px;color:var(--a-mute)}
+.ap-h1{font-size:24px;font-weight:600;letter-spacing:-.01em;margin-top:2px}
+.ap-h1 em{font-style:normal;color:var(--a-acc)}
+.ap-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px}
+.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c8{grid-column:span 8}.c3{grid-column:span 3}.c9{grid-column:span 9}.c12{grid-column:span 12}
+.ac{border:1px solid var(--a-line);border-radius:14px;padding:12px 14px;background:var(--a-panel)}
+.ac.soft{background:var(--a-soft);border-color:transparent}
+.ac.dk{background:var(--a-dark);color:var(--a-panel);border-color:var(--a-dark)}
+.ac-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}
+.ac-h b{font-size:13.5px;font-weight:600}
+.ac-h span{font-size:11.5px;color:var(--a-mute)}
+.ac.dk .ac-h span{color:var(--k-a7aeba)}
+.fc{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center}
+.fi{width:30px;height:30px;border-radius:9px;background:var(--a-neut);display:grid;place-items:center;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--a-neu)}
+.fi.acc{background:var(--a-acct);color:var(--a-acc)}.fi.bad{background:var(--a-badt);color:var(--a-bad)}.fi.warn{background:var(--a-warnt);color:var(--a-warn)}
+.fc .kk{font-size:11px;color:var(--a-mute)}
+.fc h5{font-size:14px;font-weight:600;margin:1px 0}
+.fc .m{font-size:11.5px;color:var(--a-ink2)}
+.ab{border-radius:8px;padding:4px 10px;font-size:11.5px;font-weight:600;white-space:nowrap;border:1px solid var(--a-line);background:var(--a-panel);color:var(--a-ink)}
+.ab.pri{background:var(--a-dark);color:var(--a-panel);border-color:var(--a-dark)}
+.tg{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;border-radius:10px;padding:0 7px;white-space:nowrap;line-height:1.7}
+.tg::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
+.tg.ok{background:var(--a-okt);color:var(--a-ok)}.tg.warn{background:var(--a-warnt);color:var(--a-warn)}.tg.bad{background:var(--a-badt);color:var(--a-bad)}.tg.neu{background:var(--a-neut);color:var(--a-neu)}.tg.acc{background:var(--a-acct);color:var(--a-acc)}
+.tg.p2{background:transparent;border:1px dashed var(--a-mute);color:var(--a-mute)}
+.tg.p2::before{display:none}
+.av{width:22px;height:22px;border-radius:50%;display:inline-grid;place-items:center;font-size:10.5px;font-weight:700;color:var(--a-panel);flex:none}
+/* week grid */
+.wk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border:1px solid var(--a-line);border-radius:10px;overflow:hidden}
+.wk-h{padding:6px 8px;font-size:11px;color:var(--a-mute);border-right:1px solid var(--a-line);background:var(--a-soft)}
+.wk-h b{display:block;font-family:var(--mono);font-size:12px;color:var(--a-ink)}
+.wk-h.today{background:var(--a-acct);color:var(--a-acc)}
+.wk-h.today b{color:var(--a-acc)}
+.wk-band{grid-column:1/-1;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--a-line)}
+.band-s{padding:5px 8px;font-size:11.5px;font-weight:600;background:var(--l-c);color:var(--l-cd);border-right:1px solid var(--a-panel)}
+.band-n{padding:5px 8px;font-size:11.5px;color:var(--a-mute);border:1px dashed var(--a-line)}
+.wk-c{min-height:150px;border-right:1px solid var(--a-line);border-top:1px solid var(--a-line);padding:6px;display:flex;flex-direction:column;gap:5px;position:relative}
+.wk-c.today{background:var(--k-fafbff)}
+.wk-h:nth-child(7),.wk-c:last-child{border-right:0}
+.it{border-radius:7px;padding:4px 6px;font-size:11px;line-height:1.4;border:1px solid var(--a-line);background:var(--a-panel)}
+.it b{display:block;font-family:var(--mono);font-size:10.5px;color:var(--a-mute);font-weight:500}
+.it.due{border-left:3px solid var(--a-warn)}
+.it.quiz{border-left:3px solid var(--a-acc)}
+.it.bot{border-left:3px solid var(--a-neu)}
+.it.wait{border-left:3px solid var(--a-ok);background:var(--a-soft)}
+.it.ev{border-left:3px solid var(--l-md);background:var(--l-m)}
+.it.p2{border:1px dashed var(--k-a7adb6);background:transparent;color:var(--a-mute)}
+.nowline{position:absolute;left:0;right:0;top:46px;border-top:2px solid var(--a-acc)}
+.nowline::before{content:"10:24";position:absolute;right:2px;top:-15px;font-family:var(--mono);font-size:9.5px;color:var(--a-acc);font-weight:700}
+.prog2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.pg b{font-family:var(--mono);font-size:24px;font-weight:600;display:block;line-height:1.1}
+.pg small{font-size:11px;color:var(--a-mute)}
+.pg .bar{height:5px;background:var(--a-neut);border-radius:3px;margin-top:6px;position:relative}
+.pg .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--a-ink)}
+.six{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin-top:10px}
+.six div{border-radius:7px;padding:5px 6px;font-size:11px;background:var(--a-soft);color:var(--a-mute)}
+.six div b{display:block;color:var(--a-ink);font-size:11.5px}
+.six .ok{background:var(--a-okt);color:var(--a-ok)}
+.six .cur{background:var(--a-acct);color:var(--a-acc);box-shadow:inset 0 0 0 1.5px var(--a-acc)}
+.li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:7px 0;border-top:1px solid var(--a-line);align-items:center}
+.li:first-of-type{border-top:0}
+.li b{font-weight:600;font-size:12.5px;display:block}
+.li span{font-size:11px;color:var(--a-mute)}
+.code-i{font-family:var(--mono);font-size:10.5px;color:var(--k-c9d3f5);background:var(--k-1d2128);border-radius:6px;padding:4px 7px;margin-top:8px}
+/* mentor multi-person grid */
+.mg{display:grid;grid-template-columns:150px repeat(14,minmax(0,1fr));border:1px solid var(--a-line);border-radius:10px;overflow:hidden;font-size:10.5px}
+.mg>div{border-right:1px solid var(--a-line);border-bottom:1px solid var(--a-line);padding:4px;min-height:30px}
+.mg .h{background:var(--a-soft);color:var(--a-mute);font-family:var(--mono);text-align:center;padding:5px 2px}
+.mg .h.we{color:var(--k-a7adb6)}
+.mg .h.today{background:var(--a-acct);color:var(--a-acc);font-weight:700}
+.mg .h.sw{box-shadow:inset 0 -2px 0 var(--a-ink)}
+.mg .who{display:flex;gap:6px;align-items:flex-start;padding:6px 8px;background:var(--a-panel)}
+.mg .who b{display:block;font-size:12px}
+.mg .who span{display:block;font-size:10.5px;color:var(--a-mute);line-height:1.35}
+.mg .gp{grid-column:1/-1;background:var(--a-soft);font-size:10.5px;font-weight:700;color:var(--a-ink2);padding:4px 8px;min-height:0}
+.mg .tdc{background:var(--k-fafbff)}
+.mg .off{background:repeating-linear-gradient(135deg,var(--a-soft) 0 6px,var(--a-panel) 6px 12px);color:var(--a-mute)}
+.mk2{display:block;border-radius:5px;padding:2px 4px;line-height:1.3;margin-bottom:2px}
+.mk2.sub{background:var(--a-okt);color:var(--a-ok)}
+.mk2.rv{background:var(--a-acct);color:var(--a-acc);font-weight:700}
+.mk2.due{background:var(--a-warnt);color:var(--a-warn)}
+.mk2.sw{background:var(--a-dark);color:var(--a-panel)}
+.mk2.bad{background:var(--a-badt);color:var(--a-bad)}
+.mk2.p2{border:1px dashed var(--k-a7adb6);color:var(--a-mute)}
+.mk2.gr{background:var(--a-neut);color:var(--a-neu)}
+/* gantt */
+.gt{display:grid;grid-template-columns:116px repeat(12,minmax(0,1fr)) 64px;border:1px solid var(--a-line);border-radius:10px;overflow:hidden;position:relative;font-size:11px}
+.gt>div{border-bottom:1px solid var(--a-line);min-height:34px;padding:4px}
+.gt .h{background:var(--a-soft);color:var(--a-mute);font-family:var(--mono);font-size:10px;text-align:center;border-right:1px solid var(--a-line);padding:5px 2px}
+.gt .h.ix{color:var(--a-ink);font-weight:700}
+.gt .rl{display:flex;align-items:center;gap:6px;padding-left:8px;background:var(--a-panel);border-right:1px solid var(--a-line)}
+.gt .rl b{font-size:12px}
+.gt .rl span{font-size:10px;color:var(--a-mute)}
+.gb{grid-column:span 2;border-radius:6px;margin:1px 2px;padding:5px 6px;font-weight:600;font-size:11.5px;display:flex;justify-content:space-between;align-items:center;gap:4px;min-height:24px!important;border-bottom:0!important}
+.gb small{font-weight:500;font-size:9.5px;opacity:.85}
+.gb.t{background:var(--l-t);color:var(--l-td)}.gb.c{background:var(--l-c);color:var(--l-cd)}.gb.m{background:var(--l-m);color:var(--l-md)}
+.gb.past{opacity:.55}
+.gb.sel{box-shadow:0 0 0 2px var(--a-acc)}
+.gt .tail{font-size:10px;color:var(--a-mute);text-align:center;display:flex;align-items:center;justify-content:center;border-left:1px dashed var(--a-line)}
+.gt .dia{color:var(--a-ink);font-weight:700}
+.g-today{position:absolute;top:0;bottom:0;width:0;border-left:2px solid var(--a-acc);pointer-events:none}
+.g-today b{position:absolute;top:2px;left:3px;font-family:var(--mono);font-size:9.5px;color:var(--a-acc);background:var(--a-panel);padding:0 3px;white-space:nowrap}
+.g-hol{position:absolute;top:26px;bottom:0;background:repeating-linear-gradient(135deg,var(--k-rgba-98-102-109-12) 0 4px,transparent 4px 8px);pointer-events:none;border-left:1px dashed var(--k-a7adb6);border-right:1px dashed var(--k-a7adb6)}
+.g-hol b{position:absolute;bottom:3px;left:3px;font-size:9.5px;color:var(--a-neu);background:var(--a-panel);padding:0 3px;font-weight:500;white-space:nowrap}
+.oc{grid-column:span 2;display:flex;flex-wrap:wrap;gap:3px;align-content:flex-start;border-right:1px solid var(--a-line);padding:5px!important}
+.oc span{border-radius:5px;padding:1px 5px;font-size:10.5px;background:var(--a-soft)}
+.oc.n2{background:var(--a-warnt)}
+.oc.n2 span{background:var(--a-panel)}
+.oc.n0{background:repeating-linear-gradient(135deg,var(--a-badt) 0 5px,var(--a-panel) 5px 10px)}
+.oc em{font-style:normal;font-family:var(--mono);font-size:10px;color:var(--a-mute);width:100%}
+.oc.n2 em{color:var(--a-warn);font-weight:700}
+.oc.n0 em{color:var(--a-bad);font-weight:700}
+.gvw{display:none}
+.gvw.on{display:block}
+.gsw{display:inline-flex;border:1px solid var(--a-line);border-radius:8px;padding:2px;gap:2px;background:var(--a-soft)}
+.gsw button{border:0;background:none;padding:3px 10px;border-radius:6px;font-size:11.5px;cursor:pointer;color:var(--a-ink2)}
+.gsw button[aria-pressed=true]{background:var(--a-panel);color:var(--a-ink);font-weight:700;box-shadow:0 0 0 1px var(--a-line)}
+.drawer{border-left:1px solid var(--a-line);padding:14px;background:var(--a-panel);display:flex;flex-direction:column;gap:8px}
+.fld{display:grid;grid-template-columns:64px minmax(0,1fr);gap:6px;font-size:12px;align-items:center}
+.fld span{color:var(--a-mute);font-size:11px}
+.inp{border:1px solid var(--a-line);border-radius:8px;padding:4px 8px;background:var(--a-panel);font-size:12px}
+/* month */
+.mo{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border:1px solid var(--a-line);border-radius:10px;overflow:hidden}
+.mo .h{padding:5px 8px;font-size:11px;color:var(--a-mute);background:var(--a-soft);border-right:1px solid var(--a-line)}
+.mo .d{min-height:86px;border-right:1px solid var(--a-line);border-top:1px solid var(--a-line);padding:5px;display:flex;flex-direction:column;gap:3px}
+.mo .d>b{font-family:var(--mono);font-size:11px;color:var(--a-ink)}
+.mo .d.out>b{color:var(--k-a7adb6)}
+.mo .d.today{background:var(--k-fafbff)}
+.mo .d.today>b{color:var(--a-acc)}
+.mo .h:nth-child(7n),.mo .d:nth-child(7n){border-right:0}
+.mo .it{font-size:10.5px;padding:2px 5px}
+.conf{font-size:10px;color:var(--a-bad);font-weight:700}
+/* todo list */
+.td-g{font-family:var(--mono);font-size:10.5px;color:var(--a-mute);letter-spacing:.06em;margin:8px 0 4px}
+.td{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--a-line);border-radius:10px;margin-bottom:6px;background:var(--a-panel)}
+.td .src{font-family:var(--mono);font-size:10px;color:var(--a-mute);display:block}
+.td b{font-size:12.5px;font-weight:600}
+.td .m{font-size:11px;color:var(--a-ink2);display:block}
+.stepbar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.stepbar div{border-top:3px solid var(--a-line);padding:6px 4px 0;font-size:11px;color:var(--a-mute)}
+.stepbar div b{display:block;font-family:var(--mono);font-size:10px}
+.stepbar .ok{border-top-color:var(--a-ok);color:var(--a-ink2)}
+.stepbar .cur{border-top-color:var(--a-acc);color:var(--a-acc);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{font-size:10.5px;color:var(--a-mute);text-align:left;font-weight:500;padding:6px 8px;border-bottom:1px solid var(--a-line)}
+.tbl td{padding:7px 8px;border-bottom:1px solid var(--a-line);vertical-align:top}
+.tbl tr:last-child td{border-bottom:0}
+.rad{display:flex;flex-wrap:wrap;gap:4px}
+.rad span{border:1px solid var(--a-line);border-radius:8px;padding:2px 8px;font-size:11px}
+.rad span.on{border-color:var(--a-acc);background:var(--a-acct);color:var(--a-acc);font-weight:700}
+.gal4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+
+/* decision cards */
+.dec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:2px solid var(--ink)}
+.dc{padding:22px 24px 22px 0;border-bottom:1px solid var(--rule2)}
+.dc:nth-child(even){padding-left:24px;border-left:1px solid var(--rule2)}
+.dc-h{display:flex;gap:12px;align-items:baseline}
+.dc-h i{font-style:normal;font-family:var(--num);font-weight:800;font-size:26px;color:var(--c);line-height:1}
+.dc-h h4{font-size:17px;font-weight:900;line-height:1.45}
+.dc dl{margin:12px 0 0;display:grid;grid-template-columns:72px minmax(0,1fr);gap:6px 12px;font-size:13.5px;line-height:1.65}
+.dc dt{font-family:var(--mono);font-size:11px;color:var(--ink3);padding-top:3px}
+.dc dd{margin:0;color:var(--ink2)}
+.dc dd.rec{color:var(--ink);font-weight:500;background:var(--ct);padding:4px 8px}
+.dc .src{margin-top:8px;font-size:12px;color:var(--ink3)}
+
+/* phases */
+.ph3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border:1px solid var(--rule);background:var(--surface)}
+.ph3>div{padding:18px 20px}
+.ph3>div+div{border-left:1px solid var(--rule2)}
+.ph3 h4{font-family:var(--num);font-weight:800;font-size:28px;line-height:1;color:var(--c)}
+.ph3 h4 small{font-family:var(--sans);font-size:14px;font-weight:700;color:var(--ink);margin-left:8px}
+.ph3 ul{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.ph3 li{font-size:13.5px;line-height:1.55;color:var(--ink2);display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:baseline}
+.ph3 .why{margin-top:14px;padding-top:12px;border-top:1px dashed var(--rule);font-size:13px;color:var(--ink2)}
+.metric{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;border:1px solid var(--rule);background:var(--surface)}
+.metric>div{padding:20px 22px}
+.metric>div+div{border-left:1px solid var(--rule2);background:color-mix(in srgb,var(--ct) 40%,var(--surface))}
+.metric h4{font-size:19px;font-weight:900;margin-top:6px}
+.metric dl{margin:14px 0 0;display:grid;grid-template-columns:56px minmax(0,1fr);gap:8px 12px;font-size:13.5px;line-height:1.65}
+.metric dt{font-family:var(--mono);font-size:11px;color:var(--ink3);padding-top:3px}
+.metric dd{margin:0;color:var(--ink2)}
+.metric .res{margin-top:16px;padding-top:12px;border-top:1px dashed var(--rule);display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.metric .res b{font-family:var(--num);font-weight:800;font-size:34px;line-height:1;color:var(--ink)}
+.metric .res span{font-size:12.5px;color:var(--ink3)}
+
+/* footer */
+.foot{padding:56px 0 72px;font-size:13.5px;color:var(--ink2);border-top:1px solid var(--rule)}
+.next{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:center;padding:26px 30px;background:var(--band);color:var(--a-panel);margin-bottom:48px}
+.next p{font-size:clamp(17px,1.7vw,21px);font-weight:700;line-height:1.55}
+.next .bars{display:flex;gap:4px}
+.next .bars b{width:34px;height:34px;display:grid;place-items:center;font-family:var(--num);font-size:14px;font-weight:800;color:var(--a-panel)}
+.foot-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:48px}
+.foot h4{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--ink3);font-weight:500;margin:0 0 12px}
+.foot ul{list-style:none;margin:0;padding:0}
+.foot li{padding:9px 0;border-top:1px solid var(--rule);display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px}
+.foot li i{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--ink3);padding-top:3px}
+.foot li small{display:block;font-family:var(--mono);font-size:11px;color:var(--ink3);word-break:break-all}
+.foot .disc{margin-top:16px;font-size:12.5px;color:var(--ink3);line-height:1.7}
+
+/* responsive */
+@media (max-width:1180px){.top nav a em{display:none}}
+@media (max-width:1080px){
+  :root{--g:28px}
+  .top nav{display:none}
+  .hero-head,.concl,.foot-grid,.basis,.two,.figrow,.d1,.metric{grid-template-columns:minmax(0,1fr);gap:28px}
+  .metric>div+div{border-left:0;border-top:1px solid var(--rule2)}
+  .nums{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .nums>div:nth-child(4){padding-left:0;border-left:0}
+  .nums>div:nth-child(n+4){border-top:1px solid var(--rule2)}
+  .chain{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .chain>div{border-left:0!important;border-top:1px solid var(--rule2)}
+  .chain>div::before{display:none}
+  .ph3{grid-template-columns:minmax(0,1fr)}
+  .ph3>div+div{border-left:0;border-top:1px solid var(--rule2)}
+  .gal4{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:760px){
+  :root{--g:16px}
+  .hero{padding:44px 0 56px}
+  .spine{grid-template-columns:minmax(0,1fr)}
+  .sp-link{padding:6px 0}
+  .sp-link .arr{width:12px;height:22px}
+  .sp-link .arr::before{left:5px;right:auto;top:0;bottom:6px;width:2px;height:auto}
+  .sp-link .arr::after{right:auto;left:1px;top:auto;bottom:0;border:5px solid transparent;border-top:8px solid var(--ink);border-bottom:0}
+  .loop{grid-template-columns:minmax(0,1fr)}
+  .nums{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .nums>div:nth-child(n){padding-left:0;border-left:0;border-top:1px solid var(--rule2)}
+  .nums>div:nth-child(even){padding-left:14px;border-left:1px solid var(--rule2)}
+  .nums>div:first-child,.nums>div:nth-child(2){border-top:0}
+  .concl ol{grid-template-columns:minmax(0,1fr)}
+  .concl li:nth-child(even){padding-left:0;border-left:0}
+  .sec{padding:72px 0}
+  .stage{padding-top:72px}
+  .st-head,.st-head.rev{grid-template-columns:minmax(0,1fr);gap:16px}
+  .st-head.rev .st-num{order:0}
+  .blk{padding:44px 0}
+  .blk.band{padding-top:44px;padding-bottom:48px}
+  .blk.panel{padding:26px 16px 30px;margin:0 calc(var(--g) * -1)}
+  .chain{grid-template-columns:minmax(0,1fr)}
+  .day{grid-template-columns:62px minmax(0,1fr) minmax(0,1fr)}
+  .day>div{padding:10px 8px;font-size:12.5px}
+  .dec{grid-template-columns:minmax(0,1fr)}
+  .dc:nth-child(even){padding-left:0;border-left:0}
+  .dc dl{grid-template-columns:minmax(0,1fr)}
+  .pnote{grid-template-columns:minmax(0,1fr)}
+  .next{grid-template-columns:minmax(0,1fr);padding:20px}
+  .dm-head{flex-direction:column;align-items:flex-start}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top"><i aria-hidden="true"><b style="background:var(--s1)"></b><b style="background:var(--s2)"></b><b style="background:var(--s3)"></b></i>管培生工作台 · 结构重排</a>
+    <nav aria-label="章节">
+      <a href="#s1"><span>01</span><em>结论</em></a>
+      <a href="#s2"><span>02</span><em>场景</em></a>
+      <a href="#s3"><span>03</span><em>根因</em></a>
+      <a href="#s4"><span>04</span><em>本体</em></a>
+      <a href="#s5"><span>05</span><em>待办</em></a>
+      <a href="#s6"><span>06</span><em>时间视图</em></a>
+      <a href="#s7"><span>07</span><em>信息架构</em></a>
+      <a href="#s8"><span>08</span><em>写回</em></a>
+      <a href="#s9"><span>09</span><em>差异</em></a>
+      <a href="#s10"><span>10</span><em>指标分期</em></a>
+      <a href="#s11"><span>11</span><em>拍板</em></a>
+      <a href="#s12"><span>12</span><em>局限</em></a>
+    </nav>
+  </div>
+</header>
+<main id="top">
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-head">
+      <div>
+        <div class="eyebrow"><span class="bars" aria-hidden="true"><b style="background:var(--s1)"></b><b style="background:var(--s2)"></b><b style="background:var(--s3)"></b></span><span class="k">AI 落地三步法 · 第二步 技术方案 · 2026-11-06</span></div>
+        <h1>管培生工作台<br><span class="thin">整体结构</span>重排</h1>
+        <p class="sub">把 PRD v1.0 的六个板块放回一套<b>本体</b>上：对象、事件和<b>时间口径</b>先立起来，日程、待办、通知这些视图就能从结构里推出来，不用靠「想起来」。</p>
+      </div>
+      <blockquote class="quote">
+        <p>「所有数据存工作台自己的 PostgreSQL，工作台是唯一数据源。」</p>
+        <div class="who"><b>PRD v1.0 第 124 行</b>唯一数据源，意味着每个页面都该是同一套本体的投影。PRD 在轮岗日历上已经这么想了一次（L66「由所有人的个人路径汇总生成」）；这份方案把这条思路推到全站：首页、日程、待办、看板、动态都从同一套对象和事件里切出来。</div>
+      </blockquote>
+    </div>
+
+    <div class="spine" role="img" aria-label="全貌：本体、规则、视图三层，视图上的动作写回本体">
+      <a class="sp-col s1" href="#s4">
+        <div class="sp-sec"><div class="sp-top"><span class="sp-num">①</span><span class="k">本体 · 第 4 章</span></div><h3>对象、事件、日程项</h3><p class="what">业务里有哪些东西、怎么连、走到哪一步、什么时候在哪</p></div>
+        <div class="sp-sec"><div class="sp-lab"><span class="k">新增 7 个对象 + 1 个查询视图</span></div><div class="sp-chips"><span class="n">期次</span><span class="n">周期任务规则</span><span class="n">工作日日历</span><span class="n">交接要点</span><span class="n">事件日志</span><span class="n">待办</span><span class="n">通知</span><span>日程项（视图，不建表）</span></div></div>
+        <div class="sp-sec"><div class="sp-lab"><span class="k">最关键的修订</span></div><div class="sp-chips"><span>带教关系挂到「站」</span><span>任务加开放日</span><span>周期任务分四型</span></div></div>
+      </a>
+      <div class="sp-link" aria-hidden="true"><div class="arr"></div></div>
+      <a class="sp-col s2" href="#s5">
+        <div class="sp-sec"><div class="sp-top"><span class="sp-num">②</span><span class="k">规则 · 第 5、10 章</span></div><h3>待办 = 事件 × 规则</h3><p class="what">什么时候变成谁的事、多久算晚、怎么去重和撤销、怎么量结果</p></div>
+        <div class="sp-sec"><div class="sp-lab"><span class="k">19 条待办规则（一期 12 条）</span></div><div class="sp-chips"><span>待点评 · 2 个工作日</span><span>换站前 5 个工作日</span><span>修改截止</span><span>交接要点</span></div></div>
+        <div class="sp-sec"><div class="sp-lab"><span class="k">指标</span></div><div class="sp-chips"><span class="n">路径任务按期达标率</span><span>阶段评估达标率</span></div></div>
+      </a>
+      <div class="sp-link" aria-hidden="true"><div class="arr"></div></div>
+      <a class="sp-col s3" href="#s6">
+        <div class="sp-sec"><div class="sp-top"><span class="sp-num">③</span><span class="k">视图 · 第 6、7 章</span></div><h3>板块装东西，顶栏放切面</h3><p class="what">六个板块是对象的家；搜索、日程、待办、通知跨板块看</p></div>
+        <div class="sp-sec"><div class="sp-lab"><span class="k">四个时间视图</span></div><div class="sp-chips"><span class="n">我的本周</span><span class="n">我带的人</span><span class="n">轮岗排期</span><span class="n">团队活动月历</span></div></div>
+        <div class="sp-sec"><div class="sp-lab"><span class="k">顶栏</span></div><div class="sp-chips"><span>搜索</span><span class="n">日程</span><span class="n">待办</span><span>通知</span></div></div>
+      </a>
+    </div>
+    <div class="loop"><span><b>写回闭环</b>（第 8 章）：视图上的每个动作——提交、点评、写交接要点、顺延一站——都写回本体的某个字段，同时追加一条事件，事件再按规则生成下一条待办。</span><span class="k">数据源 → 事件 → 规则 → 待办 → 视图 → 写回</span></div>
+
+    <div class="nums">
+      <div class="hl s3"><b>40</b><span>PRD 第 3 节页面</span><span class="cap">保留 24 · 修订 15 · 并入 1</span></div>
+      <div class="hl s1"><b>+8</b><span>新增页面</span><span class="cap">日程两个视角、待办、周期任务规则、期次启动、交接要点、工作日日历、汇报</span></div>
+      <div><b>30<small>→37</small></b><span>本体对象</span><span class="cap">PRD 30 个实体保留 16、修订 14，新增 7；日程项是查询视图，不计入</span></div>
+      <div><b>69</b><span>角色走查缺口</span><span class="cap">管培生 21 · 带教 25 · 管理员与同事 23（推演）</span></div>
+      <div class="hl s1"><b>10</b><span>待常浩拍板</span><span class="cap">四份走查 27 个问题合并去重</span></div>
+    </div>
+
+    <div class="basis">
+      <div>
+        <h4>和 PRD v1.0 的关系 · 依据从哪来</h4>
+        <ul>
+          <li><b>保留</b>：定位、四种角色、一级导航 6 个板块、飞书登录、工作台是唯一数据源、只做电脑版、积分只奖励贡献 <span class="ev p">PRD L12–29 L33 L116 L124 L166</span>。</li>
+          <li><b>修订</b>：信息架构（顶栏加日程、待办）、三种首页、带教关系、任务状态与周期任务、可见性、数据模型、机器人接口、分期、主指标。逐条提案见 <code>prd-changes.md</code>。</li>
+          <li><b>依据</b>：PRD v1.0（235 行，35 轮问答定稿 <span class="ev p">L4</span>）；一期前端原型 <code>web/src</code>（示例数据，演示时刻 2026-11-05 周四 10:24 <span class="ev o">mock.ts:10</span>）；四份角色与本体走查；带教机器人项目文档作旁证。<b>没有真人访谈，也没有过程数据</b>，局限见第 12 章。</li>
+        </ul>
+      </div>
+      <div class="legend">
+        <h4>全文依据分级</h4>
+        <div><span class="ev p">PRD L66</span><span>已确认：PRD 原文行号</span></div>
+        <div><span class="ev o">mock.ts:68</span><span>原型现状：<code>web/src/</code> 下的文件与行号</span></div>
+        <div><span class="ev g">推演</span><span>走查里的推断，待常浩确认，不当事实</span></div>
+        <div><span class="ev x">旁证</span><span>机器人项目文档，只作参考</span></div>
+        <div><span class="ev g">建议值</span><span>规则阈值，没有业务出处，由常浩定</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 01 结论 -->
+<section class="sec white" id="s1">
+  <div class="wrap concl">
+    <div class="concl-lead">
+      <div class="sec-k"><span class="k">01 · 结论先行</span></div>
+      <h2 class="h2">十句话讲清这套结构</h2>
+      <p>读完这一页，就知道对象、事件、规则、视图、写回各是什么，以及哪些要常浩拍板。后面各章是依据和能开工的细节。</p>
+    </div>
+    <ol>
+      <li><span><b>重排的是整套工作台的结构，不是换页面。</b>PRD 的定位、角色、六个板块基本保留，改的是底下本体、规则、视图三层的关系。</span></li>
+      <li><span><b>轮岗日历是漏排了，「本周」是推不出来。</b>轮岗日历的数据 PRD 已经有：个人路径带每站起止 <span class="ev p">L65</span><span class="ev p">L131</span>，也写明由它汇总 <span class="ev p">L66</span>，只是分期表三期都没列 <span class="ev p">L170–174</span>。管培生、带教要的「本周」推不出来，是因为本体只有起止和截止两类时间，缺开放日、跟岗和 1:1 这类安排、点评和交接期限，也没有工作日口径。</span></li>
+      <li><span><b>本体新增 7 个对象、修订 14 个。</b>最关键的是带教关系改挂到「站」上，作为唯一来源；主带教可选，不设时由管理员担任。</span></li>
+      <li><span><b>带时间的东西统一成「日程项」</b>，分时段、截止、时刻三种形状。它是接口返回的查询视图，不建表：都在查询时从本体算出，飞书来的团队活动本来就存在 <code>team_event</code>。</span></li>
+      <li><span><b>四个时间视图由此推出</b>：管培生「我的本周」、带教「我带的人」、管理员「轮岗排期」甘特、全员「团队活动」月历，各回答一个角色的一个问题。</span></li>
+      <li><span><b>待办 = 事件 × 规则。</b>本体走查的 33 类事件（加上新增的 E34 站结束）归纳出 19 条待办规则，一期 12 条；每条写到负责人、期限、去重和撤销，阈值都标了出处或「建议值」。</span></li>
+      <li><span><b>和飞书日历按类型分开处理</b>：团队活动只读一本共享日历；截止、换站这类推算出来的不写进飞书，提醒交给机器人；「加入日历」改为跳转。</span></li>
+      <li><span><b>导航：一级 6 个不动，顶栏加「日程」「待办」。</b>PRD 第 3 节 40 页里保留 24、修订 15、并入 1，另新增 8 页。一期的修订和新增页都画了原型（P1–P8），只有工作日日历、机器人接口密钥两个简单设置页没画；二期的通知中心、答辩材料包、汇报随期另画。</span></li>
+      <li><span><b>主指标改为「路径任务按期达标率」</b>：只算路径任务，按期提交且被评为达标以上才算，显示 n/N；期末另看阶段评估达标率和定岗结果。</span></li>
+      <li><span><b>一期补进时间结构</b>：站带教关系、事件与待办、我的本周、我带的人、轮岗排期；读飞书日历、通知中心、站评三档放二期。<b>10 项要常浩拍板</b>，第一项是每个轮岗站有没有固定带教。</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 02 场景 -->
+<section class="stage s3" id="s2">
+  <div class="wrap">
+    <div class="st-head">
+      <div class="st-num">02</div>
+      <div><span class="k">场景还原 · 为什么要这么做</span><h2>三类人、四个时间尺度，<em>每个人要的是不同的时间</em></h2><p>PRD 把管培生的工作建模成「一串要交的产出」，但一天里更多的是「一串带时间的安排」。示例时刻 2026-11-05 周四 10:24；人名、日期来自原型示例数据 <span class="ev o">mock.ts:1</span>，只当结构样例，作息和做法是 <span class="ev g">推演</span>。</p></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>林夏的一天：现在和重排后</h3><span class="k">示意 · 轮岗中段 · 客服岗第 2 周 · 培养第 57 / 180 天</span></div>
+      <div class="pscroll">
+      <div class="day" role="table" aria-label="林夏 11-05 一天对照">
+        <div class="hd">时刻</div><div class="hd now">现在（PRD v1.0 + 原型）</div><div class="hd aft">重排后</div>
+        <div class="tm">09:00</div><div class="now">打开首页：两张截止卡，轻测今天 20:00、复盘明天 18:00 <span class="ev o">Home.tsx:55</span>。跟岗、1:1 只在周颖的日历里 <span class="ev o">mock.ts:189-190</span>，她看不到。</div><div class="aft"><b>我的本周</b>一条时间线：客服岗第 2 周 · 11-12 换到销售 · 今晚轻测 · 明天复盘截止。跟岗、1:1 二期从飞书日历叠加。</div>
+        <div class="tm">09:30</div><div class="now">跟岗。工作台里没有这件事；「客服跟岗观察表」只躺在资产库 <span class="ev o">mock.ts:167</span>。</div><div class="aft">一期：机器人晨报只推截止。二期：跟岗作为日程项挂到客服站，推荐工具挂在日程上。</div>
+        <div class="tm">12:00</div><div class="now">昨天交的话术录音评了没？首页只显示已有的点评 <span class="ev o">Home.tsx:121-126</span>，看不到「还在等」。</div><div class="aft">「我在等」：话术演练录音 · 点评期限 11-06 16:50（提交后 2 个工作日，<span class="ev g">建议值</span>）。</div>
+        <div class="tm">16:00</div><div class="now">与带教 1:1。PRD 全文没有 1:1。</div><div class="aft">二期日程叠加；1:1 结论要不要沉淀，暂不定 <span class="ev g">T-20</span>。</div>
+        <div class="tm">20:00</div><div class="now">轻测：按钮「开始」跳任务详情，让贴飞书文档链接；示例把产出写成「文档」、出题人写成带教 <span class="ev o">mock.ts:114</span>，和「机器人出题，成绩写回」矛盾 <span class="ev p">L78</span>。</div><div class="aft">测验型周期任务：按钮「去飞书作答」，成绩由机器人写回；没答记「未答」，不判逾期 <span class="ev x">旁证</span>。</div>
+        <div class="tm lst">全天</div><div class="now lst">首页六站条只有站名，不提示 11-12 换站 <span class="ev o">Home.tsx:99</span>；下一站谁带、先读什么，都没有。</div><div class="aft lst">今天正是开站前第 5 个工作日：她的待办出现「换站准备 · 下一站 销售 · 11-12 周四」，新站带教同日收到「接人准备」。</div>
+      </div>
+      </div>
+      <p class="fig-cap"><b>图 1</b>同一天，现在的工作台只能回答「我欠什么」，答不了「我什么时候在哪、下一步跟谁」。重排后一期先补齐推算得出的部分，飞书日程二期叠上来。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>差异分组 × 时间尺度：谁在什么尺度上要什么</h3><span class="k">点标签切换角色</span></div>
+      <p class="lead">同一个角色里，不同阶段要的东西不一样：新人要「今天去哪」，中段要「别漏、换站别掉链子」，答辩前要「材料齐不齐」。带教的首次和老手、管理员的每天到跨期也各不相同。每格写：要知道什么 → 现在 → 重排后由哪个视图回答。</p>
+      <div class="tabs" role="tablist" aria-label="角色">
+        <button role="tab" aria-selected="true" data-tab="tr"><span>T</span>管培生</button>
+        <button role="tab" aria-selected="false" data-tab="me"><span>M</span>带教人</button>
+        <button role="tab" aria-selected="false" data-tab="ad"><span>A</span>管理员</button>
+        <button role="tab" aria-selected="false" data-tab="co"><span>C</span>同事</button>
+      </div>
+      <div class="tabp on" data-panel="tr" role="tabpanel">
+        <div class="tw"><table class="t min">
+          <thead><tr><th>分组</th><th>一天</th><th>一周</th><th>一站（约两周）</th><th>整期（180 天）</th></tr></thead>
+          <tbody>
+            <tr><td><b>新人</b><br><span class="cap">第 1–2 周 · 示例里没有这类人 <span class="ev o">mock.ts:13-18</span></span></td>
+              <td><span class="cell-q">今天去哪、找谁</span><span class="cell-now"><span class="mk no">✗</span> 新登录默认「同事」，看到同事首页 <span class="ev p">L28</span></span><span class="cell-new">→ 期次预置名单，首登即管培生；焦点放入职清单</span></td>
+              <td><span class="cell-q">入职任务哪天交</span><span class="cell-now"><span class="mk half">◐</span> 有截止，没有安排</span><span class="cell-new">→ 我的本周</span></td>
+              <td><span class="cell-q">通识路演哪天、谁来听</span><span class="cell-now"><span class="mk no">✗</span> 路演只是一条截止 <span class="ev o">mock.ts:50</span></span><span class="cell-new">→ 日程项·时刻（二期）</span></td>
+              <td><span class="cell-q">180 天怎么走</span><span class="cell-now"><span class="mk half">◐</span> 路径总览只有模板</span><span class="cell-new">→ 我的路径加培养期时间轴</span></td></tr>
+            <tr><td><b>轮岗中段</b><br><span class="cap">林夏，第 57 天</span></td>
+              <td><span class="cell-q">几点跟岗、1:1，今晚轻测</span><span class="cell-now"><span class="mk half">◐</span> 只有截止</span><span class="cell-new">→ 我的本周（安排二期叠加）</span></td>
+              <td><span class="cell-q">截止和分享会在哪天</span><span class="cell-now"><span class="mk no">✗</span> 活动只有写死的下一场 <span class="ev o">mock.ts:186</span></span><span class="cell-new">→ 我的本周 + 团队活动月历</span></td>
+              <td><span class="cell-q">下一站哪天、谁带、上一站遗留</span><span class="cell-now"><span class="mk no">✗</span> 六站条只有站名 <span class="ev o">Home.tsx:99</span></span><span class="cell-new">→ 换站预告待办 + 站带教</span></td>
+              <td><span class="cell-q">我做成了多少</span><span class="cell-now"><span class="mk no">✗</span> 进度环量的是第几天 <span class="ev o">api.ts:59-64</span></span><span class="cell-new">→ 时间进度、完成进度两个数</span></td></tr>
+            <tr><td><b>答辩前</b><br><span class="cap">定岗期 75 天</span></td>
+              <td><span class="cell-q">定岗岗位上做什么</span><span class="cell-now"><span class="mk no">✗</span> 定岗只有 2 个任务 <span class="ev o">mock.ts:64-65</span></span><span class="cell-new">→ 定岗方向字段（二期）</span></td>
+              <td><span class="cell-q">材料还差什么</span><span class="cell-now"><span class="mk no">✗</span> 材料包在二期且不查完整度</span><span class="cell-new">→ 材料包完整度检查（二期）</span></td>
+              <td><span class="cell-q">定岗这一站谁带</span><span class="cell-now"><span class="mk half">◐</span> 定岗是一个模块 <span class="ev o">mock.ts:41</span>，PRD 没说谁带</span><span class="cell-new">→ 定岗算一站，站带教可为主带教或管理员</span></td>
+              <td><span class="cell-q">答辩哪天、谁评</span><span class="cell-now"><span class="mk no">✗</span> 答辩是 61 天的截止任务 <span class="ev o">mock.ts:65</span></span><span class="cell-new">→ 答辩日程项 + 倒计时焦点（二期）</span></td></tr>
+          </tbody></table></div>
+      </div>
+      <div class="tabp" data-panel="me" role="tabpanel">
+        <div class="tw"><table class="t min">
+          <thead><tr><th>分组</th><th>一天</th><th>一周</th><th>一站（接人 → 带 → 评 → 交接）</th><th>整期（轮岗 12 周）</th></tr></thead>
+          <tbody>
+            <tr><td><b>首次带教</b><br><span class="cap">缺的是标准 <span class="ev g">推演</span></span></td>
+              <td><span class="cell-q">有新提交了吗、达标长什么样</span><span class="cell-now"><span class="mk no">✗</span> 机器人接口读不到待点评 <span class="ev p">L154</span>；提示语却许诺「带教人会收到飞书提醒」<span class="ev o">Growth.tsx:129</span></span><span class="cell-new">→ 待点评待办 + 机器人读接口；三档说明（二期）</span></td>
+              <td><span class="cell-q">这周要做哪些带教动作</span><span class="cell-now"><span class="mk no">✗</span> 没有</span><span class="cell-new">→ 我带的人</span></td>
+              <td><span class="cell-q">两周里什么时候接人、交接</span><span class="cell-now"><span class="mk no">✗</span> 看板只认当前在带 <span class="ev o">api.ts:186</span></span><span class="cell-new">→ 换站接人、写交接要点两条待办</span></td>
+              <td><span class="cell-q">我这站每两周来的是谁</span><span class="cell-now"><span class="mk no">✗</span> 轮岗日历没做</span><span class="cell-new">→ 轮岗排期 · 只看我这站</span></td></tr>
+            <tr><td><b>老带教</b><br><span class="cap">示例「带过三期」<span class="ev o">mock.ts:19</span>；缺的是不漏人</span></td>
+              <td><span class="cell-q">别漏评、先评最急的</span><span class="cell-now"><span class="mk half">◐</span> 待点评先到先评 <span class="ev o">Growth.tsx:226</span></span><span class="cell-new">→ 按离点评期限还有多久排序</span></td>
+              <td><span class="cell-q">一屏看完所有人</span><span class="cell-now"><span class="mk half">◐</span> 看板只有当前在带</span><span class="cell-new">→ 我带的人：在带 / 将到 / 刚交接出去</span></td>
+              <td><span class="cell-q">交接周三种状态同时出现</span><span class="cell-now"><span class="mk no">✗</span> 示例里 6 人同一天换站 <span class="ev o">mock.ts:68</span></span><span class="cell-new">→ 三组 + 换站节点焦点</span></td>
+              <td><span class="cell-q">这一期比上一期怎样</span><span class="cell-now"><span class="mk no">✗</span> 没有</span><span class="cell-new">→ 跨期对比（三期）</span></td></tr>
+          </tbody></table></div>
+      </div>
+      <div class="tabp" data-panel="ad" role="tabpanel">
+        <div class="tw"><table class="t min">
+          <thead><tr><th>节奏</th><th>要知道 / 要做</th><th>现在</th><th>重排后</th></tr></thead>
+          <tbody>
+            <tr><td><b>每天</b></td><td>审核积压、逾期的人、谁压着没点评</td><td><span class="mk half">◐</span> 焦点只有审核和已逾期 <span class="ev o">Home.tsx:251-261</span>；没有按带教的点评积压</td><td class="cell-new">待办「待处理」组 + 点评积压按带教人汇总</td></tr>
+            <tr><td><b>每周</b></td><td>谁换站、哪些节点、主指标走势</td><td><span class="mk no">✗</span> 只能逐人看路径 <span class="ev o">Admin.tsx:147</span>；趋势线写死 <span class="ev o">Home.tsx:266</span></td><td class="cell-new">首页「本周与下周排期」+ 按期达标率 n/N</td></tr>
+            <tr><td><b>每站</b></td><td>岗位接不接得住、谁要顺延</td><td><span class="mk no">✗</span> 看不到同段扎堆；日期不能改 <span class="ev o">Admin.tsx:145</span></td><td class="cell-new">轮岗排期 · 按岗位 / 按带教 + 抽屉顺延（留痕）</td></tr>
+            <tr><td><b>每期</b></td><td>建期次、导入约 12 人、排轮岗、分站带教</td><td><span class="mk no">✗</span> 逐人改角色、逐人排 <span class="ev o">Admin.tsx:55-78</span> <span class="ev o">Admin.tsx:130-169</span></td><td class="cell-new">期次启动向导（预览甘特后一次发布）</td></tr>
+            <tr><td><b>跨期</b></td><td>模板复用、两期对比、对上汇报</td><td><span class="mk no">✗</span> 模板没有版本 <span class="ev o">Admin.tsx:88</span></td><td class="cell-new">模板版本（一期）；对比（三期）；汇报（二期 <span class="ev g">推演</span>）</td></tr>
+          </tbody></table></div>
+      </div>
+      <div class="tabp" data-panel="co" role="tabpanel">
+        <div class="tw"><table class="t min">
+          <thead><tr><th>情境</th><th>要知道 / 要做</th><th>现在</th><th>重排后</th></tr></thead>
+          <tbody>
+            <tr><td><b>偶尔来一次</b><br><span class="cap">从飞书群里的链接进来 <span class="ev g">推演</span></span></td><td>有没有我能直接用的</td><td><span class="mk half">◐</span> 同事首页讲「这里有什么」<span class="ev o">Home.tsx:299-314</span></td><td class="cell-new">二期候选：按岗位推荐、资产标「需要什么工具」<span class="ev g">A-15</span></td></tr>
+            <tr><td><b>被邀请主讲</b></td><td>哪天、听众在哪一站</td><td><span class="mk no">✗</span> 只有一张写死的活动卡 <span class="ev o">mock.ts:186</span></td><td class="cell-new">团队活动月历 + 活动详情（听众所在站分布）；挂上回放并确认后才记主讲贡献</td></tr>
+            <tr><td><b>接任站带教</b></td><td>从哪天带谁、前几站怎么样</td><td><span class="mk no">✗</span> 档案只对主带教开放 <span class="ev o">Team.tsx:49</span></td><td class="cell-new">站带教关系生效即有权限；档案交接卡</td></tr>
+          </tbody></table></div>
+      </div>
+      <p class="fig-cap"><b>图 2</b>✗ 现在答不了；◐ 部分能答。差异分组和缺口来自三份角色走查，全部是 <span class="ev g">推演</span>，第 12 章写了要用什么真实材料验证。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 根因 + 数据从哪来 -->
+<section class="stage s1" id="s3">
+  <div class="wrap">
+    <div class="st-head rev">
+      <div class="st-num">03</div>
+      <div><span class="k">根因与数据从哪来</span><h2>时间数据从哪来，<em>断在哪里</em></h2><p>轮岗日历的数据 PRD 已经有，断在分期表；「本周」「我带的人」要的安排类时间，断在本体。先顺着 PRD 行号找断点，再看六处结构性矛盾，每处推出一个设计决定。</p></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>表层：一个页面掉进了分期的缝里</h3></div>
+      <div class="chain">
+        <div><small>PRD L39</small><b>页面表列了「轮岗日历」</b><span>和带教看板、任务详情并列在「成长」下</span></div>
+        <div><small>PRD L66</small><b>写明由个人路径汇总生成</b><span>数据现成：每站已有起止日期 <span class="ev o">types.ts:36-37</span></span></div>
+        <div><small>PRD L170–174</small><b>分期表三期都没列它</b><span>一期只写「成长路径（模板、个人路径、任务、提交、点评、带教看板）」</span></div>
+        <div><small>原型 main.tsx:25-28</small><b>原型按分期做</b><span>成长只有 4 个路由；带教首页「本周带教安排」是写死数据 <span class="ev o">Home.tsx:197</span></span></div>
+        <div class="end"><small>结果</small><b>整个工作台没有一个时间视图</b><span>通知中心同样不在任何一期 <span class="ev o">Layout.tsx:105</span></span></div>
+      </div>
+      <p class="fig-cap"><b>图 3</b>对轮岗日历，主因就是漏排进分期：个人路径带每站起止 <span class="ev p">L65</span><span class="ev p">L131</span>，补排一期就能做出轮岗排期，不需要新数据。但补上它，管培生要的「今天几点在哪」、带教要的「这周我带的人谁哪天交、我哪天要评完」仍然推不出来——这一半断在本体（C2），另外还有四处结构性矛盾。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>深层：六处结构性矛盾，各推出一个设计决定</h3></div>
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>#</th><th>矛盾</th><th>PRD 依据</th><th>原型里的表现</th><th>推出的设计决定</th></tr></thead>
+        <tbody>
+          <tr><td class="id">C1</td><td><b>分期表没有覆盖页面表</b></td><td>轮岗日历、通知中心在页面表里 <span class="ev p">L37</span><span class="ev p">L39</span>，不在 <span class="ev p">L170–174</span></td><td>两者都没做；铃铛点了提示「二期上线」<span class="ev o">Layout.tsx:105</span></td><td>分期表逐页挂期（第 10 章）；轮岗排期、我的本周进一期</td></tr>
+          <tr><td class="id">C2</td><td><b>本体只有起止和截止两类时间，缺「安排」和工作日口径</b></td><td>第 9 节有个人路径和站的起止 <span class="ev p">L131</span>、任务截止 <span class="ev p">L132</span>、周报周次 <span class="ev p">L136</span>、活动日历 id <span class="ev p">L143</span>；没有任务开放日，没有跟岗、1:1、答辩这类安排，没有点评、交接期限，也没有工作日口径</td><td><code>CalendarItem</code> 只有所属人、标题、起止 <span class="ev o">types.ts:88</span>；跟岗、1:1 挂在带教名下 <span class="ev o">mock.ts:189-190</span>；模板有天数、实例没有开放日 <span class="ev o">types.ts:42-55</span></td><td>统一成<b>日程项</b>查询视图（时段 / 截止 / 时刻）；任务加开放日；加工作日日历；跟岗、1:1 二期读飞书。轮岗排期不依赖这一条，「我的本周」「我带的人」依赖（第 6 章）</td></tr>
+          <tr><td class="id">C3</td><td><b>带教关系挂错了层级</b></td><td>按模块挂 <span class="ev p">L65</span><span class="ev p">L131</span>，又在 <code>user</code> 上挂一个 <span class="ev p">L109</span><span class="ev p">L129</span>，两处并存</td><td>每站都填主带教 <span class="ev o">mock.ts:71</span>；看板按 <code>user.mentorId</code> 取人 <span class="ev o">api.ts:186</span>；改带教把所有未通过任务整体转走 <span class="ev o">api.ts:43</span>；可见性也只认它 <span class="ev o">Team.tsx:49</span></td><td><b>站带教为唯一来源</b>，主带教可选；任务的负责带教跟着所属站走，换站不转；跨站可见性重写（第 4 章，拍板 B1、B2）</td></tr>
+          <tr><td class="id">C4</td><td><b>页面按板块列，跨板块的视图没有家</b></td><td>页面表按六板块组织 <span class="ev p">L35–44</span>，但搜索、通知已经放在「全局」<span class="ev p">L37</span></td><td>待点评、审核队列散在侧栏 <span class="ev o">Layout.tsx:36-46</span>；首页焦点只覆盖逾期、待点评、审核三类</td><td>顶栏加<b>日程</b>、<b>待办</b>；板块装东西，顶栏放切面（第 7 章）</td></tr>
+          <tr><td class="id">C5</td><td><b>一套状态机套所有任务</b></td><td>状态流转只有一条 <span class="ev p">L73</span>；周期任务含轻测、周报 <span class="ev p">L71</span>，但它们由机器人写入 <span class="ev p">L78</span><span class="ev p">L112</span><span class="ev p">L155</span></td><td>轻测写成交「文档」<span class="ev o">mock.ts:114</span>；周报出现「已通过」<span class="ev o">mock.ts:117</span>，进了带教的待点评队列 <span class="ev o">api.ts:176-182</span></td><td>周期任务按<b>完成方式</b>分四型，周报、轻测成绩是完成凭证（第 4 章，拍板 B4）；同时修订 issue #6 验收「周期任务与路径任务共用状态流转和提交方式」</td></tr>
+          <tr><td class="id">C6</td><td><b>指标量的是代理</b></td><td>主指标是按时提交率 <span class="ev p">L178</span>，但 L179 又要「进度与计划的差距」</td><td>按时率含周期任务，状态「已通过」但没有提交记录的也算按时 <span class="ev o">api.ts:200-206</span>；进度环量的是入职第几天 <span class="ev o">api.ts:59-64</span></td><td>主指标改为<b>路径任务按期达标率</b>；进度给两个数（第 10 章，拍板 B9）</td></tr>
+        </tbody>
+      </table></div>
+      <p class="fig-cap"><b>图 4</b>拿掉任何一行，对应的决定就站不住：比如不认 C3，带教多人视图就只能按「人」画，换站那天看板不会切换，下一站带教看不到上一站。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>数据从哪来：一线到底在处理什么信息</h3><span class="k">事件编号沿用本体走查 E01–E33</span></div>
+      <p class="lead">工作台自己不产生业务，只记录和推算。六类来源里，<b>系统推算</b>是这次补出来的一类：个人路径 × 周期规则 × 工作日日历 × 当前时间，就能算出开放、即将截止、逾期、换站、阶段结束，不需要任何人录入。</p>
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>来源</th><th>进来的东西</th><th>产生的事件</th><th>写入方</th><th>谁做</th></tr></thead>
+        <tbody>
+          <tr><td><b>管理员后台</b></td><td>期次、个人路径、站带教、周期任务规则、工作日日历</td><td>E02 路径生成 · E03 路径调整</td><td>管理员</td><td>人</td></tr>
+          <tr><td><b>系统推算</b>（新）</td><td>路径 × 规则 × 日历 × 当前时间</td><td>E04 周期实例生成 · E05 换站 · E06 离站有遗留 · E07 任务开放 · E08 即将截止 · E09 逾期 · E15 周报未交 · E16 阶段结束 · E34 站结束（新增）</td><td>系统</td><td>自动</td></tr>
+          <tr><td><b>网页操作</b></td><td>提交、点评、交接要点、资产、审核</td><td>E10 提交 · E11 点评 · E17–E18 评估 · E20–E25 资产与作品集</td><td>本人 / 带教 / 管理员</td><td>人</td></tr>
+          <tr><td><b>带教机器人</b></td><td>周报、轻测成绩、FAQ、经飞书的提交</td><td>E12–E14 · E27</td><td>机器人（接口）<span class="ev p">L150–155</span></td><td>机器出题、收周报；人作答</td></tr>
+          <tr><td><b>飞书日历</b></td><td>团队活动；二期：带教日程</td><td>E29 活动出现或变更 · E30 活动结束</td><td>飞书（只读）<span class="ev p">L111</span></td><td>自动读取</td></tr>
+          <tr><td><b>飞书登录 / 知识库</b></td><td>首次登录；资料目录（二期）</td><td>E01 首次登录 · E26 新资料</td><td>飞书</td><td>自动</td></tr>
+        </tbody>
+      </table></div>
+      <div class="two" style="margin-top:20px">
+        <div class="fig"><div class="k" style="margin-bottom:8px">交给机器和规则</div><p style="font-size:14px;color:var(--ink2)">截止、换站、逾期、阶段结束的推算；轻测出题和判分 <span class="ev p">L78</span>；周报收集 <span class="ev p">L112</span>；FAQ 入库 <span class="ev p">L97</span>；提醒推送 <span class="ev p">L150</span>。</p></div>
+        <div class="fig"><div class="k" style="margin-bottom:8px">必须人做，让人做得快</div><p style="font-size:14px;color:var(--ink2)">点评、交接要点、阶段评估、排期决定、批准延期。机器人项目已定「专业成果评阅」不是机器人职能 <span class="ev x">旁证 · 业务共识第 13 行</span>。让人快的办法是把上下文推到面前：再交时并排上次评语，接人时给交接卡。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 本体 -->
+<section class="stage s1" id="s4">
+  <div class="wrap">
+    <div class="st-head">
+      <div class="st-num">04</div>
+      <div><span class="k">数据本体 · 数据怎么串、怎么流转</span><h2>37 个对象，<em>新增 7 个、修订 14 个</em></h2><p>PRD 第 9 节的 30 个实体里保留 16 个、修订 14 个，再新增 7 个，让本体动得起来；日程项是查询视图，单独标注，不建表、不计数。四份走查对同一件事有不同提法，下面先写取舍，再给字段、关系、状态和可见性。</p></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>对象字段表（新增与修订）</h3><span class="k">写入方：管理员 / 系统 / 本人 / 带教 / 机器人 / 飞书</span></div>
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>对象</th><th></th><th>关键字段（新增或改动的加粗）</th><th>写入方</th><th>依据</th></tr></thead>
+        <tbody>
+          <tr class="grp"><td colspan="5">人与期次</td></tr>
+          <tr><td class="id">cohort 期次</td><td><span class="st new">新增</span></td><td><b>名称、模板版本、开学日、结束日、状态（筹备 → 进行中 → 已结束）、预置名单（飞书 open_id）</b></td><td>管理员</td><td><span class="ev p">L14</span><span class="ev p">L128</span> 只有字段；<span class="ev o">mock.ts:13</span> 写死字符串；<span class="ev g">A-02</span></td></tr>
+          <tr><td class="id">user</td><td><span class="st rev">修订</span></td><td>飞书 open_id、姓名、角色、<b>期次</b>；「带教人」<b>改为派生值</b>（当前所在站的站带教）</td><td>飞书 / 管理员</td><td><span class="ev p">L129</span>；<span class="ev g">M-01</span></td></tr>
+          <tr class="grp"><td colspan="5">路径与时间</td></tr>
+          <tr><td class="id">path_template</td><td><span class="st rev">修订</span></td><td>层级、顺序、<b>版本号；已被期次绑定的版本只读，改动另存新版本（阶段、模块、任务模板一起冻结）</b></td><td>管理员</td><td><span class="ev o">Admin.tsx:88</span>；<span class="ev g">A-13</span></td></tr>
+          <tr><td class="id">task_template</td><td><span class="st rev">修订</span></td><td>要求、产出形式、建议用时（天）、<b>截止规则（锚点：站开始或站结束；偏移 N 个工作日；时刻）</b>、关联资料、推荐资产</td><td>管理员</td><td><span class="ev o">Admin.tsx:118</span> 只有建议用时；<span class="ev g">A-08</span></td></tr>
+          <tr><td class="id">personal_path</td><td><span class="st rev">修订</span></td><td>用户、<b>期次</b>、起止、<b>主带教（可空，空 = 管理员）</b>、状态（待分配 → 进行中 → 已结束）</td><td>管理员 / 系统</td><td><span class="ev p">L65</span>；拍板 B1</td></tr>
+          <tr><td class="id">personal_module 站</td><td><span class="st rev">修订</span></td><td>模块、顺序、起止、<b>站带教（带教关系唯一来源）</b>、<b>时间位置（待开始 / 在站 / 已离站，推算）</b>、<b>结清（本站路径任务已通过数 / 总数，推算）</b></td><td>管理员；推算字段由系统</td><td><span class="ev p">L65</span><span class="ev p">L131</span>；<span class="ev o">api.ts:81-88</span> 过了日期就算完成</td></tr>
+          <tr><td class="id">recurring_rule 周期任务规则</td><td><span class="st new">新增</span></td><td><b>名称、频率（每日 / 每周几 / 每月末 / 指定日期）、截止时刻、适用阶段或期次、完成方式（提交链接 / 机器人收周报 / 机器人写成绩 / 本人声明 + 管理员确认）、是否需要带教点评</b></td><td>管理员</td><td><span class="ev p">L71</span>；issue #6 验收「按日、按周、按月最后一天、按指定日期生成」</td></tr>
+          <tr><td class="id">task_instance</td><td><span class="st rev">修订</span></td><td>个人路径、<b>来源（模板 / 周期规则）</b>、所属站、<b>开放日</b>、截止、<b>原截止</b>、<b>调整原因</b>、<b>修改截止</b>、<b>负责带教（不单存：路径任务取所属站的站带教，周期任务取主带教，空 = 管理员）</b>、<b>完成方式</b>、状态；逾期是查询时算的标记</td><td>系统生成；状态由本人、带教、机器人推动</td><td><span class="ev p">L70–73</span><span class="ev p">L132</span>；<span class="ev o">types.ts:42-55</span></td></tr>
+          <tr><td class="id">workday_calendar</td><td><span class="st new">新增</span></td><td><b>日期、是否工作日、名称（假期、调休）</b></td><td>管理员</td><td>示例第一站 10-01 开站 <span class="ev o">mock.ts:68</span>；16 条路径任务里 7 条截止落在周末（coverage 5.4）</td></tr>
+          <tr><td class="id">schedule_item 日程项</td><td><span class="st keep">视图</span></td><td><b>类型、形状（时段 / 截止 / 时刻）、开始、结束、所属人、关联对象、来源、可见级别、状态（继承关联对象，用于着色）</b>；<b>接口返回的查询视图，不建表</b>。飞书团队活动已存在 <code>team_event</code>；二期带教日程引用存进 <code>team_event</code> 加类型，或另建 <code>external_calendar_event</code>（待定）</td><td>系统（查询时算）</td><td>C2；第 6 章</td></tr>
+          <tr class="grp"><td colspan="5">产出与考核（全部受限）</td></tr>
+          <tr><td class="id">submission</td><td><span class="st rev">修订</span></td><td>任务、飞书链接、提交时间、版本、<b>提交渠道（网页 / 机器人）</b>、<b>修改说明（再交必填）</b></td><td>本人 / 机器人</td><td><span class="ev p">L133</span>；<span class="ev g">M-13</span></td></tr>
+          <tr><td class="id">quiz_result · weekly_report</td><td><span class="st rev">修订</span></td><td>原字段 + <b>对应的周期任务实例</b>（作为完成凭证）</td><td>机器人</td><td><span class="ev p">L135–136</span>；C5</td></tr>
+          <tr><td class="id">stage_assessment</td><td><span class="st rev">修订</span></td><td>用户、阶段、<b>填写人（主带教，空则管理员）</b>、三档、评语、确认人、<b>状态（未到期 → 待填写 → 待确认 → 已确认）</b></td><td>主带教 / 管理员</td><td><span class="ev p">L79</span>；拍板 B3</td></tr>
+          <tr><td class="id">handover_note 交接要点</td><td><span class="st new">新增</span></td><td><b>个人模块、作者（原站带教）、要点（最多 3 条）、写于；站评三档、评语（二期）</b></td><td>站带教</td><td><span class="ev g">M-04</span><span class="ev g">A-17</span></td></tr>
+          <tr class="grp"><td colspan="5">团队</td></tr>
+          <tr><td class="id">team_event（原 event）</td><td><span class="st rev">修订</span></td><td>飞书日历事件 id、<b>类型（分享会 / 路演 / 读书会）、主讲、主题、受众期次、关联资产、状态（预告 → 已结束待挂回放 → 已挂回放）</b>、妙记链接</td><td>飞书（时间）/ 管理员（其余）</td><td><span class="ev p">L111</span><span class="ev p">L143</span>；<span class="ev g">A-10</span></td></tr>
+          <tr class="grp"><td colspan="5">运行层（让本体动起来）</td></tr>
+          <tr><td class="id">event_log 事件日志</td><td><span class="st new">新增</span></td><td><b>事件类型、主体对象、发生时间、来源、操作人、可见级别、载荷、去重键；只追加</b></td><td>系统</td><td>动态「自动生成」<span class="ev p">L110</span>、档案时间线 <span class="ev p">L56</span>、贡献「按历史补算」<span class="ev p">L120</span> 都要它</td></tr>
+          <tr><td class="id">todo 待办</td><td><span class="st new">新增</span></td><td><b>负责人、规则、来源事件、关联对象、出现时间、期限、优先级、状态（待处理 / 已完成 / 已撤销）、关闭事件</b></td><td>系统</td><td>第 5 章</td></tr>
+          <tr><td class="id">notification 通知</td><td><span class="st new">新增</span></td><td><b>接收人、事件、渠道（站内 / 机器人推送）、合并批次、已读</b></td><td>系统</td><td><span class="ev p">L33</span><span class="ev p">L37</span> 有通知中心，没写什么事通知谁</td></tr>
+          <tr><td class="id">activity_feed · contribution</td><td><span class="st rev">修订</span></td><td>不再各自存：动态 = 事件日志的公开投影；贡献 = 指定事件的派生（管理员加权另存）</td><td>系统</td><td><span class="ev p">L104</span><span class="ev p">L141</span><span class="ev p">L143</span>；<span class="ev o">types.ts:85-86</span></td></tr>
+        </tbody>
+      </table></div>
+      <p class="fig-cap"><b>表 1</b>保留不动的 16 个：stage、module、review、resource_card、faq、asset、asset_version、asset_usage、favorite、point_ledger、redemption、badge、announcement、tag、portfolio_item、bot_client。计数见 coverage.md 第 3 节。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>四份走查的提法怎么合并</h3></div>
+      <div class="tw"><table class="t min">
+        <thead><tr><th>走查里的提法</th><th>采用</th><th>理由</th></tr></thead>
+        <tbody>
+          <tr><td>管理员走查另建 <code>mentorship</code> 表（管培生、带教、类型、起止）</td><td>不单建；用 <code>personal_module.站带教</code> + <code>personal_path.主带教</code></td><td>站本来就有起止，带教关系的时间范围直接取站的起止，少一份会对不上的数据</td></tr>
+          <tr><td><code>schedule_change</code> 改期记录、<code>followup</code> 跟进记录</td><td>做成 <code>event_log</code> 的事件类型；任务上存原截止和调整原因</td><td>改期、催办本来就是只追加的事件，再建两张表等于重复</td></tr>
+          <tr><td>带教走查 <code>mentor_session</code>、管培生走查「日程」对象、本体走查 <code>schedule_item</code></td><td>统一为 <code>schedule_item</code> 查询视图；飞书来源的只存日程 id（在 team_event 或二期新表）</td><td>同一个东西三个名字；名字先统一，界面和规则才对得上</td></tr>
+          <tr><td>站状态四值（未开始 / 进行中 / 已结束未结清 / 已结清）</td><td>拆成两个推算字段：时间位置、结清</td><td>和四值等价，但两件事各自独立：时间到了不等于做完了</td></tr>
+          <tr><td>任务加「受阻 / 申请延期」状态</td><td>不加状态，用「调整截止 + 原因 + 留痕」覆盖</td><td>少一种状态，主指标口径一致；受阻多常见要真人记录验证</td></tr>
+          <tr><td>草稿提交</td><td>不支持</td><td>飞书文档本身就是活文档；示例里的草稿让按时率分不清 <span class="ev o">mock.ts:147</span><span class="ev o">mock.ts:154</span></td></tr>
+          <tr><td>跟岗师傅角色、1:1 记录、站评里「推荐定岗到本线」</td><td>一期都不做</td><td>都是推演，录入负担和公平性要先确认（第 12 章）</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>关系图</h3><span class="k">ER · 带基数</span></div>
+      <div class="fig"><pre class="mermaid">
+erDiagram
+  cohort ||--o{ personal_path : "本期成员"
+  path_template ||--o{ cohort : "绑定版本"
+  path_template ||--|{ stage : "含"
+  stage ||--|{ module : "含站"
+  module ||--o{ task_template : "含"
+  user ||--o| personal_path : "管培生"
+  user ||--o{ personal_path : "主带教(可空)"
+  personal_path ||--|{ personal_module : "站(起止)"
+  user ||--o{ personal_module : "站带教"
+  module ||--o{ personal_module : "排进"
+  personal_path ||--o{ task_instance : "生成"
+  task_template ||--o{ task_instance : "路径任务"
+  recurring_rule ||--o{ task_instance : "周期任务"
+  personal_module ||--o{ task_instance : "所属站"
+  task_instance ||--o{ submission : "多版本"
+  submission ||--o| review : "点评"
+  task_instance ||--o| quiz_result : "凭证"
+  task_instance ||--o| weekly_report : "凭证"
+  personal_module ||--o| handover_note : "站末"
+  personal_path ||--o{ stage_assessment : "每阶段"
+  team_event }o--o{ user : "主讲"
+  event_log }o--|| user : "主体或操作人"
+  event_log ||--o{ todo : "按规则生成"
+  event_log ||--o{ notification : "按规则生成"
+  event_log ||--o| contribution : "派生"
+  user ||--o{ todo : "负责"
+  workday_calendar ||--o{ task_instance : "推算截止"
+      </pre></div>
+      <p class="fig-cap"><b>图 5</b>带教人有三条关系线：主带教（挂在个人路径上，可空）、站带教（挂在站上，唯一的点评关系）、负责带教（不单存：路径任务取所属站的站带教，所以站带教后补或更换时，这一站未关闭的待办随之重派；管培生换到下一站时，上一站的任务仍归上一站）。日程项不在图里，它是从这些对象查询时推出来的视图。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>关键状态机</h3></div>
+      <div class="figrow">
+        <div class="fig"><div class="k" style="margin-bottom:8px">任务实例（路径任务；提交链接型周期任务同）</div><pre class="mermaid">
+stateDiagram-v2
+  [*] --> 未开始: 系统生成
+  未开始 --> 进行中: 到开放日(系统) 或 本人点开始
+  进行中 --> 已提交: 本人或机器人提交
+  未开始 --> 已提交: 直接提交
+  已提交 --> 需修改: 负责带教评「需改进」，同时写修改截止
+  已提交 --> 已通过: 负责带教评「优秀/达标」
+  需修改 --> 已提交: 再交(版本+1, 修改说明必填)
+  已通过 --> [*]
+        </pre></div>
+        <div class="fig"><div class="k" style="margin-bottom:8px">阶段评估（二期）</div><pre class="mermaid">
+stateDiagram-v2
+  [*] --> 未到期: 生成个人路径时按阶段建立
+  未到期 --> 待填写: 到阶段结束日(系统)
+  待填写 --> 待确认: 主带教填三档与评语，轮岗阶段依据各站站评
+  待确认 --> 已确认: 管理员确认
+  待确认 --> 待填写: 管理员退回(待拍板)
+  已确认 --> [*]: 动态只写「通过某阶段」
+        </pre></div>
+      </div>
+      <div class="tw" style="margin-top:16px"><table class="t min">
+        <thead><tr><th>标记与推算字段</th><th>怎么算</th><th>依据</th></tr></thead>
+        <tbody>
+          <tr><td><b>逾期</b>（标记，不是状态）</td><td>状态为未开始 / 进行中，且当前时间晚于截止；需修改时看修改截止；轻测未答不算</td><td><span class="ev p">L73</span>；<span class="ev x">旁证 · 业务共识第 107 行</span></td></tr>
+          <tr><td><b>迟交</b>（标记）</td><td>首次正式提交晚于截止（截止被调整过的，以调整后的为准，留痕）</td><td>主指标口径（第 10 章）</td></tr>
+          <tr><td><b>站 · 时间位置</b></td><td>待开始 → 在站（到开始日）→ 已离站（过结束日）</td><td><span class="ev o">api.ts:81-88</span> 已这样算</td></tr>
+          <tr><td><b>站 · 结清</b></td><td>本站路径任务已通过数 / 总数；离站时未结清触发 E06</td><td><span class="ev g">T-04</span>；ontology 3.4</td></tr>
+        </tbody>
+      </table></div>
+      <div class="tw" style="margin-top:16px"><table class="t min">
+        <thead><tr><th>周期任务完成方式</th><th>状态</th><th>带教要不要评</th><th>依据</th></tr></thead>
+        <tbody>
+          <tr><td><b>机器人收周报</b>（周报）</td><td>未交 → 已交（机器人写入）；过截止未交 = 逾期未交</td><td>只看不评</td><td><span class="ev p">L112</span>「只显示谁交了、谁没交」；拍板 B4</td></tr>
+          <tr><td><b>机器人写成绩</b>（轻测）</td><td>未开始 → 已出题 → 已出分 / 未答</td><td>不评，机器人判</td><td><span class="ev p">L78</span>；<span class="ev x">旁证 · 业务共识第 99、107 行：每周一次 2—3 道；未答只记未答</span></td></tr>
+          <tr><td><b>本人声明 + 管理员确认</b>（月度物料）</td><td>未声明 → 已声明待确认 → 已通过 / 退回</td><td>管理员确认</td><td><span class="ev x">旁证 · 业务共识第 111–126 行</span></td></tr>
+          <tr><td><b>提交链接</b>（日报，通道待定）</td><td>同任务实例</td><td>待定</td><td><span class="ev p">L71</span> 有日报，<span class="ev p">L155</span> 写接口没有</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>可见性规则（服务端执行）</h3><span class="k">推荐值 · 待拍板 B2</span></div>
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>数据</th><th>本人</th><th>本站站带教</th><th>路径上其他站带教</th><th>主带教</th><th>管理员</th><th>其他管培生、同事</th></tr></thead>
+        <tbody>
+          <tr><td><b>站、换站、走到哪一步</b></td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓ <span class="ev p">L84</span></td></tr>
+          <tr><td><b>任务名称与状态</b></td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>只看站，不看任务级逾期</td></tr>
+          <tr><td><b>产出与点评</b></td><td>✓</td><td>本站全部</td><td>开站前 5 个工作日起只读此前各站；离站后保留本站只读</td><td>✓</td><td>✓</td><td>✗ <span class="ev p">L85</span></td></tr>
+          <tr><td><b>交接要点</b></td><td>待定</td><td>写本站的</td><td>只读</td><td>✓</td><td>✓</td><td>✗</td></tr>
+          <tr><td><b>考核：轻测成绩、站评三档、阶段评估</b></td><td>✓</td><td>只看自己写的站评</td><td>✗</td><td>✓</td><td>✓</td><td>✗</td></tr>
+          <tr><td><b>带教日程（二期）</b></td><td>参会的那条</td><td>自己的</td><td>✗</td><td>✗</td><td>✗</td><td>✗</td></tr>
+        </tbody>
+      </table></div>
+      <p class="fig-cap"><b>表 2</b>原型的 <code>canSeePrivate</code> 只认「本人、管理员、带教 id 列表」<span class="ev o">types.ts:92-94</span>，按站分配后要把「路径上的站带教 + 时间窗口」算进列表；多人视图里不满足条件的条目直接不返回，不是置灰 <span class="ev p">L29</span>。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 待办链路 -->
+<section class="stage s2" id="s5">
+  <div class="wrap">
+    <div class="st-head rev">
+      <div class="st-num">05</div>
+      <div><span class="k">待办链路 · 每类待办怎么产生、怎么结束</span><h2>待办 = <em>事件 × 规则</em></h2><p>原型里的待点评、审核队列、逾期都是现算的列表 <span class="ev o">api.ts:176-195</span>，没有统一对象，也说不清「谁的、多久算晚」。这里把它们都变成同一种东西：一条事件按一条规则生成一条待办，完成时由另一条事件关闭。</p></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>事件表和待办表怎么建</h3></div>
+      <div class="two">
+<pre class="code"><span class="c">-- 只追加：不更新、不删除</span>
+<span class="kw">event_log</span>
+  id            bigserial    PK
+  type          text         NOT NULL  <span class="c">-- E01…E41，如 submission.created</span>
+  subject_type  text         NOT NULL  <span class="c">-- task_instance / personal_module …</span>
+  subject_id    uuid         NOT NULL
+  person_id     uuid                   <span class="c">-- 属于哪位管培生（时间线按它取）</span>
+  actor_id      uuid                   <span class="c">-- 操作人；推算事件为空</span>
+  source        text         NOT NULL  <span class="c">-- web / bot / feishu / system</span>
+  occurred_at   timestamptz  NOT NULL
+  visibility    text         NOT NULL  <span class="c">-- public / restricted / owner / admin</span>
+  payload       jsonb                  <span class="c">-- 证据：链接、原截止、新截止、原因</span>
+  dedup_key     text         UNIQUE    <span class="c">-- task.overdue:{task_id}:{due_at}</span></pre>
+<pre class="code"><span class="kw">todo</span>
+  id                  uuid         PK
+  owner_id            uuid         NOT NULL
+  rule_id             text         NOT NULL  <span class="c">-- R01…R19</span>
+  event_id            bigint       → event_log
+  subject_type, subject_id
+  title               text
+  due_at              timestamptz            <span class="c">-- 工作日日历推算</span>
+  priority            smallint
+  status              text   <span class="c">-- open / done / cancelled</span>
+  closed_by_event_id  bigint       → event_log
+  UNIQUE (rule_id, subject_id, owner_id)
+    WHERE status = 'open'   <span class="c">-- 一条规则可给多人</span>
+
+<span class="c">-- 推算事件：定时任务扫描路径、规则与工作日日历，</span>
+<span class="c">-- 条件成立就写一条事件，dedup_key 保证只写一次</span></pre>
+      </div>
+      <p class="fig-cap"><b>图 6</b>动态流 = 可见级别为 public 的事件；档案时间线 = person_id 是这个人的事件，按查看人权限过滤 <span class="ev p">L58</span>；贡献 = 资产上架、被标「我用过」、作品集入选、主讲确认等事件的派生，三期上线积分时按历史补算 <span class="ev p">L120</span>。前提是事件从一期就开始存。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>规则配置：19 条，一期 12 条</h3><span class="k">阈值有出处的写出处，没有的标建议值或待定</span></div>
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>规则</th><th>来源事件</th><th>条件</th><th>负责人</th><th>期限 · 出处</th><th>关闭 / 撤销</th><th>期</th></tr></thead>
+        <tbody>
+          <tr><td class="id">R01</td><td>E01 首次登录</td><td>角色为同事，且 open_id 不在任何期次预置名单</td><td>管理员</td><td>待定</td><td>角色或路径已分配</td><td class="nw">一期</td></tr>
+          <tr><td class="id">R02</td><td>E10 提交</td><td>路径任务，或规则要求点评的周期任务</td><td>任务所属站的站带教（空 = 管理员）</td><td>提交后 2 个工作日；再过 3 个工作日抄送管理员 <span class="ev g">建议值 · 带教走查 Q4</span></td><td>点评写入</td><td class="nw">一期</td></tr>
+          <tr><td class="id">R03</td><td>E11 点评 = 需改进</td><td>—</td><td>本人</td><td>修改截止 = 点评后 N 个工作日 <span class="ev g">建议值 3 · T-24</span></td><td>再次提交</td><td class="nw">一期</td></tr>
+          <tr><td class="id">R04</td><td>E08 即将截止</td><td>截止在今天或明天且未完成；含今天的测验</td><td>本人</td><td>= 截止 <span class="ev p">L50「今天和明天截止」</span></td><td>提交、成绩写回或周报已交；截止被调后撤销</td><td class="nw">一期</td></tr>
+          <tr><td class="id">R05</td><td>E09 逾期 · E15 周报未交</td><td>未完成且过截止（需修改看修改截止）；轻测未答不算</td><td>每人各一条：本人（补交）；路径任务的站带教 / 周期任务的主带教（跟进，主带教空 = 管理员）。管理员「有逾期的人」是汇总查询，不生成待办</td><td>立即 <span class="ev p">L51–52</span><span class="ev p">L73</span></td><td>提交；截止被调到未来后撤销</td><td class="nw">一期</td></tr>
+          <tr><td class="id">R06</td><td>E05 换站（推算）</td><td>新站带教 ≠ 原站带教</td><td>新站带教</td><td>开站前 5 个工作日出现，期限 = 开站日 <span class="ev g">建议值 · 带教走查 Q10</span></td><td>带教点「已准备」；开站日仍未确认则提示管理员</td><td class="nw">一期</td></tr>
+          <tr><td class="id">R07</td><td>E05 换站（推算）</td><td>—</td><td>本人</td><td>开站前 5 个工作日出现 <span class="ev g">建议值；管培生走查提 3 个，统一为 5</span></td><td>开站日自动关闭</td><td class="nw">一期</td></tr>
+          <tr><td class="id">R08</td><td>E34 站结束（推算）</td><td>下一站带教 ≠ 本站带教</td><td>原站带教</td><td>站结束后 2 个工作日 <span class="ev g">建议值 · 带教走查 Q3</span></td><td>交接要点写入</td><td class="nw">一期</td></tr>
+          <tr><td class="id">R09</td><td>E06 离站仍有未通过任务</td><td>—</td><td>原站带教</td><td>站后 3 个工作日，超时转管理员 <span class="ev g">建议值 · 带教走查 Q12</span></td><td>遗留任务都有结论</td><td class="nw">一期</td></tr>
+          <tr><td class="id">R10</td><td>E20 资产提交</td><td>—</td><td>管理员</td><td>待定</td><td>通过或退回 <span class="ev p">L104</span></td><td class="nw">一期</td></tr>
+          <tr><td class="id">R11</td><td>E22 资产退回</td><td>—</td><td>作者</td><td>待定</td><td>重提</td><td class="nw">一期</td></tr>
+          <tr><td class="id">R12</td><td>E32 接口或同步异常</td><td>—</td><td>管理员</td><td>立即 <span class="ev p">L52 连接状态</span></td><td>恢复正常</td><td class="nw">一期</td></tr>
+          <tr><td class="id">R13</td><td>E16 阶段结束</td><td>—</td><td>主带教（空 = 管理员）</td><td>阶段结束后 N 个工作日，待定 <span class="ev p">L79</span></td><td>评估已填</td><td class="nw">二期</td></tr>
+          <tr><td class="id">R14</td><td>E17 阶段评估已填</td><td>—</td><td>管理员</td><td>待定</td><td>确认或退回</td><td class="nw">二期</td></tr>
+          <tr><td class="id">R15</td><td>E26 同步到新资料</td><td>—</td><td>管理员</td><td>待定</td><td>补标签、挂任务 <span class="ev p">L90</span></td><td class="nw">二期</td></tr>
+          <tr><td class="id">R16</td><td>E30 活动结束</td><td>—</td><td>管理员</td><td>待定</td><td>挂妙记并确认主讲（才写贡献）</td><td class="nw">二期</td></tr>
+          <tr><td class="id">R17</td><td>E24 作品集提名</td><td>—</td><td>本人</td><td>待定</td><td>同意或拒绝 <span class="ev p">L86</span></td><td class="nw">二期</td></tr>
+          <tr><td class="id">R18</td><td>E33 只读归档日到达</td><td>—</td><td>管理员</td><td>= 归档日 <span class="ev p">L159</span></td><td>确认切换完成</td><td class="nw">二期</td></tr>
+          <tr><td class="id">R19</td><td>E31 兑换申请</td><td>—</td><td>管理员</td><td>待定</td><td>线下发放后标记 <span class="ev p">L118</span></td><td class="nw">三期</td></tr>
+        </tbody>
+      </table></div>
+      <p class="fig-cap"><b>表 3</b>去重：同一规则、同一对象、同一负责人只有一条未关闭的待办（唯一约束含 owner_id，R05 这类一事多人的规则才建得出来）。负责人为空时（比如站带教还没指定），待办落到管理员；站带教后补或更换时，这一站未关闭的 R02、R06、R08、R09 待办改派给新带教，并追加 E41 待办重派。每个角色的待办来源：管培生 R03 R04 R05 R07 R17；带教 R02 R05 R06 R08 R09 R13；管理员 R01 R10 R12 R14 R15 R16 R18 R19，外加负责人为空时落下来的 R02 R05 R06 R08 R09。本体走查的 E19「培养期临近结束」并进二期答辩日程，一期不设规则。原型只给待点评和审核留了入口 <span class="ev o">Layout.tsx:37</span><span class="ev o">Layout.tsx:41</span>。</p>
+    </div>
+
+    <div class="blk band dark s1" data-demo="chain">
+      <div class="dm-head">
+        <div><h4>顺着一条示例数据，从数据源走到写回</h4><p>两条链：A 一次提交怎么变成点评并写回；B 一次换站怎么生成三个人的待办。人名、时间来自示例数据，带教分配按「站带教」模型重排后的样子（示意）。</p></div>
+        <div class="dm-ctl">
+          <div class="seg-sw"><button type="button" data-mode="A" aria-pressed="true">A 点评链</button><button type="button" data-mode="B" aria-pressed="false">B 换站链</button></div>
+          <button class="btn pri" type="button" data-act="play"><svg viewBox="0 0 12 12"><path d="M2 1l9 5-9 5z"/></svg><span>播放</span></button>
+          <button class="btn" type="button" data-act="replay">重播</button>
+          <button class="btn" type="button" data-act="step">逐步 →</button>
+          <span class="dm-prog">0 / 6</span>
+        </div>
+      </div>
+      <div class="dm-stage d1">
+        <div class="win" style="display:flex;flex-direction:column"><div class="win-bar"><span class="dots"><i></i><i></i><i></i></span><b class="ch-title">链路</b><span class="demo-note" style="font-family:var(--mono);font-size:11px">示意</span></div><div class="steps ch-steps"></div></div>
+        <div class="win" style="display:flex;flex-direction:column"><div class="win-bar"><b>这一步写了什么</b><span class="ch-at" style="font-family:var(--mono);font-size:11px"></span></div><div class="pay ch-pay"></div></div>
+      </div>
+      <div class="dm-end ch-end"></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>边界和反例</h3></div>
+      <div class="tw"><table class="t min">
+        <thead><tr><th>情况</th><th>处理</th><th>依据</th></tr></thead>
+        <tbody>
+          <tr><td>晚上提交</td><td>点评提醒合并到次日早上一次推，不打扰下班时间；时刻由常浩定</td><td><span class="ev g">推演 · 示例提交多在 20–22 点 mock.ts:143-147</span></td></tr>
+          <tr><td>轻测没作答</td><td>记「未答」，不生成逾期，不追加催答</td><td><span class="ev x">旁证 · 业务共识第 107 行</span></td></tr>
+          <tr><td>周报交了</td><td>只看不评，不进待点评；原型 3 条待点评里有 1 条是周报 <span class="ev o">api.ts:176-182</span></td><td>拍板 B4</td></tr>
+          <tr><td>连续两站同一位带教</td><td>R06 换站接人、R08 交接要点都不生成</td><td><span class="ev g">带教走查 Q17</span></td></tr>
+          <tr><td>截止被调整</td><td>原逾期待办撤销；事件 E35 留原截止、新截止、原因、操作人；主指标按新截止算，旁边并列调整过的条数和调整人</td><td>拍板 B5、B9</td></tr>
+          <tr><td>同一任务反复催</td><td>催办经机器人发，同一任务 24 小时内一次</td><td><span class="ev g">建议值 · M-14</span></td></tr>
+          <tr><td>换站时还有没评完的</td><td>仍归原站带教（负责带教跟着所属站走，管培生换站不转），原型改带教会把未通过任务整体转走 <span class="ev o">api.ts:43</span></td><td>R09；拍板 B4</td></tr>
+          <tr><td>站带教开站后才补指定，或中途更换</td><td>负责带教不单存，取所属站的站带教，所以点评归属自动跟上；这一站未关闭的 R02 R06 R08 R09 改派给新带教（E41），已写的点评不动</td><td>拍板 B1；P5 孟川投放站</td></tr>
+          <tr><td>有人中止培养</td><td>未关闭待办全部撤销；指标分母剔除</td><td><span class="ev g">A-22</span></td></tr>
+          <tr><td>同一推算重复执行</td><td>去重键保证事件只写一次，待办只生成一次</td><td>表结构</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 时间模型与四个视图 -->
+<section class="stage s3" id="s6">
+  <div class="wrap">
+    <div class="st-head">
+      <div class="st-num">06</div>
+      <div><span class="k">呈现（一）· 时间模型与四个时间视图</span><h2>先有「日程项」，<em>日历是推出来的</em></h2><p>工作台里带时间的东西只有三种形状，来源分推算、规则展开和飞书三种。把它们统一成日程项这个查询视图以后，四个时间视图只是同一份数据按人、按带教、按岗位、按团队切出来的四个切面，不需要另想、另存。</p></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>三种形状，三种来源</h3></div>
+      <div class="tw"><table class="t min">
+        <thead><tr><th>形状</th><th>是什么</th><th>本案里的例子</th><th>在视图里怎么画</th></tr></thead>
+        <tbody>
+          <tr><td><b>时段</b></td><td>有开始和结束</td><td>培养期、阶段、站、任务开放期、团队活动；二期：跟岗、1:1</td><td>横条或时间块</td></tr>
+          <tr><td><b>截止</b></td><td>某刻之前要完成</td><td>任务截止、修改截止、周报、轻测、点评期限、交接要点期限</td><td>竖针，颜色跟状态（语义色）</td></tr>
+          <tr><td><b>时刻</b></td><td>某一刻发生</td><td>换站、入职、阶段评估节点、答辩、公告发布</td><td>菱形或竖线</td></tr>
+          <tr><td><i>来源 · 推算</i></td><td>个人路径 × 工作日日历 × 当前时间</td><td>站、换站、开放期、截止、点评与交接期限、评估节点</td><td>—</td></tr>
+          <tr><td><i>来源 · 规则展开</i></td><td>周期任务规则展开成实例，每个实例是一条截止</td><td>周报每周日、轻测每周一次、月度物料每月末</td><td>按截止画</td></tr>
+          <tr><td><i>来源 · 飞书</i></td><td>以飞书为准，工作台只读</td><td>团队活动（一本共享日历）；二期：带教日程</td><td>实线块标「飞书」；未接入时虚线标「二期」</td></tr>
+        </tbody>
+      </table></div>
+      <div class="tw" style="margin-top:16px"><table class="t wide">
+        <thead><tr><th>日程项类型</th><th>形状</th><th>从哪来</th><th>可见级别</th><th>期</th><th>依据</th></tr></thead>
+        <tbody>
+          <tr><td>培养期、阶段、站</td><td>时段</td><td>推算：个人路径起止</td><td>公开</td><td class="nw">一期</td><td><span class="ev p">L65</span><span class="ev p">L84</span></td></tr>
+          <tr><td>换站</td><td>时刻</td><td>推算</td><td>公开</td><td class="nw">一期</td><td>C2</td></tr>
+          <tr><td>任务开放期、任务截止、修改截止</td><td>时段 / 截止</td><td>推算：截止规则 × 工作日日历</td><td>名称与状态公开，详情受限</td><td class="nw">一期</td><td><span class="ev p">L132</span></td></tr>
+          <tr><td>周报、轻测、月度物料</td><td>截止</td><td>周期任务规则</td><td>周报「交没交」公开；轻测受限</td><td class="nw">一期</td><td><span class="ev p">L85</span><span class="ev p">L136</span></td></tr>
+          <tr><td>点评期限、交接要点期限</td><td>截止</td><td>推算：提交时间 / 站结束 + 规则</td><td>负责人；点评期限也给提交的本人看</td><td class="nw">一期</td><td>R02 R08</td></tr>
+          <tr><td>阶段评估节点</td><td>时刻</td><td>推算：阶段结束日</td><td>受限（考核）</td><td>一期显示节点，二期接流程</td><td><span class="ev p">L79</span>；<span class="ev g">A-11</span></td></tr>
+          <tr><td>团队活动</td><td>时段</td><td>飞书共享日历（落库）</td><td>公开</td><td class="nw">二期</td><td><span class="ev p">L111</span><span class="ev p">L143</span></td></tr>
+          <tr><td>答辩、路演</td><td>时刻</td><td>管理员排定（或读共享日历）</td><td>时间公开，材料受限</td><td class="nw">二期</td><td><span class="ev p">L80</span>；<span class="ev g">T-10</span></td></tr>
+          <tr><td>带教 1:1、跟岗、陪访</td><td>时段</td><td>飞书：带教人日历中参会人含所带管培生的日程</td><td>只给带教本人和对应管培生</td><td>二期，待拍板 B6</td><td>PRD 未写；<span class="ev o">mock.ts:188-193</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>四个视图，各回答谁的什么问题</h3></div>
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>视图</th><th>谁用</th><th>回答什么问题</th><th>包含的日程项</th><th>粒度</th><th>期</th><th>原型</th></tr></thead>
+        <tbody>
+          <tr><td><b>我的本周</b></td><td>管培生（首页切片 + 日程默认视角）</td><td>这周哪天交什么？我在哪站、第几周，下一站哪天开始？这周有没有分享会？</td><td>本人的站、换站、截止、周报、轻测、团队活动；二期叠加跟岗、1:1</td><td>周（7 列），今天是其中一列</td><td>一期（推算部分）</td><td>P1</td></tr>
+          <tr><td><b>我带的人</b></td><td>带教人</td><td>这周我带的人谁哪天交？我哪天要评完？谁下周到我这站、谁要走？</td><td>行：在带、将到、刚交接出去；单元：提交、点评期限、截止、换站；二期一行「我的日程」</td><td>两周（14 列），看得到换站日</td><td>一期（推算部分）</td><td>P2</td></tr>
+          <tr><td><b>轮岗排期</b></td><td>管理员编辑；带教、管培生只读</td><td>每人现在在哪站？某一段某个岗位挤了几个人、空了几个？每位带教同时带几个？调整某人后会不会扎堆？评估节点集中在哪几周？</td><td>行：人 / 岗位 / 带教；条：站（按业务线着色）；标记：换站、阶段评估节点、假期</td><td>周</td><td class="nw">一期</td><td>P3</td></tr>
+          <tr><td><b>团队活动</b></td><td>全员</td><td>这个月有哪些分享会、路演、读书会？谁讲、在哪、回放在哪？哪天换站、哪天周报截止？</td><td>团队活动、公告发布、换站日、周报截止（公开部分）</td><td>月</td><td>二期（随飞书日历读取）</td><td>P4</td></tr>
+        </tbody>
+      </table></div>
+      <p class="fig-cap"><b>表 4</b>个人档案的成长时间线不算日程视图：它放的是已经发生的事件（事件日志），不是未来的安排。四个视图共用一个单元：<b>日程条</b>（类型、时间、状态色、来源标记），点开都跳回它所属对象的家（任务详情、站、活动）。<b>「我带的人」和带教看板不重复</b>：看板（成长板块）是人和进度的家，一行一个人，答「谁在哪站、做完几成、待我做什么、上一站怎样」；「我带的人」是时间切面，答「谁哪天交、我哪天要评完、谁哪天到」。带教首页把两者各取一个切片（P2）。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>和飞书日历的关系：按类型分开处理，不是三选一</h3></div>
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>日程项</th><th>读</th><th>写</th><th>跳转</th><th>推荐</th><th>理由</th></tr></thead>
+        <tbody>
+          <tr><td><b>团队活动</b></td><td>✓</td><td>—</td><td>✓</td><td><b>只读一本共享「管培生活动」日历</b>（应用身份读，不读个人日历）；活动卡「加入日历」改为在飞书中打开这条日程</td><td>PRD 已定「日程读飞书日历」<span class="ev p">L111</span>；按钮现在没有动作 <span class="ev o">Home.tsx:26</span>，写日历要额外权限</td></tr>
+          <tr><td><b>截止、换站、评估节点</b>（推算出来的）</td><td>—</td><td><b>不写</b></td><td>—</td><td>工作台自己展示；需要提醒的交给机器人推送</td><td>约 12 人一期 <span class="ev p">L14</span>，写进去会塞满日历；路径一调就要批量改删；有人在飞书里改了时间工作台不知道，违背「工作台是唯一数据源」<span class="ev p">L124</span>；机器人本来就负责推送 <span class="ev p">L150</span></td></tr>
+          <tr><td><b>带教 1:1、跟岗、陪访</b></td><td class="nw">二期</td><td>—</td><td>✓</td><td>一期不进；二期只读带教人日历中参会人含所带管培生的日程，本职时段只取忙闲、不取标题；点空白处跳到飞书建日程</td><td>牵涉个人授权和隐私 <span class="ev g">带教走查 Q16</span>；具体权限点要对照飞书开放平台核实 <span class="ev g">待验证</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- P1 -->
+  <div class="wrap">
+  <div class="blk band dark s3">
+    <div class="dm-head"><div><h4>P1 · 管培生首页「我的本周」</h4><p>林夏，2026-11-05 周四 10:24。焦点由规则从待办里挑两件；本周时间线把站、截止、测验、机器人交付和团队活动排在一起；跟岗、1:1 用虚线标二期。</p></div></div>
+    <div class="pscroll">
+    <div class="ap">
+      <aside class="ap-side">
+        <div class="ap-brand"><i></i><div>管培生工作台<small>TRAINEE HUB</small></div></div>
+        <div class="ap-nav on">首页</div><div class="ap-nav">成长</div><div class="ap-nav">知识<em>二期</em></div><div class="ap-nav">AI</div><div class="ap-nav">团队</div><div class="ap-nav">激励<em>三期</em></div>
+        <div class="ap-sg">我的</div><div class="ap-nav">我的档案</div><div class="ap-nav">我的提交<em>1</em></div><div class="ap-nav">收藏</div>
+      </aside>
+      <div class="ap-main">
+        <div class="ap-top"><div class="ap-crumb">首页 / <b>我的今天</b></div><div class="ap-tools"><span class="ap-tool">搜索 ⌘K</span><span class="ap-tool new">日程</span><span class="ap-tool new">待办 <span class="n">3</span></span><span class="ap-tool">通知</span><span class="ap-pri">提交产出</span></div></div>
+        <div class="ap-body">
+          <div><div class="ap-dt">2026-11-05 周四 · W45 · 培养第 57 / 180 天</div><div class="ap-h1">林夏，近两天有 <em>2 件事</em>要处理</div></div>
+          <div class="ap-grid">
+            <div class="ac soft c6"><div class="fc"><span class="fi acc">测</span><div><div class="kk">今天的测验 · 周期任务 · 机器人出题</div><h5>轻测 · 客服话术与流程</h5><div class="m">今天 20:00 · 成绩由机器人写回 · 未答记「未答」</div></div><span class="ab">去飞书作答</span></div></div>
+            <div class="ac soft c6"><div class="fc"><span class="fi warn">截</span><div><div class="kk">明天截止 · 路径任务 · 客服站</div><h5>一周来电归因复盘</h5><div class="m">11-06 周五 18:00 · 进行中</div></div><span class="ab pri">继续写</span></div></div>
+            <div class="ac c12">
+              <div class="ac-h"><b>我的本周 · W45 · 11-02 – 11-08</b><span><span class="tg warn">截止</span> <span class="tg acc">测验</span> <span class="tg neu">机器人收</span> <span class="tg ok">等待点评</span> <span class="tg p2">二期 · 飞书日程</span></span></div>
+              <div class="wk">
+                <div class="wk-h">周一<b>11-02</b></div><div class="wk-h">周二<b>11-03</b></div><div class="wk-h">周三<b>11-04</b></div><div class="wk-h today">周四 · 今天<b>11-05</b></div><div class="wk-h">周五<b>11-06</b></div><div class="wk-h">周六<b>11-07</b></div><div class="wk-h">周日<b>11-08</b></div>
+                <div class="wk-band"><div class="band-s" style="grid-column:1/-1">客服岗 · 第 3 / 6 站 · 第 2 周（10-29 – 11-11）· 站带教 周颖</div></div>
+                <div class="wk-c"></div>
+                <div class="wk-c"></div>
+                <div class="wk-c"><div class="it wait"><b>18:00 · 已提交</b>话术演练录音 · 等周颖点评，期限 11-06 16:50</div></div>
+                <div class="wk-c today"><div class="it p2" style="box-shadow:inset 3px 0 0 var(--a-acc)"><b>09:30–11:30 · 二期 · 现在 10:24</b>客服岗跟岗</div><div class="it p2" style="margin-top:14px"><b>16:00 · 二期</b>与周颖 1:1</div><div class="it quiz"><b>20:00 · 测验</b>轻测 · 去飞书作答</div></div>
+                <div class="wk-c"><div class="it due"><b>18:00 · 进行中</b>一周来电归因复盘</div></div>
+                <div class="wk-c"></div>
+                <div class="wk-c"><div class="it bot"><b>22:00 · 机器人收</b>第 45 周周报</div></div>
+              </div>
+              <div style="margin-top:8px;font-size:11.5px;color:var(--a-ink2)"><b>下周</b> · 11-11 周三 18:00 客服岗小结（站末）· <b>11-12 周四 换站 → 销售</b> · 19:30 分享会「用 Claude 做行业研究」</div>
+            </div>
+            <div class="ac c5">
+              <div class="ac-h"><b>我的进度</b><span>两个数并列</span></div>
+              <div class="prog2">
+                <div class="pg"><small>时间进度</small><b>57 / 180 天</b><div class="bar"><i style="width:32%"></i></div><small>32% · 只说明过了多久</small></div>
+                <div class="pg"><small>完成进度（路径任务）</small><b>5 / 6</b><div class="bar"><i style="width:83%;background:var(--a-ok)"></i></div><small>已通过 / 截至今天应完成 · 差 1（待点评）</small></div>
+              </div>
+              <div class="six"><div class="ok"><b>教研</b>已结清</div><div class="ok"><b>教学</b>已结清</div><div class="cur"><b>客服</b>第 2 周 · 0/3</div><div><b>销售</b>11-12</div><div><b>内容</b>11-26</div><div><b>投放</b>12-10</div></div>
+            </div>
+            <div class="ac c4">
+              <div class="ac-h"><b>待办 · 3</b><span>按规则排序</span></div>
+              <div class="li"><div><b>轻测 · 客服话术与流程</b><span>今天 20:00 · R04</span></div><span class="tg acc">测验</span></div>
+              <div class="li"><div><b>一周来电归因复盘</b><span>明天 18:00 · R04</span></div><span class="tg warn">截止</span></div>
+              <div class="li"><div><b>换站准备 · 下一站 销售</b><span>11-12 周四开站 · 先读资料、开通 CRM · R07</span></div><span class="tg neu">换站</span></div>
+              <div style="font-size:11px;color:var(--a-mute);padding:6px 0">周报（周日 22:00）、客服岗小结（11-11）不是今明截止，留在「我的本周」时间线上，到前一天才进待办（R04）。</div>
+              <div class="li" style="border-top:1px dashed var(--a-line)"><div><b>我在等 · 话术演练录音</b><span>周颖点评 · 期限 11-06 16:50</span></div><span class="tg ok">已提交</span></div>
+            </div>
+            <div class="ac dk c3"><div class="ac-h"><b>这一步可以用</b><span>AI 推荐</span></div><div style="font-size:12px;color:var(--k-a7aeba)">Skill</div><div style="font-weight:700;margin:2px 0 6px">通话记录归因</div><div style="font-size:11.5px;color:var(--k-d0d4db);line-height:1.55">按问题类型、课程、时段归类一周来电，给出前三大原因和原话样例。</div><div class="code-i">挂在任务「一周来电归因复盘」上</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="pnote">
+      <div><b>焦点由规则挑</b>已逾期 &gt; 需修改 &gt; 今天的测验 &gt; 今明截止 &gt; 换站预告 &gt; 答辩倒计时 &gt; 入职清单。今天命中「测验」和「明天截止」，换站预告排第三。<span class="ev g">优先级为推演</span></div>
+      <div><b>本周时间线是日程项切片</b>一期只有推算部分；周报、轻测按完成方式出按钮，不出现「去提交」。焦点卡沿用原型的位置和样式 <span class="ev o">Home.tsx:55</span>。</div>
+      <div><b>进度给两个数</b>示例数据只生成了部分路径任务，5 / 6 只演示算法 <span class="ev o">mock.ts:106-113</span>；站区分「时间到了」和「已结清」。</div>
+    </div>
+    <p class="fig-cap"><b>图 7</b>P1 对应需求：首页焦点规则、我的本周、进度两个数、换站预告、等待点评、周期任务分型（第 7 章需求对照 #3 #6 N1）。</p>
+  </div>
+  </div>
+
+  <!-- P2 -->
+  <div class="wrap">
+  <div class="blk panel dark s3">
+    <div class="dm-head"><div><h4>P2 · 带教人首页：「我带的人」切片 + 看板摘要</h4><p>周颖，示意为客户线客服、销售两站的站带教（示例数据里她是 3 人的固定带教，这里按「站带教」重排）。中间是日程「我带的人」的两周切片（时间），下面是带教看板摘要（人和进度）。</p></div></div>
+    <div class="pscroll">
+    <div class="ap nos">
+      <div class="ap-main">
+        <div class="ap-top"><div class="ap-crumb">首页 / <b>我的今天（带教人）</b></div><div class="ap-tools"><span class="ap-tool">日程 · 我带的人 →</span><span class="ap-tool">成长 · 带教看板 →</span><span class="ap-tool new">待办 <span class="n">2</span></span></div></div>
+        <div class="ap-body">
+          <div><div class="ap-dt">2026-11-05 周四 · 客户线 · 客服、销售两站站带教（示意）</div><div class="ap-h1">周颖，在带 <em>2 人</em> · 下周四到站 1 人 · 上一站未完 0 份</div></div>
+          <div class="ap-grid">
+            <div class="ac soft c6"><div class="fc"><span class="fi acc">评</span><div><div class="kk">待点评 · 离期限最近 · R02</div><h5>林夏 · 话术演练录音</h5><div class="m">11-04 16:50 提交 · 期限 11-06 16:50 · <b>剩 1 天 6 小时</b> · 说明：第 4 段投诉场景有点卡壳</div></div><span class="ab pri">去点评</span></div></div>
+            <div class="ac soft c6"><div class="fc"><span class="fi warn">换</span><div><div class="kk">下一个换站节点 · R06</div><h5>11-12 周四 · 赵一然到站（内容 → 销售）</h5><div class="m">上一站交接要点：待填写，期限 11-13（示例里内容站没有站带教，暂落管理员）· 林夏、许诺换站后仍由你带，不用交接</div></div><span class="ab">接人准备</span></div></div>
+            <div class="c12">
+              <div class="mg">
+                <div class="h"></div><div class="h">11-02 一</div><div class="h">03 二</div><div class="h">04 三</div><div class="h today">05 四 今天</div><div class="h">06 五</div><div class="h we">07 六</div><div class="h we">08 日</div><div class="h">09 一</div><div class="h">10 二</div><div class="h">11 三</div><div class="h sw">12 四 换站</div><div class="h">13 五</div><div class="h we">14 六</div><div class="h we">15 日</div>
+                <div class="gp">在带 · 2</div>
+                <div class="who"><span class="av" style="background:var(--a-acc)">林</span><div><b>林夏</b><span>客服 第 8/14 天 · 本站通过 0/3</span></div></div>
+                <div></div><div></div><div><span class="mk2 sub">交 话术录音</span></div><div class="tdc"><span class="mk2 gr">轻测（不评）</span></div><div><span class="mk2 rv">评 期限 16:50</span><span class="mk2 due">截 来电复盘</span></div><div></div><div><span class="mk2 gr">周报（只看）</span></div><div></div><div></div><div><span class="mk2 due">截 客服岗小结</span></div><div><span class="mk2 sw">→ 销售 仍由你带</span></div><div></div><div></div><div></div>
+                <div class="who"><span class="av" style="background:var(--k-5a6577)">许</span><div><b>许诺</b><span>销售 第 8/14 天 · 本站通过 0/2</span></div></div>
+                <div><span class="mk2 gr">W44 周报未交（11-01 截止）· 主带教跟进</span></div><div></div><div></div><div class="tdc"><span class="mk2 gr">轻测（不评）</span></div><div></div><div></div><div><span class="mk2 due">截 跟单记录 · 周日</span></div><div></div><div></div><div><span class="mk2 gr">站末</span></div><div><span class="mk2 sw">→ 客服 仍由你带</span></div><div></div><div></div><div></div>
+                <div class="gp">将到 · 1</div>
+                <div class="who"><span class="av" style="background:var(--k-8a6a3b)">赵</span><div><b>赵一然</b><span>内容站（其他带教）· 11-12 到站</span></div></div>
+                <div class="off"></div><div class="off"></div><div class="off"></div><div class="tdc"><span class="mk2 rv">可只读此前各站</span></div><div class="off"></div><div class="off"></div><div class="off"></div><div class="off"></div><div class="off"></div><div class="off"><span class="mk2 gr">内容站末</span></div><div><span class="mk2 sw">到站 销售</span></div><div></div><div></div><div></div>
+                <div class="gp">刚交接出去 · 0（10-28 离站的人没有未完事项）</div>
+                <div class="gp" style="background:var(--a-panel);border-top:1px dashed var(--a-line)">我的日程 · 二期从飞书日历读取（参会人含所带管培生的日程；本职时段只显示「忙」）</div>
+                <div class="who"><span class="av" style="background:var(--k-b0875a)">周</span><div><b>周颖</b><span>带教日程</span></div></div>
+                <div></div><div></div><div></div><div class="tdc"><span class="mk2 p2">09:30 林夏跟岗</span><span class="mk2 p2">16:00 林夏 1:1</span></div><div><span class="mk2 p2">14:00 许诺陪访</span></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+              </div>
+            </div>
+            <div class="ac c5"><div class="ac-h"><b>待点评 · 1</b><span>按离期限还有多久排，不再先到先评</span></div>
+              <div class="li"><div><b>林夏 · 话术演练录音</b><span>客服站 · 期限 11-06 16:50 · 剩 1 天 6 小时</span></div><span class="tg warn">2 个工作日内</span></div>
+              <div style="font-size:11px;color:var(--a-mute);margin-top:6px">原型这里有 3 条：另 2 条是赵一然的内容站选题（应归内容站带教）和周报（只看不评）。</div>
+            </div>
+            <div class="ac c7"><div class="ac-h"><b>带教看板 · 摘要</b><span>人和进度；完整版在成长板块</span></div>
+              <table class="tbl"><thead><tr><th>管培生</th><th>本站进度</th><th>待我做</th><th>上一站</th><th>状态</th></tr></thead><tbody>
+                <tr><td><b>林夏</b> · 在带</td><td>客服 8/14 天 · 0/3</td><td>评 1 份</td><td>教学：达标</td><td><span class="tg ok">正常</span></td></tr>
+                <tr><td><b>许诺</b> · 在带</td><td>销售 8/14 天 · 0/2</td><td>—</td><td>教研：无记录</td><td><span class="tg warn">周报未交</span></td></tr>
+                <tr><td><b>赵一然</b> · 将到</td><td>11-12 到站</td><td>接人准备</td><td>内容：要点待写</td><td><span class="tg neu">将到</span></td></tr>
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="pnote">
+      <div><b>人从「站带教关系」取</b>在带 = 当前站是我；将到 = 下一站是我（开站前 5 个工作日起）；刚交接出去 = 上一站是我且有未完事项。原型按 <code>user.mentorId</code> 取人 <span class="ev o">api.ts:186</span>。</div>
+      <div><b>三类标记分开</b>蓝 = 我要做（点评期限）；黄 = 他要交；黑 = 换站。周报、轻测灰色：带教只看不评（拍板 B4）。</div>
+      <div><b>二期叠加我的日程</b>示例里还有一条「轻测出题截止」<span class="ev o">mock.ts:191</span>，和「机器人出题」<span class="ev p">L78</span> 矛盾，这里不放。</div>
+    </div>
+    <p class="fig-cap"><b>图 8</b>P2 对应需求：带教首页三组、点评时效排序、换站节点焦点、跨站只读窗口、带教日程（二期）（需求对照 #3 #8 N2）。数字见 coverage.md 5.5、5.6。</p>
+  </div>
+  </div>
+
+  <!-- P3 -->
+  <div class="wrap">
+  <div class="blk band dark s3">
+    <div class="dm-head"><div><h4>P3 · 管理员「轮岗排期」甘特</h4><p>由 6 位示例管培生的个人路径直接生成，不需要任何新数据。切到「按岗位」能看到示例排法里 7 个格子挤了 2 人、7 个格子空岗；点色块在右侧抽屉里顺延或换站带教。</p></div></div>
+    <div class="pscroll">
+    <div class="ap nos">
+      <div class="ap-main">
+        <div class="ap-top"><div class="ap-crumb">日程 / <b>轮岗排期</b> · 2026 秋季班 · 轮岗阶段 10-01 – 12-23</div><div class="ap-tools"><span class="gsw" role="group" aria-label="视角"><button type="button" data-gv="person" aria-pressed="true">按人</button><button type="button" data-gv="station" aria-pressed="false">按岗位</button><button type="button" data-gv="mentor" aria-pressed="false">按带教</button></span><span class="ap-tool">导出</span></div></div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 250px">
+          <div class="ap-body">
+            <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--a-ink2)"><span class="gb t" style="display:inline-flex;min-height:0!important">老师线</span><span class="gb c" style="display:inline-flex;min-height:0!important">客户线</span><span class="gb m" style="display:inline-flex;min-height:0!important">市场</span><span>◆ 阶段评估节点（只给带教与管理员）</span><span>斜纹 = 假期（示意）</span><span style="color:var(--a-acc)">│ 今天 11-05</span></div>
+            <div class="gvw on" data-gview="person">
+              <div class="gt">
+                <div class="h"></div><div class="h">10-01</div><div class="h">10-08</div><div class="h">10-15</div><div class="h">10-22</div><div class="h">10-29</div><div class="h ix">11-05</div><div class="h">11-12</div><div class="h">11-19</div><div class="h">11-26</div><div class="h">12-03</div><div class="h">12-10</div><div class="h">12-17</div><div class="h">之后</div>
+                <div class="rl"><b>林夏</b><span>09-10 入职</span></div><div class="gb t past">教研</div><div class="gb t past">教学</div><div class="gb c sel">客服<small>当前</small></div><div class="gb c">销售</div><div class="gb m">内容</div><div class="gb m">投放</div><div class="tail"><span class="dia">◆ 12-23</span></div>
+                <div class="rl"><b>许诺</b><span>09-10 入职</span></div><div class="gb t past">教学</div><div class="gb t past">教研</div><div class="gb c">销售</div><div class="gb c">客服</div><div class="gb m">投放</div><div class="gb m">内容</div><div class="tail"><span class="dia">◆</span></div>
+                <div class="rl"><b>赵一然</b><span>09-10 入职</span></div><div class="gb t past">教研</div><div class="gb c past">客服</div><div class="gb m">内容</div><div class="gb c">销售</div><div class="gb t">教学</div><div class="gb m">投放</div><div class="tail"><span class="dia">◆</span></div>
+                <div class="rl"><b>陈默</b><span>09-10 入职</span></div><div class="gb m past">内容</div><div class="gb c past">销售</div><div class="gb m">投放</div><div class="gb t">教研</div><div class="gb c">客服</div><div class="gb t">教学</div><div class="tail"><span class="dia">◆</span></div>
+                <div class="rl"><b>孟川</b><span>09-10 入职</span></div><div class="gb c past">客服</div><div class="gb t past">教研</div><div class="gb t">教学</div><div class="gb m">投放</div><div class="gb m">内容</div><div class="gb c">销售</div><div class="tail"><span class="dia">◆</span></div>
+                <div class="rl"><b>宋知</b><span>09-10 入职</span></div><div class="gb c past">销售</div><div class="gb m past">投放</div><div class="gb t">教研</div><div class="gb t">教学</div><div class="gb c">客服</div><div class="gb m">内容</div><div class="tail"><span class="dia">◆</span></div>
+                <div class="g-hol" style="left:calc(116px);width:calc((100% - 180px)/12)"><b>国庆（示意）</b></div>
+                <div class="g-today" style="left:calc(116px + (100% - 180px)/12*5)"><b>今天</b></div>
+              </div>
+              <div style="font-size:11px;color:var(--a-mute);margin-top:6px">示例里 6 人全部在同一天换站（10-01、10-15、10-29、11-12、11-26、12-10），交接集中在同一天；第一站正好从国庆当天开始。</div>
+            </div>
+            <div class="gvw" data-gview="station">
+              <div class="gt" style="grid-template-columns:116px repeat(12,minmax(0,1fr))">
+                <div class="h"></div><div class="h" style="grid-column:span 2">第 1 段 10-01</div><div class="h" style="grid-column:span 2">第 2 段 10-15</div><div class="h ix" style="grid-column:span 2">第 3 段 10-29</div><div class="h" style="grid-column:span 2">第 4 段 11-12</div><div class="h" style="grid-column:span 2">第 5 段 11-26</div><div class="h" style="grid-column:span 2">第 6 段 12-10</div>
+                <div class="rl"><b>教研</b><span>老师线</span></div><div class="oc n2"><em>2 人</em><span>林夏</span><span>赵一然</span></div><div class="oc n2"><em>2 人</em><span>许诺</span><span>孟川</span></div><div class="oc"><em>1</em><span>宋知</span></div><div class="oc"><em>1</em><span>陈默</span></div><div class="oc n0"><em>空岗</em></div><div class="oc n0"><em>空岗</em></div>
+                <div class="rl"><b>教学</b><span>老师线</span></div><div class="oc"><em>1</em><span>许诺</span></div><div class="oc"><em>1</em><span>林夏</span></div><div class="oc"><em>1</em><span>孟川</span></div><div class="oc"><em>1</em><span>宋知</span></div><div class="oc"><em>1</em><span>赵一然</span></div><div class="oc"><em>1</em><span>陈默</span></div>
+                <div class="rl"><b>客服</b><span>客户线</span></div><div class="oc"><em>1</em><span>孟川</span></div><div class="oc"><em>1</em><span>赵一然</span></div><div class="oc"><em>1</em><span>林夏</span></div><div class="oc"><em>1</em><span>许诺</span></div><div class="oc n2"><em>2 人</em><span>陈默</span><span>宋知</span></div><div class="oc n0"><em>空岗</em></div>
+                <div class="rl"><b>销售</b><span>客户线</span></div><div class="oc"><em>1</em><span>宋知</span></div><div class="oc"><em>1</em><span>陈默</span></div><div class="oc"><em>1</em><span>许诺</span></div><div class="oc n2"><em>2 人</em><span>林夏</span><span>赵一然</span></div><div class="oc n0"><em>空岗</em></div><div class="oc"><em>1</em><span>孟川</span></div>
+                <div class="rl"><b>内容</b><span>市场</span></div><div class="oc"><em>1</em><span>陈默</span></div><div class="oc n0"><em>空岗</em></div><div class="oc"><em>1</em><span>赵一然</span></div><div class="oc n0"><em>空岗</em></div><div class="oc n2"><em>2 人</em><span>林夏</span><span>孟川</span></div><div class="oc n2"><em>2 人</em><span>许诺</span><span>宋知</span></div>
+                <div class="rl"><b>投放</b><span>市场</span></div><div class="oc n0"><em>空岗</em></div><div class="oc"><em>1</em><span>宋知</span></div><div class="oc"><em>1</em><span>陈默</span></div><div class="oc"><em>1</em><span>孟川</span></div><div class="oc"><em>1</em><span>许诺</span></div><div class="oc n2"><em>2 人</em><span>林夏</span><span>赵一然</span></div>
+              </div>
+              <div style="font-size:11px;color:var(--a-mute);margin-top:6px">同段同岗 2 人：7 格；空岗：7 格（coverage.md 5.3）。岗位容量上限是业务决定，未定前只标「≥2」和「空」。</div>
+            </div>
+            <div class="gvw" data-gview="mentor">
+              <div class="gt" style="grid-template-columns:116px repeat(12,minmax(0,1fr))">
+                <div class="h"></div><div class="h" style="grid-column:span 2">第 1 段</div><div class="h" style="grid-column:span 2">第 2 段</div><div class="h ix" style="grid-column:span 2">第 3 段</div><div class="h" style="grid-column:span 2">第 4 段</div><div class="h" style="grid-column:span 2">第 5 段</div><div class="h" style="grid-column:span 2">第 6 段</div>
+                <div class="rl"><b>吴桐</b><span>老师线 · 教研 + 教学</span></div><div class="oc n2"><em>3 人</em></div><div class="oc n2"><em>3 人</em></div><div class="oc"><em>2</em></div><div class="oc"><em>2</em></div><div class="oc"><em>1</em></div><div class="oc"><em>1</em></div>
+                <div class="rl"><b>周颖</b><span>客户线 · 客服 + 销售</span></div><div class="oc"><em>2</em></div><div class="oc"><em>2</em></div><div class="oc"><em>2</em></div><div class="oc n2"><em>3 人</em></div><div class="oc"><em>2</em></div><div class="oc"><em>1</em></div>
+                <div class="rl"><b>未指定</b><span>市场 · 内容 + 投放</span></div><div class="oc"><em>1</em></div><div class="oc"><em>1</em></div><div class="oc"><em>2</em></div><div class="oc"><em>1</em></div><div class="oc n2"><em>3 人</em></div><div class="oc n0"><em>4 人</em></div>
+              </div>
+              <div style="font-size:11px;color:var(--a-mute);margin-top:6px">示意：假设每条业务线一位站带教兼两站。示例数据没有市场线带教（M-25）；同时带几人算超载由常浩定，这里 3 人标黄、4 人标红只是演示。</div>
+            </div>
+          </div>
+          <div class="drawer">
+            <div style="font-size:11px;color:var(--a-mute)">已选 · 站</div>
+            <div style="font-size:15px;font-weight:600">林夏 · 客服站</div>
+            <div class="fld"><span>起止</span><div>10-29 周四 – 11-11 周三</div></div>
+            <div class="fld"><span>站带教</span><div class="inp">周颖 ▾</div></div>
+            <div class="fld"><span>本站</span><div>通过 0/3 · 待点评 1</div></div>
+            <div class="fld"><span>操作</span><div style="display:flex;gap:4px"><span class="ab pri">顺延</span><span class="ab">换站带教</span></div></div>
+            <div style="border:1px solid var(--a-line);border-radius:10px;padding:8px;font-size:11.5px;line-height:1.55;background:var(--a-soft)"><b>顺延 1 周 · 预览</b><br>客服站改为 10-29 – 11-18；销售、内容、投放三站和定岗各后移 1 周；本站未开始任务 1 条重排截止：客服岗小结 11-11 → 11-18。</div>
+            <div class="fld"><span>原因</span><div class="inp" style="color:var(--a-mute)">必填，例：请假一周</div></div>
+            <div style="font-size:10.5px;color:var(--a-mute);line-height:1.5">确认后写入：站起止、任务截止（原截止另存）、事件「路径调整」。已开始的站只能顺延，不能换顺序 <span style="font-family:var(--mono)">Admin.tsx:145</span>。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="pnote">
+      <div><b>取代「个人路径分配」页</b>原型是逐人上下挪顺序，日期不能改，也看不到全员分布 <span class="ev o">Admin.tsx:130-169</span>；这里同一份数据切三种视角，编辑放进抽屉。</div>
+      <div><b>调整是一个事件</b>原型调整后不重排任务 <span class="ev o">api.ts:106</span>，和 issue #5 验收不一致；这里写回站起止和任务截止，并留痕。拖拽编辑放二期。</div>
+      <div><b>只读角色看到的</b>带教：只高亮自己的站；管培生：只高亮自己那一行；其他人只看站和换站，看不到评估节点和任务级逾期（拍板 B2）。</div>
+    </div>
+    <p class="fig-cap"><b>图 9</b>P3 对应需求：轮岗日历改为轮岗排期、个人路径分配并入、工作日日历、评估节点、带教承载（需求对照 #9 #11 #33 N7）。</p>
+  </div>
+  </div>
+
+  <!-- P4 -->
+  <div class="wrap">
+  <div class="blk panel dark s3">
+    <div class="dm-head"><div><h4>P4 · 全员「团队活动」月历</h4><p>2026 年 11 月。只放公开的东西：团队活动、公告、换站日、周报截止。示例数据里只有一场活动，没有补编；其余活动二期从共享日历读进来。</p></div></div>
+    <div class="pscroll">
+    <div class="ap nos">
+      <div class="ap-main">
+        <div class="ap-top"><div class="ap-crumb">日程 / <b>团队活动</b> · 2026 年 11 月</div><div class="ap-tools"><span class="gsw"><button type="button">我的本周</button><button type="button">我带的人</button><button type="button">轮岗排期</button><button type="button" aria-pressed="true">团队活动</button></span><span class="ap-tool">‹ 10 月</span><span class="ap-tool">12 月 ›</span></div></div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 260px">
+          <div class="ap-body">
+            <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="tg ok" style="background:var(--l-m);color:var(--l-md)">团队活动 · 飞书</span><span class="tg neu">换站日</span><span class="tg neu">周报截止</span><span class="tg acc">公告</span><span class="tg warn">月度物料</span></div>
+            <div class="mo">
+              <div class="h">一</div><div class="h">二</div><div class="h">三</div><div class="h">四</div><div class="h">五</div><div class="h">六</div><div class="h">日</div>
+              <div class="d out"><b>26</b></div><div class="d out"><b>27</b></div><div class="d out"><b>28</b></div><div class="d out"><b>29</b><div class="it bot">换站日</div></div><div class="d out"><b>30</b></div><div class="d out"><b>31</b></div><div class="d"><b>1</b><div class="it bot">周报截止 22:00</div></div>
+              <div class="d"><b>2</b></div><div class="d"><b>3</b><div class="it quiz">公告 · 11 月分享会安排</div></div><div class="d"><b>4</b></div><div class="d today"><b>5 今天</b></div><div class="d"><b>6</b></div><div class="d"><b>7</b></div><div class="d"><b>8</b><div class="it bot">周报截止 22:00</div></div>
+              <div class="d"><b>9</b></div><div class="d"><b>10</b></div><div class="d"><b>11</b></div><div class="d" style="background:var(--k-fffbf5)"><b>12</b><div class="it bot">换站日</div><div class="it ev"><b>19:30</b>分享会 · 用 Claude 做行业研究 · 陈默</div><span class="conf">同日换站</span></div><div class="d"><b>13</b></div><div class="d"><b>14</b></div><div class="d"><b>15</b><div class="it bot">周报截止 22:00</div></div>
+              <div class="d"><b>16</b></div><div class="d"><b>17</b></div><div class="d"><b>18</b></div><div class="d"><b>19</b></div><div class="d"><b>20</b></div><div class="d"><b>21</b></div><div class="d"><b>22</b><div class="it bot">周报截止 22:00</div></div>
+              <div class="d"><b>23</b></div><div class="d"><b>24</b></div><div class="d"><b>25</b></div><div class="d"><b>26</b><div class="it bot">换站日</div></div><div class="d"><b>27</b></div><div class="d"><b>28</b></div><div class="d"><b>29</b><div class="it bot">周报截止 22:00</div></div>
+              <div class="d"><b>30</b><div class="it due">月度物料 22:00</div></div><div class="d out"><b>1</b></div><div class="d out"><b>2</b></div><div class="d out"><b>3</b></div><div class="d out"><b>4</b></div><div class="d out"><b>5</b></div><div class="d out"><b>6</b></div>
+            </div>
+          </div>
+          <div class="drawer">
+            <div style="font-size:11px;color:var(--a-mute)">活动详情 · 来自共享「管培生活动」日历</div>
+            <div style="font-size:15px;font-weight:600">分享会：用 Claude 做行业研究</div>
+            <div class="fld"><span>时间</span><div>11-12 周四 19:30</div></div>
+            <div class="fld"><span>主讲</span><div>陈默</div></div>
+            <div class="fld"><span>地点</span><div>3 楼大会议室 / 飞书会议</div></div>
+            <div class="fld"><span>操作</span><div><span class="ab pri">在飞书中打开</span></div></div>
+            <div style="border:1px solid var(--a-line);border-radius:10px;padding:8px;font-size:11.5px;line-height:1.6;background:var(--a-soft)"><b>听众当天所在站</b><br>教研 1 · 教学 1 · 客服 1 · 销售 2 · 内容 0 · 投放 1<br><span style="color:var(--a-bad)">当天是换站日，6 人都在开新站</span></div>
+            <div style="font-size:11px;color:var(--a-mute);line-height:1.55">回放：活动结束后由管理员挂妙记链接，确认后才记主讲贡献（R16，二期）。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="pnote">
+      <div><b>只读，不写</b>「加入日历」改为「在飞书中打开」，由本人决定接受 <span class="ev o">Home.tsx:26</span>。</div>
+      <div><b>只放公开层</b>周报只显示截止，不显示谁没交；轻测、评估节点受限，不进全员月历 <span class="ev p">L85</span>。</div>
+      <div><b>示例数据瑕疵</b>公告正文写「11.12 周三」，但 2026-11-12 是周四 <span class="ev o">mock.ts:183</span>；活动时间以日历为准。</div>
+    </div>
+    <p class="fig-cap"><b>图 10</b>P4 对应需求：团队活动（列表 + 月历）、活动读共享日历、主讲贡献确认（需求对照 #25）。听众分布取自轮岗排期第 4 段（coverage.md 5.3）。</p>
+  </div>
+  </div>
+</section>
+
+<!-- 07 信息架构 -->
+<section class="stage s3" id="s7">
+  <div class="wrap">
+    <div class="st-head rev">
+      <div class="st-num">07</div>
+      <div><span class="k">呈现（二）· 信息架构与需求对照</span><h2>板块装东西，<em>顶栏放切面</em></h2><p>六个板块按对象归属组织，一个对象只有一个家；跨对象的看法放顶栏。PRD 已经把搜索、通知放在「全局」<span class="ev p">L37</span>，日程和待办属于同一类，只是被拆散进了成长、团队和首页。</p></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>重排后的导航树和每页职责</h3></div>
+      <div class="two">
+<pre class="code"><span class="kw">顶栏 · 跨板块切面</span>
+├─ 搜索 ⌘K      资料 / AI 资产 / FAQ / 作品集            <span class="c">二期</span>
+├─ <span class="kw">日程</span>（新）   按角色默认视角，可切换                    <span class="c">一期</span>
+│   ├─ 我的本周       管培生默认                         <span class="c">P1</span>
+│   ├─ 我带的人       带教默认                           <span class="c">P2</span>
+│   ├─ 轮岗排期       管理员默认，其他人只读              <span class="c">P3</span>
+│   └─ 团队活动       全员；二期接共享日历               <span class="c">P4</span>
+├─ <span class="kw">待办</span>（新）   我负责的全部待办；首页焦点=前两条        <span class="c">P5</span>
+├─ 通知         刚发生、与我有关的事件                   <span class="c">二期</span>
+└─ 头像 → 我的档案
+
+<span class="kw">一级导航 · 对象的家（6 个不变）</span>
+├─ 首页   焦点 → 本周（日程切片）→ 角色卡片 → 团队动态
+├─ 成长   路径总览 · 我的路径 · 任务详情 · 带教看板
+│         · 轮岗排期（深链）· 考核（轻测记录、阶段评估）
+├─ 知识   资料库 · FAQ · 作品集
+├─ AI     首页 · 资产库 · 资产详情 · 提交 · 学习路径 · 用例墙
+├─ 团队   成员 · 个人档案（时间线、交接卡、答辩材料包）
+│         · 公告与动态 · 活动（月历深链）· 周报汇总
+└─ 激励   贡献榜 · 我的积分 · 兑换商城 · 我的兑换申请</pre>
+<pre class="code"><span class="kw">管理后台 · 按「什么时候用」分组</span>
+├─ 待处理     = 管理员的待办                         <span class="c">P5</span>
+│   审核队列（资产 / 资料 / 作品集）· 待分配角色与路径
+│   · 阶段评估待确认 · 兑换处理
+├─ 期次与排期
+│   期次与期次启动（新）                             <span class="c">P8</span>
+│   · 轮岗排期编辑（取代「个人路径分配」）           <span class="c">P3</span>
+│   · 工作日日历（新）
+├─ 路径
+│   路径模板（带版本、截止规则）· 周期任务规则（新）  <span class="c">P7</span>
+├─ 内容     公告发布 · 标签维护
+├─ 系统     知识库同步 · 机器人接口密钥 · 积分规则
+└─ 汇报（新，二期，推演）
+
+<span class="c">原则</span>
+<span class="c">· 一个对象只有一个家：在家里看详情、编辑</span>
+<span class="c">· 切面不存数据：日程、待办、通知都是查询</span>
+<span class="c">· 首页焦点 = 待办前两条；后台首屏 = 待处理组</span></pre>
+      </div>
+      <p class="fig-cap"><b>图 11</b>一级导航不动，因为六个板块是 35 轮问答定的 <span class="ev p">L33</span>，而且对象归属清楚；这次的问题出在「跨板块视图没有位置」，不在板块划分。日程放顶栏而不是成长里，是因为团队活动属于团队板块，一个视图横跨两个板块。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>和 PRD 第 3 节逐页对照</h3><span class="k">保留 24 · 修订 15 · 删除（并入）1 · 新增 8</span></div>
+      <p class="lead">逐页写原型现状、新结构的处置、期次和对应原型。「原型图」一列就是需求 → 视图对照：一期的修订和新增页都有原型（P1–P8），只有工作日日历、机器人接口密钥两个简单设置页没画；改动只在数据或规则层的写「沿用原型界面」；原型里只是占位或没做、本次也没画的，写「某期另出」。下面先列有改动的 16 页和新增 8 页，40 页全表折叠在后面。</p>
+<div class="tw"><table class="t wide"><thead><tr><th>#</th><th>PRD 页面</th><th>原型现状</th><th>新结构</th><th>说明</th><th>期</th><th>原型图</th></tr></thead><tbody><tr class="grp"><td colspan="7">全局</td></tr><tr><td class="id">#2</td><td><b>通知中心</b><br><span class="cap">PRD L37</span></td><td>未做<br><span class="cap">铃铛提示「二期上线」Layout.tsx:105</span></td><td><span class="st rev">修订</span></td><td>补「事件→通知」规则表；PRD 分期表未列，定为二期</td><td class="nw">二期</td><td>二期另出</td></tr><tr class="grp"><td colspan="7">首页</td></tr><tr><td class="id">#3</td><td><b>我的今天（按角色）</b><br><span class="cap">PRD L38</span></td><td>部分<br><span class="cap">三角色已做；带教「本周带教安排」写死 Home.tsx:197；管理员连接状态、公告占位 Home.tsx:285,289</span></td><td><span class="st rev">修订</span></td><td>焦点=待办前两条（规则挑）；加「本周」日程切片；带教按在带/将到/刚交接三组；管理员加本周排期与点评积压</td><td class="nw">一期</td><td>P1 P2</td></tr><tr><td class="id">#4</td><td><b>团队动态</b><br><span class="cap">PRD L38</span></td><td>部分<br><span class="cap">动态是写死文本 mock.ts:174-180，types.ts:86 只有 text</span></td><td><span class="st rev">修订</span></td><td>改为事件日志的公开投影</td><td class="nw">一期</td><td>沿用原型界面</td></tr><tr class="grp"><td colspan="7">成长</td></tr><tr><td class="id">#6</td><td><b>我的路径与进度</b><br><span class="cap">PRD L39</span></td><td>已做<br><span class="cap">main.tsx:26</span></td><td><span class="st rev">修订</span></td><td>进度给两个数（时间、完成）；站分「时间位置」和「结清」两字段</td><td class="nw">一期</td><td>P1</td></tr><tr><td class="id">#7</td><td><b>任务详情</b><br><span class="cap">PRD L39</span></td><td>已做<br><span class="cap">main.tsx:27</span></td><td><span class="st rev">修订</span></td><td>周期任务按完成方式出按钮；再交并排上次评语；需修改给修改截止；带教=本站带教</td><td class="nw">一期</td><td>沿用原型界面</td></tr><tr><td class="id">#8</td><td><b>带教看板</b><br><span class="cap">PRD L39</span></td><td>已做<br><span class="cap">main.tsx:28；按 user.mentorId 取人 api.ts:186</span></td><td><span class="st rev">修订</span></td><td>按站带教关系取人，分三组；只管人和进度（列：本站进度、待我做、上一站要点），时间切面在日程「我带的人」</td><td class="nw">一期</td><td>P2</td></tr><tr><td class="id">#9</td><td><b>轮岗日历</b><br><span class="cap">PRD L39 PRD L66</span></td><td>未做<br><span class="cap">成长页签无此项 Growth.tsx:10-14；分期表 L172-174 未列</span></td><td><span class="st rev">修订</span></td><td>改名「轮岗排期」，放进日程（甘特，按人/按岗位/按带教），成长保留深链</td><td class="nw">一期</td><td>P3</td></tr><tr><td class="id">#10</td><td><b>考核·轻测记录</b><br><span class="cap">PRD L39</span></td><td>未做<br><span class="cap">二期 L173</span></td><td><span class="st rev">修订</span></td><td>轻测=测验型周期任务，成绩由机器人写回，未答不判逾期</td><td class="nw">二期</td><td>P7</td></tr><tr><td class="id">#11</td><td><b>考核·阶段评估</b><br><span class="cap">PRD L39</span></td><td>未做<br><span class="cap">二期 L173</span></td><td><span class="st rev">修订</span></td><td>轮岗阶段由主带教依据各站站评汇总；评估节点一期先上甘特</td><td class="nw">二期</td><td>P3</td></tr><tr><td class="id">#12</td><td><b>考核·答辩材料包</b><br><span class="cap">PRD L39</span></td><td>未做<br><span class="cap">二期 L173</span></td><td><span class="st rev">修订</span></td><td>移到个人档案（PRD L80 原文即「从个人档案一键汇总」），加完整度检查</td><td class="nw">二期</td><td>二期另出</td></tr><tr class="grp"><td colspan="7">团队</td></tr><tr><td class="id">#23</td><td><b>个人档案</b><br><span class="cap">PRD L42</span></td><td>部分<br><span class="cap">main.tsx:34；无成长时间线</span></td><td><span class="st rev">修订</span></td><td>成长时间线=事件日志按人投影；加交接卡；答辩材料包入口</td><td class="nw">一期</td><td>P6</td></tr><tr><td class="id">#25</td><td><b>活动</b><br><span class="cap">PRD L42</span></td><td>未做<br><span class="cap">首页一张写死活动卡 mock.ts:186</span></td><td><span class="st rev">修订</span></td><td>列表+月历（=日程「团队活动」视角深链），读共享「管培生活动」日历</td><td class="nw">二期</td><td>P4</td></tr><tr class="grp"><td colspan="7">后台</td></tr><tr><td class="id">#31</td><td><b>成员与角色</b><br><span class="cap">PRD L44</span></td><td>已做<br><span class="cap">main.tsx:37</span></td><td><span class="st rev">修订</span></td><td>带教权限由站带教关系的起止推出；新人由期次预置名单直接成为管培生</td><td class="nw">一期</td><td>P8</td></tr><tr><td class="id">#32</td><td><b>路径模板编辑</b><br><span class="cap">PRD L44</span></td><td>已做<br><span class="cap">main.tsx:38</span></td><td><span class="st rev">修订</span></td><td>模板加版本号；任务加「截止规则（锚点站开始或站结束 + 偏移工作日）」；周期任务拆到单独的规则页</td><td class="nw">一期</td><td>P7</td></tr><tr><td class="id">#33</td><td><b>个人路径分配</b><br><span class="cap">PRD L44</span></td><td>已做<br><span class="cap">main.tsx:39；调整不重排任务 api.ts:106</span></td><td><span class="st del">删除（并入）</span></td><td>并入轮岗排期甘特的编辑抽屉；调整触发未开始任务截止重排</td><td class="nw">一期</td><td>P3</td></tr><tr><td class="id">#34</td><td><b>审核队列（资产、资料、作品集）</b><br><span class="cap">PRD L44</span></td><td>部分<br><span class="cap">只有资产 main.tsx:36</span></td><td><span class="st rev">修订</span></td><td>归入后台「待处理」组（=管理员待办）</td><td class="nw">一期</td><td>P5</td></tr></tbody></table></div><div class="tw" style="margin-top:16px"><table class="t wide"><thead><tr><th>#</th><th>新增页面</th><th>职责</th><th></th><th>期</th><th>原型图</th><th>来源</th></tr></thead><tbody><tr><td class="id">N1</td><td><b>日程 · 我的本周</b></td><td>管培生默认视角：站、换站、截止、周报、轻测、团队活动排在一条周时间线上；跟岗、1:1 二期叠加</td><td><span class="st new">新增</span></td><td>一期（推算部分）</td><td>P1</td><td><span class="cap">T-01 T-03；ontology 5.2</span></td></tr><tr><td class="id">N2</td><td><b>日程 · 我带的人</b></td><td>带教多人周视图：行=在带/将到的人，列=天，单元=截止、提交、点评期限、换站；我的飞书日程二期叠加</td><td><span class="st new">新增</span></td><td>一期（推算部分）</td><td>P2</td><td><span class="cap">M-10 M-11；ontology 5.2</span></td></tr><tr><td class="id">N3</td><td><b>待办（顶栏入口）</b></td><td>我负责的全部待办，按期限排；首页焦点=前两条；后台「待处理」组=管理员待办</td><td><span class="st new">新增</span></td><td class="nw">一期</td><td>P5</td><td><span class="cap">ontology 第 4 节；A-07 A-14</span></td></tr><tr><td class="id">N4</td><td><b>后台 · 周期任务规则</b></td><td>周报、轻测、月度物料、日报：频率、截止时刻、适用阶段、完成方式</td><td><span class="st new">新增</span></td><td class="nw">一期</td><td>P7</td><td><span class="cap">ontology 1.2；T-07；issue #6</span></td></tr><tr><td class="id">N5</td><td><b>后台 · 期次与期次启动</b></td><td>建期次、选模板版本、预置成员名单、设开学日、生成轮岗矩阵、分配站带教、甘特预览、发布</td><td><span class="st new">新增</span></td><td>一期（最简向导）</td><td>P8</td><td><span class="cap">A-02 T-11</span></td></tr><tr><td class="id">N6</td><td><b>交接要点（站末填写 + 档案交接卡）</b></td><td>站末由本站带教写，最多 3 条，给下一站带教和管理员看</td><td><span class="st new">新增</span></td><td class="nw">一期</td><td>P6</td><td><span class="cap">M-04 A-17</span></td></tr><tr><td class="id">N7</td><td><b>后台 · 工作日日历</b></td><td>法定假期与调休，排期和截止推算用</td><td><span class="st new">新增</span></td><td class="nw">一期</td><td>设置页一期另出（P3 只画了假期灰带）</td><td><span class="cap">A-09 T-12</span></td></tr><tr><td class="id">N8</td><td><b>后台 · 汇报</b></td><td>按期次、时间范围出数，导出飞书文档（推演，待常浩确认）</td><td><span class="st new">新增</span></td><td class="nw">二期</td><td>二期另出</td><td><span class="cap">A-12</span></td></tr></tbody></table></div><details class="more"><summary>PRD 第 3 节 40 页全表（含保留不动的 24 页）</summary><div class="tw"><table class="t wide"><thead><tr><th>#</th><th>PRD 页面</th><th>原型现状</th><th>新结构</th><th>说明</th><th>期</th><th>原型图</th></tr></thead><tbody><tr class="grp"><td colspan="7">全局</td></tr><tr><td class="id">#1</td><td><b>全局搜索</b><br><span class="cap">PRD L37</span></td><td>未做<br><span class="cap">PRD 二期 L173</span></td><td><span class="st keep">保留</span></td><td>二期不变</td><td class="nw">二期</td><td>二期另出</td></tr><tr><td class="id">#2</td><td><b>通知中心</b><br><span class="cap">PRD L37</span></td><td>未做<br><span class="cap">铃铛提示「二期上线」Layout.tsx:105</span></td><td><span class="st rev">修订</span></td><td>补「事件→通知」规则表；PRD 分期表未列，定为二期</td><td class="nw">二期</td><td>二期另出</td></tr><tr class="grp"><td colspan="7">首页</td></tr><tr><td class="id">#3</td><td><b>我的今天（按角色）</b><br><span class="cap">PRD L38</span></td><td>部分<br><span class="cap">三角色已做；带教「本周带教安排」写死 Home.tsx:197；管理员连接状态、公告占位 Home.tsx:285,289</span></td><td><span class="st rev">修订</span></td><td>焦点=待办前两条（规则挑）；加「本周」日程切片；带教按在带/将到/刚交接三组；管理员加本周排期与点评积压</td><td class="nw">一期</td><td>P1 P2</td></tr><tr><td class="id">#4</td><td><b>团队动态</b><br><span class="cap">PRD L38</span></td><td>部分<br><span class="cap">动态是写死文本 mock.ts:174-180，types.ts:86 只有 text</span></td><td><span class="st rev">修订</span></td><td>改为事件日志的公开投影</td><td class="nw">一期</td><td>沿用原型界面</td></tr><tr class="grp"><td colspan="7">成长</td></tr><tr><td class="id">#5</td><td><b>路径总览（模板）</b><br><span class="cap">PRD L39</span></td><td>已做<br><span class="cap">main.tsx:25</span></td><td><span class="st keep">保留</span></td><td>不变</td><td class="nw">一期</td><td>沿用原型</td></tr><tr><td class="id">#6</td><td><b>我的路径与进度</b><br><span class="cap">PRD L39</span></td><td>已做<br><span class="cap">main.tsx:26</span></td><td><span class="st rev">修订</span></td><td>进度给两个数（时间、完成）；站分「时间位置」和「结清」两字段</td><td class="nw">一期</td><td>P1</td></tr><tr><td class="id">#7</td><td><b>任务详情</b><br><span class="cap">PRD L39</span></td><td>已做<br><span class="cap">main.tsx:27</span></td><td><span class="st rev">修订</span></td><td>周期任务按完成方式出按钮；再交并排上次评语；需修改给修改截止；带教=本站带教</td><td class="nw">一期</td><td>沿用原型界面</td></tr><tr><td class="id">#8</td><td><b>带教看板</b><br><span class="cap">PRD L39</span></td><td>已做<br><span class="cap">main.tsx:28；按 user.mentorId 取人 api.ts:186</span></td><td><span class="st rev">修订</span></td><td>按站带教关系取人，分三组；只管人和进度（列：本站进度、待我做、上一站要点），时间切面在日程「我带的人」</td><td class="nw">一期</td><td>P2</td></tr><tr><td class="id">#9</td><td><b>轮岗日历</b><br><span class="cap">PRD L39 PRD L66</span></td><td>未做<br><span class="cap">成长页签无此项 Growth.tsx:10-14；分期表 L172-174 未列</span></td><td><span class="st rev">修订</span></td><td>改名「轮岗排期」，放进日程（甘特，按人/按岗位/按带教），成长保留深链</td><td class="nw">一期</td><td>P3</td></tr><tr><td class="id">#10</td><td><b>考核·轻测记录</b><br><span class="cap">PRD L39</span></td><td>未做<br><span class="cap">二期 L173</span></td><td><span class="st rev">修订</span></td><td>轻测=测验型周期任务，成绩由机器人写回，未答不判逾期</td><td class="nw">二期</td><td>P7</td></tr><tr><td class="id">#11</td><td><b>考核·阶段评估</b><br><span class="cap">PRD L39</span></td><td>未做<br><span class="cap">二期 L173</span></td><td><span class="st rev">修订</span></td><td>轮岗阶段由主带教依据各站站评汇总；评估节点一期先上甘特</td><td class="nw">二期</td><td>P3</td></tr><tr><td class="id">#12</td><td><b>考核·答辩材料包</b><br><span class="cap">PRD L39</span></td><td>未做<br><span class="cap">二期 L173</span></td><td><span class="st rev">修订</span></td><td>移到个人档案（PRD L80 原文即「从个人档案一键汇总」），加完整度检查</td><td class="nw">二期</td><td>二期另出</td></tr><tr class="grp"><td colspan="7">知识</td></tr><tr><td class="id">#13</td><td><b>资料库</b><br><span class="cap">PRD L40</span></td><td>占位<br><span class="cap">Misc.tsx:21</span></td><td><span class="st keep">保留</span></td><td>二期不变</td><td class="nw">二期</td><td>二期另出</td></tr><tr><td class="id">#14</td><td><b>FAQ</b><br><span class="cap">PRD L40</span></td><td>占位<br><span class="cap">Misc.tsx:21</span></td><td><span class="st keep">保留</span></td><td>二期不变</td><td class="nw">二期</td><td>二期另出</td></tr><tr><td class="id">#15</td><td><b>作品集（列表+详情）</b><br><span class="cap">PRD L40</span></td><td>占位<br><span class="cap">Misc.tsx:21</span></td><td><span class="st keep">保留</span></td><td>二期；提名人另定</td><td class="nw">二期</td><td>二期另出</td></tr><tr class="grp"><td colspan="7">AI</td></tr><tr><td class="id">#16</td><td><b>AI 首页</b><br><span class="cap">PRD L41</span></td><td>已做<br><span class="cap">main.tsx:29</span></td><td><span class="st keep">保留</span></td><td>不变</td><td class="nw">一期</td><td>沿用原型</td></tr><tr><td class="id">#17</td><td><b>资产库</b><br><span class="cap">PRD L41</span></td><td>已做<br><span class="cap">main.tsx:30</span></td><td><span class="st keep">保留</span></td><td>不变</td><td class="nw">一期</td><td>沿用原型</td></tr><tr><td class="id">#18</td><td><b>资产详情</b><br><span class="cap">PRD L41</span></td><td>已做<br><span class="cap">main.tsx:31</span></td><td><span class="st keep">保留</span></td><td>不变</td><td class="nw">一期</td><td>沿用原型</td></tr><tr><td class="id">#19</td><td><b>提交资产</b><br><span class="cap">PRD L41</span></td><td>已做<br><span class="cap">main.tsx:32</span></td><td><span class="st keep">保留</span></td><td>不变</td><td class="nw">一期</td><td>沿用原型</td></tr><tr><td class="id">#20</td><td><b>AI 学习路径</b><br><span class="cap">PRD L41</span></td><td>占位<br><span class="cap">AI.tsx:42 占位卡</span></td><td><span class="st keep">保留</span></td><td>三期不变</td><td class="nw">三期</td><td>三期另出</td></tr><tr><td class="id">#21</td><td><b>用例墙</b><br><span class="cap">PRD L41</span></td><td>未做<br><span class="cap">三期 L174</span></td><td><span class="st keep">保留</span></td><td>三期不变</td><td class="nw">三期</td><td>三期另出</td></tr><tr class="grp"><td colspan="7">团队</td></tr><tr><td class="id">#22</td><td><b>成员列表</b><br><span class="cap">PRD L42</span></td><td>已做<br><span class="cap">main.tsx:33</span></td><td><span class="st keep">保留</span></td><td>不变</td><td class="nw">一期</td><td>沿用原型</td></tr><tr><td class="id">#23</td><td><b>个人档案</b><br><span class="cap">PRD L42</span></td><td>部分<br><span class="cap">main.tsx:34；无成长时间线</span></td><td><span class="st rev">修订</span></td><td>成长时间线=事件日志按人投影；加交接卡；答辩材料包入口</td><td class="nw">一期</td><td>P6</td></tr><tr><td class="id">#24</td><td><b>公告与动态</b><br><span class="cap">PRD L42</span></td><td>未做<br><span class="cap">二期 L173</span></td><td><span class="st keep">保留</span></td><td>二期不变（动态来源已在「团队动态」行修订）</td><td class="nw">二期</td><td>二期另出</td></tr><tr><td class="id">#25</td><td><b>活动</b><br><span class="cap">PRD L42</span></td><td>未做<br><span class="cap">首页一张写死活动卡 mock.ts:186</span></td><td><span class="st rev">修订</span></td><td>列表+月历（=日程「团队活动」视角深链），读共享「管培生活动」日历</td><td class="nw">二期</td><td>P4</td></tr><tr><td class="id">#26</td><td><b>周报汇总</b><br><span class="cap">PRD L42</span></td><td>未做<br><span class="cap">二期 L173</span></td><td><span class="st keep">保留</span></td><td>二期不变；周报只在机器人交，这里只看交没交</td><td class="nw">二期</td><td>二期另出</td></tr><tr class="grp"><td colspan="7">激励</td></tr><tr><td class="id">#27</td><td><b>贡献榜（月榜、总榜）</b><br><span class="cap">PRD L43</span></td><td>占位<br><span class="cap">Misc.tsx:22</span></td><td><span class="st keep">保留</span></td><td>三期不变</td><td class="nw">三期</td><td>三期另出</td></tr><tr><td class="id">#28</td><td><b>我的积分明细</b><br><span class="cap">PRD L43</span></td><td>占位<br><span class="cap">Misc.tsx:22</span></td><td><span class="st keep">保留</span></td><td>三期不变</td><td class="nw">三期</td><td>三期另出</td></tr><tr><td class="id">#29</td><td><b>兑换商城</b><br><span class="cap">PRD L43</span></td><td>占位<br><span class="cap">Misc.tsx:22</span></td><td><span class="st keep">保留</span></td><td>三期不变</td><td class="nw">三期</td><td>三期另出</td></tr><tr><td class="id">#30</td><td><b>我的兑换申请</b><br><span class="cap">PRD L43</span></td><td>占位<br><span class="cap">Misc.tsx:22</span></td><td><span class="st keep">保留</span></td><td>三期不变</td><td class="nw">三期</td><td>三期另出</td></tr><tr class="grp"><td colspan="7">后台</td></tr><tr><td class="id">#31</td><td><b>成员与角色</b><br><span class="cap">PRD L44</span></td><td>已做<br><span class="cap">main.tsx:37</span></td><td><span class="st rev">修订</span></td><td>带教权限由站带教关系的起止推出；新人由期次预置名单直接成为管培生</td><td class="nw">一期</td><td>P8</td></tr><tr><td class="id">#32</td><td><b>路径模板编辑</b><br><span class="cap">PRD L44</span></td><td>已做<br><span class="cap">main.tsx:38</span></td><td><span class="st rev">修订</span></td><td>模板加版本号；任务加「截止规则（锚点站开始或站结束 + 偏移工作日）」；周期任务拆到单独的规则页</td><td class="nw">一期</td><td>P7</td></tr><tr><td class="id">#33</td><td><b>个人路径分配</b><br><span class="cap">PRD L44</span></td><td>已做<br><span class="cap">main.tsx:39；调整不重排任务 api.ts:106</span></td><td><span class="st del">删除（并入）</span></td><td>并入轮岗排期甘特的编辑抽屉；调整触发未开始任务截止重排</td><td class="nw">一期</td><td>P3</td></tr><tr><td class="id">#34</td><td><b>审核队列（资产、资料、作品集）</b><br><span class="cap">PRD L44</span></td><td>部分<br><span class="cap">只有资产 main.tsx:36</span></td><td><span class="st rev">修订</span></td><td>归入后台「待处理」组（=管理员待办）</td><td class="nw">一期</td><td>P5</td></tr><tr><td class="id">#35</td><td><b>公告发布</b><br><span class="cap">PRD L44</span></td><td>占位<br><span class="cap">Misc.tsx:23</span></td><td><span class="st keep">保留</span></td><td>二期不变</td><td class="nw">二期</td><td>二期另出</td></tr><tr><td class="id">#36</td><td><b>积分规则与加权</b><br><span class="cap">PRD L44</span></td><td>占位<br><span class="cap">Misc.tsx:23</span></td><td><span class="st keep">保留</span></td><td>三期不变</td><td class="nw">三期</td><td>三期另出</td></tr><tr><td class="id">#37</td><td><b>兑换处理</b><br><span class="cap">PRD L44</span></td><td>占位<br><span class="cap">Misc.tsx:23</span></td><td><span class="st keep">保留</span></td><td>三期不变</td><td class="nw">三期</td><td>三期另出</td></tr><tr><td class="id">#38</td><td><b>标签维护</b><br><span class="cap">PRD L44</span></td><td>占位<br><span class="cap">Misc.tsx:23</span></td><td><span class="st keep">保留</span></td><td>二期不变</td><td class="nw">二期</td><td>二期另出</td></tr><tr><td class="id">#39</td><td><b>知识库同步设置</b><br><span class="cap">PRD L44</span></td><td>占位<br><span class="cap">Misc.tsx:23</span></td><td><span class="st keep">保留</span></td><td>二期不变</td><td class="nw">二期</td><td>二期另出</td></tr><tr><td class="id">#40</td><td><b>机器人接口密钥</b><br><span class="cap">PRD L44</span></td><td>占位<br><span class="cap">PRD 一期 L172「机器人接口」，原型放在二/三期占位页 Misc.tsx:23</span></td><td><span class="st keep">保留</span></td><td>一期补做（原型漏做）</td><td class="nw">一期</td><td>一期另出</td></tr></tbody></table></div></details><p class="fig-cap"><b>表 7</b>「原型图」列：P1–P8 是本页画出的高保真原型；「沿用原型」= 页面不变，原型里已有界面；「沿用原型界面」= 改动只在数据或规则层；「某期另出」= 原型里只是占位或没做、本次也没画，随该期另画。一期页面里没画的只有机器人接口密钥和工作日日历两个设置页。数据与计数和 coverage.md 第 1、2 节同源（build.py 从同一份清单生成）。</p>
+    </div>
+  </div>
+
+  <div class="wrap">
+  <div class="blk panel dark s3">
+    <div class="dm-head"><div><h4>P5–P8 · 待办、点评与交接卡、周期任务规则、期次启动</h4><p>四个较小的新增或修订界面。数据仍取示例数据；带教分配按示意（老师线吴桐、客户线周颖、市场未指定）。</p></div></div>
+    <div class="gal4">
+      <!-- P5 -->
+      <div class="pscroll"><div class="ap nos" style="min-width:520px"><div class="ap-main">
+        <div class="ap-top"><div class="ap-crumb">待办 / <b>常浩</b></div><div class="ap-tools"><span class="ap-tool">全部</span><span class="ap-tool new">待处理 7</span></div></div>
+        <div class="ap-body" style="gap:4px">
+          <div class="td-g">审核 · R10 · 3</div>
+          <div class="td"><span class="tg acc">Skill</span><div><b>行研报告结构检查</b><span class="src">陈默提交 · E20</span></div><span style="display:flex;gap:4px"><span class="ab pri">通过</span><span class="ab">退回</span></span></div>
+          <div class="td"><span class="tg acc">Skill</span><div><b>销售跟进话术生成</b><span class="src">许诺提交 · E20</span></div><span style="display:flex;gap:4px"><span class="ab pri">通过</span><span class="ab">退回</span></span></div>
+          <div class="td"><span class="tg acc">Prompt</span><div><b>家长沟通开场白</b><span class="src">孟川提交 · E20</span></div><span style="display:flex;gap:4px"><span class="ab pri">通过</span><span class="ab">退回</span></span></div>
+          <div class="td-g">点评 · R02 · 2 · 所属站没有站带教，落到你</div>
+          <div class="td"><span class="tg warn">待点评</span><div><b>赵一然 · 公众号选题清单</b><span class="m">内容站 · 11-05 09:10 提交 · 期限 11-09 09:10</span></div><span style="display:flex;gap:4px"><span class="ab pri">去点评</span><span class="ab">指定站带教</span></span></div>
+          <div class="td"><span class="tg warn">待点评</span><div><b>陈默 · 投放数据周报</b><span class="m">投放站 · 11-05 09:30 提交 · 期限 11-09 09:30</span></div><span style="display:flex;gap:4px"><span class="ab pri">去点评</span><span class="ab">指定站带教</span></span></div>
+          <div class="td-g">换站 · R06 · 1</div>
+          <div class="td"><span class="tg neu">接人</span><div><b>孟川 · 11-12 到投放站</b><span class="m">新站带教未指定；指定后这条改派给新带教</span></div><span class="ab pri">指定站带教</span></div>
+          <div class="td-g">跟进 · R05 · 1 · 周期任务的主带教是你</div>
+          <div class="td"><span class="tg bad">逾期 3 天</span><div><b>许诺 · 第 44 周周报</b><span class="m">按规则 11-01 周日 22:00 截止（示例数据写的是 11-04 18:00，属瑕疵 mock.ts:121）</span></div><span class="ab">催一下</span></div>
+          <div class="td-g">汇总 · 查询，不是待办</div>
+          <div class="ac soft" style="font-size:11.5px;line-height:1.6">有逾期的人：孟川 · 试讲复盘 逾期 2 天（待办在孟川和教学站带教吴桐那里）。<br>本周排期：11-12 周四 6 人换站，3 人换了带教：接人待办 2 条已发给周颖、吴桐，1 条（孟川）落在你这里。<br>点评积压：周颖 1 · 吴桐 0 · 市场线未指定 2（就是上面两条）。</div>
+        </div>
+      </div></div></div>
+      <!-- P6 -->
+      <div class="pscroll"><div class="ap nos" style="min-width:520px"><div class="ap-main">
+        <div class="ap-top"><div class="ap-crumb">成长 / 任务详情 / <b>话术演练录音</b></div><div class="ap-tools"><span class="ap-tool">林夏 · 客服站</span></div></div>
+        <div class="ap-body" style="gap:8px">
+          <div class="ac soft" style="font-size:11.5px"><b>提交 v1</b> · 11-04 16:50 · 飞书文档<br>说明：5 段录音放在文档里，第 4 段投诉场景有点卡壳。</div>
+          <div class="ac"><div class="ac-h"><b>点评</b><span>负责带教 = 客服站站带教 周颖；林夏换站不转</span></div>
+            <div class="rad"><span>优秀</span><span class="on">达标</span><span>需改进</span></div>
+            <div class="inp" style="margin-top:6px;color:var(--a-mute);min-height:40px">一两句总评；细节可以写在飞书文档批注里</div>
+            <div style="font-size:11px;color:var(--a-mute);margin-top:6px">选「需改进」时出现：修改截止（默认 N 个工作日后，建议值）。再交时这里并排显示「上次你的评语 | 这次的修改说明」。</div>
+          </div>
+          <div class="ac"><div class="ac-h"><b>交接卡 · 林夏</b><span>下一站带教开站前 5 个工作日起可见</span></div>
+            <table class="tbl"><tbody>
+              <tr><td><b>教研站</b></td><td>课程拆解报告 <span class="tg ok">优秀</span><br><span style="color:var(--a-mute)">「结构图画得好，改进点有落地性。」</span></td></tr>
+              <tr><td><b>教学站</b></td><td>试讲复盘 <span class="tg ok">达标</span><br><span style="color:var(--a-mute)">「…下次把学生反馈的数据放到最前面，结论会更有说服力。」</span></td></tr>
+              <tr><td><b>交接要点</b></td><td><span class="tg p2">一期新增</span> 示例数据里没有，上线后由原站带教在站后 2 个工作日内写，最多 3 条</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div></div></div>
+      <!-- P7 -->
+      <div class="pscroll"><div class="ap nos" style="min-width:520px"><div class="ap-main">
+        <div class="ap-top"><div class="ap-crumb">后台 / 路径 / <b>周期任务规则</b></div><div class="ap-tools"><span class="ap-pri">新建规则</span></div></div>
+        <div class="ap-body" style="gap:8px">
+          <table class="tbl"><thead><tr><th>规则</th><th>频率与截止</th><th>完成方式</th><th>带教</th></tr></thead><tbody>
+            <tr><td><b>第 N 周周报</b></td><td>每周日 22:00</td><td>机器人收周报</td><td>只看</td></tr>
+            <tr><td><b>轻测</b></td><td>每周一次 · 20:00</td><td>机器人出题、写成绩；未答记未答</td><td>不评</td></tr>
+            <tr><td><b>月度营销物料</b></td><td>每月最后一天 22:00</td><td>本人声明 + 管理员确认</td><td>—</td></tr>
+            <tr><td><b>日报</b></td><td>工作日 · 待定</td><td><span class="tg p2">待定</span> 机器人接口没有日报</td><td>待定</td></tr>
+          </tbody></table>
+          <div class="ac"><div class="ac-h"><b>任务模板 · 客服岗小结</b><span>路径模板 v1</span></div>
+            <div class="fld"><span>建议用时</span><div class="inp">2 天</div></div>
+            <div class="fld" style="margin-top:4px"><span>截止规则</span><div class="inp">锚定站结束 · 偏移 0 · 18:00</div></div>
+            <div style="font-size:11px;color:var(--a-mute);margin-top:6px">客服站 11-11 结束 → 截止 11-11 18:00、开放日 11-09，和示例数据一致；站被顺延，小结跟着走。对照：「话术演练录音」锚定站开始、第 5 个工作日 → 11-04。</div>
+          </div>
+        </div>
+      </div></div></div>
+      <!-- P8 -->
+      <div class="pscroll"><div class="ap nos" style="min-width:520px"><div class="ap-main">
+        <div class="ap-top"><div class="ap-crumb">后台 / 期次 / <b>新建期次 · 2026 秋季班</b></div><div class="ap-tools"><span class="ap-pri">下一步：甘特预览</span></div></div>
+        <div class="ap-body" style="gap:8px">
+          <div class="stepbar"><div class="ok"><b>1</b>模板版本</div><div class="ok"><b>2</b>预置成员</div><div class="ok"><b>3</b>开学日</div><div class="ok"><b>4</b>轮岗矩阵</div><div class="cur"><b>5</b>站带教</div><div><b>6</b>甘特预览</div><div><b>7</b>发布</div></div>
+          <table class="tbl"><thead><tr><th>站</th><th>业务线</th><th>站带教</th><th>本期同时最多</th></tr></thead><tbody>
+            <tr><td>教研</td><td>老师线</td><td>吴桐</td><td>2 人</td></tr>
+            <tr><td>教学</td><td>老师线</td><td>吴桐</td><td>1 人</td></tr>
+            <tr><td>客服</td><td>客户线</td><td>周颖</td><td>2 人</td></tr>
+            <tr><td>销售</td><td>客户线</td><td>周颖</td><td>2 人</td></tr>
+            <tr><td>内容</td><td>市场</td><td><span class="tg bad">未指定</span></td><td>2 人</td></tr>
+            <tr><td>投放</td><td>市场</td><td><span class="tg bad">未指定</span></td><td>2 人</td></tr>
+          </tbody></table>
+          <div class="ac soft" style="font-size:11.5px;line-height:1.6"><b>冲突检查</b>：吴桐第 1、2 段同时带 3 人；市场线若由一人兼两站，第 6 段同时 4 人；第 1 站 10-01 开始，落在国庆假期（示意）。预置名单里的人首次飞书登录直接成为本期管培生。</div>
+        </div>
+      </div></div></div>
+    </div>
+    <div class="pnote">
+      <div><b>P5 待办 · 7 条</b>审核 3 + 落到管理员的 R02 2 条、R06 1 条 + 主带教为空的 R05 1 条；「有逾期的人」是汇总查询。示意分配下暴露出市场线没有站带教 <span class="ev g">M-25</span>。</div>
+      <div><b>P6 点评与交接卡</b>评语只要总评，不设字数下限 <span class="ev g">带教走查 Q8</span>；点评文字取自示例数据 <span class="ev o">mock.ts:158-159</span>。</div>
+      <div><b>P7 / P8 后台</b>周期规则的频率、完成方式见 <span class="ev x">旁证 · 业务共识第 99、111–126 行</span>；期次启动把逐人分配变成一次发布 <span class="ev g">A-02</span>。</div>
+    </div>
+    <p class="fig-cap"><b>图 12</b>P5 对应需求 #34 N3；P6 对应 #7 #23 N6；P7 对应 #10 #32 N4；P8 对应 #31 N5。数字见 coverage.md 5.3、5.9。</p>
+  </div>
+  </div>
+</section>
+
+<!-- 08 写回 -->
+<section class="stage s2" id="s8">
+  <div class="wrap">
+    <div class="st-head">
+      <div class="st-num">08</div>
+      <div><span class="k">回流字段 · 系统怎么越用越准</span><h2>每个动作，<em>写回一个字段、追加一条事件</em></h2><p>界面动作 → 接口 → 写回字段 → 事件。写回的字段都能在第 4 章字段表里找到；以别的系统为准的数据，界面不直接改。接口路径是建议命名，字段细节在拆 issue 时定 <span class="ev p">L124</span>。事件沿用本体走查的 E01–E33，这一版新增 E34 站结束、E35–E41（截止调整、交接要点、待办完成、催办、催办送达、规则变更、待办重派），<code>event_log.type</code> 用一套点分命名（如 <code>submission.created</code>），编号只作对照。</p></div>
+    </div>
+    <div class="blk">
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>动作（在哪）</th><th>接口</th><th>写回</th><th>追加事件 → 触发</th></tr></thead>
+        <tbody>
+          <tr><td>提交产出（任务详情 / 机器人）</td><td><code>POST /api/tasks/:id/submissions</code></td><td>submission（版本、渠道、修改说明）；task_instance.状态 = 已提交</td><td>E10 → R02 待点评</td></tr>
+          <tr><td>写点评（任务详情 P6）</td><td><code>POST /api/submissions/:id/review</code></td><td>review；task_instance.状态；需改进时 task_instance.修改截止</td><td>E11 → 关闭 R02；需改进时 R03</td></tr>
+          <tr><td>调整截止（任务详情、待办）</td><td><code>POST /api/tasks/:id/due</code></td><td>task_instance.截止；首次调整时写原截止；调整原因</td><td>E35 due.changed → 撤销已失效的 R05</td></tr>
+          <tr><td>顺延一站、换站带教（轮岗排期抽屉 P3）</td><td><code>PATCH /api/personal-modules/:id</code></td><td>personal_module 起止、站带教；后续各站起止；未开始任务截止。换站带教时，这一站未关闭的 R02 R06 R08 R09 改派新带教</td><td>E03 → 重算 R06 R07 R08；改派时追加 E41 todo.reassigned</td></tr>
+          <tr><td>写交接要点（待办 / 档案）</td><td><code>PUT /api/personal-modules/:id/handover</code></td><td>handover_note</td><td>E36 handover.created → 关闭 R08；接人卡显示「已就绪」</td></tr>
+          <tr><td>接人已准备（待办 P2）</td><td><code>POST /api/todos/:id/done</code></td><td>todo.状态</td><td>E37 todo.done → 关闭 R06</td></tr>
+          <tr><td>催一下（待办 P5、看板）</td><td><code>POST /api/tasks/:id/nudges</code></td><td>无业务字段</td><td>E38 nudge.sent → 机器人推送 → 写回执 E39 nudge.delivered</td></tr>
+          <tr><td>审核资产（待办 P5）</td><td><code>POST /api/assets/:id/review</code></td><td>asset.状态、asset_version</td><td>E21 / E22 → 贡献派生 / R11</td></tr>
+          <tr><td>发布期次（期次启动 P8）</td><td><code>POST /api/cohorts/:id/launch</code></td><td>personal_path、personal_module、task_instance、stage_assessment 占位</td><td>E02 → 周期实例展开 E04</td></tr>
+          <tr><td>保存周期规则（P7）</td><td><code>PUT /api/recurring-rules/:id</code></td><td>recurring_rule；未开始的周期实例重排</td><td>E40 rule.changed</td></tr>
+          <tr><td>机器人写周报、写成绩</td><td><code>POST /bot/v1/weekly-reports</code> · <code>/bot/v1/quiz-results</code></td><td>weekly_report / quiz_result；对应周期实例状态</td><td>E14 / E13 → 关闭 R04 R05</td></tr>
+          <tr><td>机器人读（晨报、此刻提醒）</td><td><code>GET /bot/v1/people/:id/schedule</code> · <code>/bot/v1/mentors/:id/pending-reviews</code> · <code>/bot/v1/pushes</code></td><td>只读</td><td>—</td></tr>
+          <tr><td>四个时间视图</td><td><code>GET /api/schedule?view=week|mentor|rotation|events</code></td><td>只读；服务端按可见性过滤后返回日程项</td><td>—</td></tr>
+        </tbody>
+      </table></div>
+      <div class="two" style="margin-top:20px">
+        <div class="fig"><div class="k" style="margin-bottom:8px">以别的系统为准，界面不直接改</div><p style="font-size:14px;color:var(--ink2)">团队活动的时间、地点以飞书日历为准，工作台只补主讲、主题、回放；周报、轻测成绩以机器人写入为准，网页没有改的入口；飞书文档正文不进工作台，权限由飞书判断 <span class="ev p">L72</span><span class="ev p">L90</span>。</p></div>
+        <div class="fig"><div class="k" style="margin-bottom:8px">越用越准靠什么</div><p style="font-size:14px;color:var(--ink2)">事件从一期开始存：点评时效、需修改后再交通过率、站末遗留、换站集中度都从事件里算；下一期调模板时，能看到上一期哪些任务最常逾期、最常需修改（三期界面）。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 差异 -->
+<section class="stage s3" id="s9">
+  <div class="wrap">
+    <div class="st-head rev">
+      <div class="st-num">09</div>
+      <div><span class="k">差异专题 · 哪些地方要分开做</span><h2>七个维度逐个过，<em>没有一处要整套分开</em></h2><p>差异都落在字段、规则或页面层；页面层有三处：首页按角色 × 阶段换焦点候选、带教首页按在带状态分组、同事首页按「和我有关」排。全部是推演，没有真人材料验证。</p></div>
+    </div>
+    <div class="blk">
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>维度</th><th>差异是什么</th><th>依据</th><th>落在哪层</th><th>本案怎么做</th></tr></thead>
+        <tbody>
+          <tr><td><b>角色</b></td><td>带教至少两种：站带教、主带教；管理员身兼排期者、唯一编辑和对上汇报；机器人是做事的角色；同事会变成主讲或站带教</td><td><span class="ev p">L23</span><span class="ev p">L65</span><span class="ev p">L129</span>；<span class="ev o">mock.ts:71</span>；<span class="ev x">旁证：现状导师为常浩，管培生 2 人，CONTEXT.md 第 31 行</span></td><td>数据关系 + 规则</td><td>站带教唯一来源、主带教可选；权限由关系起止推出</td></tr>
+          <tr><td><b>熟练度和阶段</b></td><td>管培生：新人 / 中段 / 答辩前要的完全不同；带教：首次缺标准、老手缺不漏人；管理员：首期从零搭、后续要复用</td><td><span class="ev g">T 1.2</span><span class="ev g">M 1.2</span><span class="ev g">A 1.3</span></td><td>页面 + 内容</td><td>焦点候选随阶段换；三档说明与本站带教清单（二期）；模板版本</td></tr>
+          <tr><td><b>业务线</b></td><td>老师线跟课表、客户线跟来电和客户、市场跟排期；产出形式和点评方式不同</td><td><span class="ev o">mock.ts:35-40</span><span class="ev o">mock.ts:53-63</span>；<span class="ev g">推演</span></td><td>字段</td><td>模块带业务线；任务模板加点评方式（二期）；甘特按线着色。不分线做流程</td></tr>
+          <tr><td><b>服务对象</b></td><td>产出依赖真实客户、真实课堂，没分到客户时逾期不是管培生的错</td><td><span class="ev o">mock.ts:53</span><span class="ev o">mock.ts:58</span>；<span class="ev g">T-13</span></td><td>规则</td><td>调整截止 + 原因 + 留痕；主指标按调整后截止并列调整条数</td></tr>
+          <tr><td><b>情境</b></td><td>全员同一天换站；节假日；请假；跟岗时不在电脑前；晚上提交；多期重叠（培养期 180 天，下一期开学时上一期可能还在定岗）</td><td><span class="ev o">mock.ts:68-69</span>；<span class="ev p">L166</span>；<span class="ev g">推演</span></td><td>规则 + 渠道分工</td><td>工作日日历；路径顺延；此刻提醒归机器人；晚间提交次日合并推；带教承载按全部在册期次算，甘特默认当前期次、可叠加（是否多期并行待常浩确认）</td></tr>
+          <tr><td><b>结果</b></td><td>培养的结果是能力长出来、定岗；带教的结果是点评及时且让产出变好</td><td><span class="ev p">L178–179</span>；<span class="ev x">旁证：业务共识第 154 行</span></td><td>指标</td><td>主指标改量结果；带教侧点评时效达标率、需修改后再交通过率（第 10 章）</td></tr>
+          <tr><td><b>现有工具</b></td><td>带教在飞书文档里写批注、用飞书日历约 1:1；常浩用多维表格 <code>project_base</code> 和机器人</td><td><span class="ev p">L150–157</span>；<span class="ev g">推演</span></td><td>集成边界</td><td>点评只要三档 + 总评；日程只读飞书；历史从 project_base 一次性导入</td></tr>
+        </tbody>
+      </table></div>
+      <p class="fig-cap"><b>表 5</b>「补的就是系统缺的」：常浩现在用什么排轮岗、上一期管培生用什么记跟岗和截止，这两件事查到了会直接改变甘特和日程的优先级，列进第 12 章要补的材料。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 指标与分期 -->
+<section class="stage s2" id="s10">
+  <div class="wrap">
+    <div class="st-head">
+      <div class="st-num">10</div>
+      <div><span class="k">评级与推进 · 先做什么，做到什么算完</span><h2>指标改成量结果，<em>时间结构进一期</em></h2><p>主指标从「交没交、准不准时」改成「按期交、而且被认可」；分期按依赖排：站带教、工作日日历和事件不先立，后面每一期都要迁移数据。</p></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>主指标：从按时提交率到按期达标率</h3></div>
+      <div class="metric">
+        <div>
+          <span class="k">PRD v1.0 · L178</span><h4>阶段产出按时提交率</h4>
+          <dl>
+            <dt>分母</dt><dd>本周已到截止的全部任务，<b>含周期任务</b> <span class="ev o">api.ts:202</span></dd>
+            <dt>分子</dt><dd>截止前有任何一次提交，<b>或状态已通过（哪怕没有提交记录）</b> <span class="ev o">api.ts:204</span></dd>
+            <dt>问题</dt><dd>量的是交没交，不量行不行；草稿、被退回的都算按时；12 人一周只有十几条，单周比率大起大落 <span class="ev g">A 问 6–7</span></dd>
+          </dl>
+          <div class="res"><b>50%</b><span>示例数据第 45 周复算：8 条里 6 条是周期任务；4 条「按时」里 3 条没有任何提交记录（coverage.md 5.1）</span></div>
+        </div>
+        <div>
+          <span class="k">建议 · 拍板 B9</span><h4>路径任务按期达标率（滚动 4 周）</h4>
+          <dl>
+            <dt>分母</dt><dd>截止落在窗口内且已过截止的<b>路径任务</b>；剔除已中止培养的人</dd>
+            <dt>分子</dt><dd>首次正式提交不晚于截止，<b>且最终评为优秀或达标</b>（需修改后再交通过的也算；首轮即达标的比例放在悬停明细）</dd>
+            <dt>待定</dt><dd>已提交没点评的、被评需修改还没出最终结论的，都单列「待定」，不进分母；点评慢由带教侧指标管</dd>
+            <dt>截止</dt><dd>以调整后的截止为准；站带教可调本站截止，必须写原因，管理员可撤销；指标旁并列调整过的条数和调整人</dd>
+            <dt>显示</dt><dd>n / N 和滚动四周趋势</dd>
+          </dl>
+          <div class="res"><b>1 / 2</b><span>同一份示例数据，窗口 10-12 – 11-08：试讲复盘（林夏）按期达标；试讲复盘（孟川）逾期；话术演练录音待定 1（coverage.md 5.2）</span></div>
+        </div>
+      </div>
+      <div class="tw" style="margin-top:16px"><table class="t wide">
+        <thead><tr><th>指标</th><th>层级</th><th>定义</th><th>出处</th><th>期</th></tr></thead>
+        <tbody>
+          <tr><td><b>路径任务按期达标率</b></td><td>主指标 · 周看</td><td>见上</td><td><span class="ev p">L178</span> 改口径；<span class="ev g">A-05</span></td><td class="nw">一期</td></tr>
+          <tr><td><b>阶段评估达标率</b></td><td>结果 · 期看</td><td>已确认的阶段评估中三档 ≥ 达标 ÷ 已确认的阶段评估</td><td><span class="ev p">L79</span>；<span class="ev g">A-06</span></td><td class="nw">二期</td></tr>
+          <tr><td><b>定岗结果</b></td><td>结果 · 期末</td><td>定岗方向确认且答辩通过的人 ÷ 进入定岗的人（需新增定岗方向字段）</td><td><span class="ev g">A-06 推演</span></td><td class="nw">二期</td></tr>
+          <tr><td><b>计划进度差距</b></td><td>辅助</td><td>截至今天应完成的路径任务 − 已通过的；完成进度 = 已通过 ÷ 应完成（示例林夏 5 / 6）</td><td><span class="ev p">L179</span>；<span class="ev g">T-04</span></td><td class="nw">一期</td></tr>
+          <tr><td><b>点评时效达标率</b></td><td>带教侧</td><td>期限内完成的点评 ÷ 窗口内到期的点评待办（R02）</td><td><span class="ev g">M-23</span></td><td>二期（数据一期就存）</td></tr>
+          <tr><td><b>需修改后再交通过率</b></td><td>带教侧</td><td>需修改后再交并通过的任务 ÷ 被评需改进的任务；看点评有没有让产出变好</td><td><span class="ev g">M-23</span></td><td class="nw">二期</td></tr>
+          <tr><td><b>资产被非作者使用的人数</b></td><td>AI 侧</td><td>「我用过」里使用人 ≠ 作者的去重人数；自报，有偏差，标注口径</td><td><span class="ev p">L104</span>；<span class="ev g">A-18</span></td><td>一期可算</td></tr>
+          <tr><td>本月新上架资产 · 周活跃人数</td><td>参考</td><td>保留但降级：一个量供给、一个量登录 <span class="ev o">api.ts:46</span></td><td><span class="ev p">L179</span></td><td class="nw">一期</td></tr>
+        </tbody>
+      </table></div>
+      <p class="fig-cap"><b>表 6</b>不做带教排行：带教是兼职，排行会伤积极性 <span class="ev g">带教走查 Q22</span>。机器人项目也定了「不以系统活动量代替」<span class="ev x">旁证 · 业务共识第 154 行</span>。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>分期重排</h3><span class="k">加粗 = 这次补进来的</span></div>
+      <div class="ph3">
+        <div class="s1"><h4>一期<small>立结构</small></h4><ul>
+          <li><span class="st keep">原有</span><span>飞书登录与角色、档案（基础，含成长时间线）、成长路径、AI 资产库与审核、Tidings、三种首页、后台基础、机器人接口</span></li>
+          <li><span class="st new">新</span><span><b>期次与最简期次启动</b>（含预置名单）</span></li>
+          <li><span class="st new">新</span><span><b>站带教关系与跨站可见性</b></span></li>
+          <li><span class="st new">新</span><span><b>工作日日历、截止推算、路径调整重排</b></span></li>
+          <li><span class="st new">新</span><span><b>周期任务规则</b>（四种完成方式）</span></li>
+          <li><span class="st new">新</span><span><b>事件日志与待办</b>（12 条规则）</span></li>
+          <li><span class="st new">新</span><span><b>我的本周、我带的人</b>（推算部分）</span></li>
+          <li><span class="st new">新</span><span><b>轮岗排期</b>（三视角只读 + 抽屉调整）</span></li>
+          <li><span class="st new">新</span><span><b>交接要点</b>；<b>主指标新口径</b>；机器人接口补读写</span></li>
+        </ul><p class="why">除了预置名单要用飞书通讯录读取权限查 open_id（待验证；备选：按手机号或邮箱预置，首次登录再匹配），都不依赖外部授权，数据现成（每站起止已在 <span class="ev o">types.ts:36-37</span>）；贡献要「从一期就开始存」<span class="ev p">L120</span>，事件同理。</p></div>
+        <div class="s2"><h4>二期<small>接飞书、上考核</small></h4><ul>
+          <li><span class="st keep">原有</span><span>知识库同步、资料与标签、FAQ、考核、全局搜索、团队板块、作品集；机器人过渡切换</span></li>
+          <li><span class="st new">新</span><span><b>飞书日历读取</b>：团队活动月历、带教日程叠加与忙闲</span></li>
+          <li><span class="st new">新</span><span><b>通知中心与推送规则</b></span></li>
+          <li><span class="st new">新</span><span><b>站评三档、轮岗阶段评估汇总</b>、答辩日程与材料包完整度</span></li>
+          <li><span class="st new">新</span><span><b>结果指标、带教侧指标</b></span></li>
+          <li><span class="st new">新</span><span>轮岗排期拖拽编辑、代理带教、汇报（推演）</span></li>
+        </ul><p class="why">读个人日历涉及授权和隐私，和团队活动一起做，接口只接一次；考核本来就在二期 <span class="ev p">L173</span>。</p></div>
+        <div class="s3"><h4>三期<small>激励与跨期</small></h4><ul>
+          <li><span class="st keep">原有</span><span>积分、排行、兑换、徽章、用例墙、AI 学习路径</span></li>
+          <li><span class="st new">新</span><span>跨期对比与模板回看（上一期哪些任务最常逾期、最常需修改）</span></li>
+          <li><span class="st new">新</span><span>老带教效率：批量处理、评语复用</span></li>
+          <li><span class="st keep">待定</span><span>1:1 结论要不要沉淀</span></li>
+        </ul><p class="why">积分按历史补算 <span class="ev p">L120</span>，前提是一期起事件就在存。</p></div>
+      </div>
+      <div class="fig" style="margin-top:16px"><pre class="mermaid">
+flowchart LR
+  A[期次] --> B[个人路径 + 站带教]
+  W[工作日日历] --> C[截止推算 / 开放日]
+  R[周期任务规则] --> C
+  B --> C
+  B --> V[跨站可见性]
+  C --> E[推算事件]
+  E --> T[待办 · 一期 12 条]
+  C --> S[日程项]
+  S --> V1[我的本周]
+  S --> V2[我带的人]
+  B --> V3[轮岗排期]
+  T --> H[首页焦点]
+  E --> M[主指标 n/N]
+  F[飞书共享日历 · 二期] --> V4[团队活动月历]
+  F --> V2
+  T --> N[通知中心 · 二期]
+  K[考核 · 二期] --> X[结果指标]
+      </pre></div>
+      <p class="fig-cap"><b>图 13</b>依赖关系：左边三样（期次、工作日日历、周期任务规则）是一期一切推算的输入；飞书日历和考核是二期的两个入口。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>能力评级与一期验收</h3></div>
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>能力</th><th>涉及对象</th><th>本期必需</th><th>数据代价</th><th>能否用现有数据验收</th><th>主要风险</th></tr></thead>
+        <tbody>
+          <tr><td><b>站带教关系 + 跨站可见性</b></td><td>personal_module、task_instance</td><td class="nw">一期</td><td>低：字段已在 <span class="ev o">types.ts:36</span></td><td>能：周颖待点评 3 → 1</td><td>B1、B2 未拍板</td></tr>
+          <tr><td><b>期次 + 期次启动</b></td><td>cohort、personal_path</td><td class="nw">一期</td><td>中</td><td>能：6 人示例</td><td>预置名单要拿到 open_id</td></tr>
+          <tr><td><b>工作日日历 + 截止推算 + 路径重排</b></td><td>workday_calendar、task_template、task_instance</td><td class="nw">一期</td><td>低：每年维护一次假期</td><td>能：话术演练录音 = 站开始第 5 个工作日 = 11-04</td><td>假期由谁维护</td></tr>
+          <tr><td><b>周期任务规则</b></td><td>recurring_rule</td><td class="nw">一期</td><td>低</td><td>能：示例 4 类</td><td>日报通道未定</td></tr>
+          <tr><td><b>事件日志 + 待办</b></td><td>event_log、todo</td><td class="nw">一期</td><td>中：规则引擎、去重</td><td>能：示例事件回放</td><td>阈值多为建议值</td></tr>
+          <tr><td><b>我的本周 / 我带的人（推算）</b></td><td>schedule_item</td><td class="nw">一期</td><td>低：纯查询</td><td>能</td><td>跟岗、1:1 缺位，和期待有落差</td></tr>
+          <tr><td><b>轮岗排期</b></td><td>personal_module</td><td class="nw">一期</td><td>中：抽屉编辑 + 重排</td><td>能：2 人同岗 7 格、空岗 7 格</td><td>拖拽留二期</td></tr>
+          <tr><td><b>交接要点</b></td><td>handover_note</td><td class="nw">一期</td><td>低</td><td>不能：没有真实记录</td><td>带教愿不愿写 <span class="ev g">推演</span></td></tr>
+          <tr><td><b>主指标新口径</b></td><td>task_instance、review</td><td class="nw">一期</td><td>低</td><td>能：示例 1 / 2，待定 1</td><td>小样本波动</td></tr>
+          <tr><td><b>机器人接口补读写</b></td><td>bot API</td><td class="nw">一期</td><td>中：跨项目</td><td>不能：要和机器人项目对齐</td><td>改造在机器人仓库做 <span class="ev p">L160</span></td></tr>
+          <tr><td>飞书日历读取</td><td>team_event、schedule_item</td><td class="nw">二期</td><td>中高：授权、隐私</td><td>待验证</td><td>权限点未核实</td></tr>
+          <tr><td>通知中心</td><td>notification</td><td class="nw">二期</td><td>中</td><td>—</td><td>打扰过多</td></tr>
+          <tr><td>站评三档 + 阶段评估汇总</td><td>handover_note、stage_assessment</td><td class="nw">二期</td><td>中</td><td>—</td><td>公平性、可见性</td></tr>
+          <tr><td>结果指标</td><td>stage_assessment</td><td class="nw">二期</td><td>依赖考核</td><td>—</td><td>约 12 人一期 <span class="ev p">L14</span>，样本小</td></tr>
+        </tbody>
+      </table></div>
+      <div class="two" style="margin-top:20px">
+        <div class="fig"><div class="k" style="margin-bottom:8px">一期验收（先用示例数据，导入 project_base 后再回放）</div>
+          <ol style="margin:0;padding-left:18px;font-size:13.5px;color:var(--ink2);line-height:1.75">
+            <li>6 人示例路径生成甘特；按岗位视角标出 7 个 2 人格、7 个空岗格。</li>
+            <li>周颖的待点评从 3 条变 1 条：周报不评，内容站选题归内容站带教。</li>
+            <li>11-05 生成 R06 两条（赵一然 → 周颖、陈默 → 吴桐）；孟川的投放站未指定站带教，R06 落管理员；林夏、许诺不生成。</li>
+            <li>无站带教时 R02、R06 落管理员：示意分配下管理员待办 7 条（审核 3、R02 2、R06 1、R05 1）；补指定站带教后，这一站未关闭的待办改派过去。</li>
+            <li>林夏待办 3 条（轻测、来电归因复盘、换站准备），周报和小结只在本周时间线上。</li>
+            <li>林夏「话术演练录音」点评期限算出 11-06 16:50。</li>
+            <li>主指标在示例上算出 1 / 2、待定 1；旧算法同期 50%，两者并列可对照。</li>
+            <li>顺延林夏客服站 1 周：客服岗小结 11-11 → 11-18，原截止留存，写入路径调整事件（issue #5）。</li>
+            <li>其他管培生调日程接口拿不到任务级逾期和评估节点（服务端过滤）。</li>
+          </ol>
+        </div>
+        <div class="fig"><div class="k" style="margin-bottom:8px">上线前必须补的数据</div>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;color:var(--ink2);line-height:1.75">
+            <li>正式培养路径内容（阶段 → 模块 → 任务 → 要求 → 产出）<span class="ev p">L186</span></li>
+            <li>每站站带教名单；是否设主带教</li>
+            <li>一期管培生名单与飞书 open_id（预置）</li>
+            <li>当年法定假期与调休</li>
+            <li>共享「管培生活动」飞书日历（二期前）</li>
+            <li>周期任务正式参数：周报截止时刻、轻测时刻、日报通道</li>
+            <li><code>project_base</code> 字段清单（导入与历史回放）<span class="ev p">L157</span></li>
+            <li>第 5 章所有「建议值」的拍板结果</li>
+          </ul>
+        </div>
+      </div>
+      <p class="fig-cap"><b>说明</b>没有过程数据，历史回放的指标和阈值现在定不了：<code>project_base</code> 导入后，先用历史任务算一遍新旧主指标对照，再定一期上线的达标线。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>二期、三期验收要点，和现有 19 张票的关系</h3></div>
+      <div class="two">
+        <div class="fig"><div class="k" style="margin-bottom:8px">二期验收</div>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;color:var(--ink2);line-height:1.75">
+            <li>共享「管培生活动」日历里新建一场，月历和团队动态都出现；改时间后工作台跟着变，工作台不能改时间。</li>
+            <li>带教日程只返回参会人含所带管培生的条目，其他时段只返回「忙」，不带标题。</li>
+            <li>阶段结束日自动生成「待填写」；轮岗阶段评估页列出 6 站站评，主带教填、管理员确认。</li>
+            <li>通知中心：同一事件不重复推；晚间提交合并到次日早上一次推。</li>
+            <li>导入 <code>project_base</code> 历史任务，新旧主指标并列算一遍，定上线达标线。</li>
+          </ul></div>
+        <div class="fig"><div class="k" style="margin-bottom:8px">三期验收</div>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;color:var(--ink2);line-height:1.75">
+            <li>积分按一期起存下的事件补算，和贡献记录逐条对得上 <span class="ev p">L120</span>。</li>
+            <li>模板回看：每个任务模板旁显示上一期按期达标率和「需修改」次数。</li>
+            <li>跨期对比：两期的主指标、阶段评估达标率并列。</li>
+          </ul></div>
+      </div>
+      <div class="tw" style="margin-top:16px"><table class="t wide">
+        <thead><tr><th>票</th><th>标题</th><th>要改什么</th><th>对应拍板</th></tr></thead>
+        <tbody>
+          <tr><td class="id">#3</td><td>角色与成员管理</td><td>带教权限由站带教关系起止推出；新人走期次预置名单</td><td>B1 B10</td></tr>
+          <tr><td class="id">#4</td><td>路径模板与路径总览</td><td>模板版本只读另存；任务截止规则（锚点 + 工作日偏移）</td><td>B5 B10</td></tr>
+          <tr><td class="id">#5</td><td>个人路径分配与「我的路径」</td><td>编辑面改到轮岗排期抽屉；站带教唯一来源；调整重排未开始任务；进度两个数</td><td>B1 B5 B7</td></tr>
+          <tr><td class="id">#6</td><td>周期任务</td><td>验收「共用状态流转和提交方式」改为四种完成方式</td><td>B4</td></tr>
+          <tr><td class="id">#7</td><td>提交产出与状态流转</td><td>开放日自动进行中；修改截止；改截止留痕；不支持草稿</td><td>B5</td></tr>
+          <tr><td class="id">#8</td><td>带教点评</td><td>点评人 = 所属站站带教；时效与超时抄送；再交并排上次评语</td><td>B1 B4</td></tr>
+          <tr><td class="id">#9</td><td>带教看板</td><td>按站关系取人，分在带 / 将到 / 刚交接三组，只管人和进度</td><td>B1 B2</td></tr>
+          <tr><td class="id">#10</td><td>成员列表与个人档案</td><td>成长时间线 = 事件投影；交接卡；跨站可见性</td><td>B2 B3</td></tr>
+          <tr><td class="id">#14–#16</td><td>三种首页</td><td>焦点取待办前两条；加本周 / 我带的人切片；管理员加本周排期、新主指标</td><td>B8 B9</td></tr>
+          <tr><td class="id">#17</td><td>带教机器人接口</td><td>补读：今日日程、待点评、待推送；补写：催办回执</td><td>B4 B6</td></tr>
+          <tr><td class="id">新票</td><td>—</td><td>期次与启动、工作日日历、事件日志与待办、日程视图、轮岗排期、交接要点</td><td>B3 B5 B7 B8 B10</td></tr>
+        </tbody>
+      </table></div>
+      <p class="fig-cap"><b>说明</b>#1 #2 #11 #12 #13 #18 #19 不受这次重排影响。票的标题取自仓库 GitHub Issues；改票是常浩拍板之后的事，这里只列影响面。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 拍板 -->
+<section class="sec white s1" id="s11">
+  <div class="wrap">
+    <div class="sec-k"><span class="k">11 · 待常浩拍板 · 回答「是」即按推荐</span></div>
+    <h2 class="h2" style="margin-bottom:36px">10 项决定，<span style="color:var(--s1)">第一项最要紧</span></h2>
+    <div class="dec">
+      <div class="dc"><div class="dc-h"><i>B1</i><h4>每个轮岗站有没有固定带教？要不要一位贯穿全期的主带教？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">每站一位站带教，是唯一的点评关系（挂在站上）；任务的负责带教跟着所属站走：站带教后补或更换时，这一站未关闭的待办改派，管培生换到下一站时不转。入职、通识、定岗也各算一站，站带教可以是主带教或管理员。可选设一位主带教贯穿全期，不设时由管理员担任；同一人可挂多站。</dd>
+        <dt>理由</dt><dd>PRD 本来按模块挂 <span class="ev p">L65</span><span class="ev p">L131</span>，原型只用了 user 上那一个 <span class="ev o">api.ts:186</span>；机器人项目现状导师就是常浩 <span class="ev x">旁证</span>，默认主带教 = 管理员正好对上。</dd>
+        <dt>不拍板</dt><dd>看板、待点评、可见性、我带的人、排期的按带教视角都没法写；上线后第一次换站就会出错。</dd></dl>
+        <div class="src">合并自：本体 Q1 · 带教 Q1 · 管理员 问题 2 · 管培生 4</div></div>
+      <div class="dc"><div class="dc-h"><i>B2</i><h4>跨站可见性怎么定？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">路径上的各站带教自开站前 5 个工作日起，只读此前各站的产出和点评，离站后保留本站只读；考核只给本人、主带教、写站评的站带教和管理员；其他管培生在排期里只看站和换站。</dd>
+        <dt>理由</dt><dd>下一站看不到上一站，交接就断；对路径上的带教公开比对全体同事公开风险小 <span class="ev g">推演</span>。备选：只看交接要点（更保守，交接质量全靠上一站写）。</dd>
+        <dt>不拍板</dt><dd>服务端可见性规则写不了 <span class="ev p">L29</span>，P2、P3 的接口定不下来。</dd></dl>
+        <div class="src">合并自：本体 Q2、Q8 · 带教 Q2 · 管理员 问题 2</div></div>
+      <div class="dc"><div class="dc-h"><i>B3</i><h4>要不要站评和交接要点？轮岗阶段评估谁出？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">一期上交接要点（站后 2 个工作日内、最多 3 条，连续两站同一带教免写）；站评三档随考核二期；轮岗阶段评估由主带教依据站评汇总、管理员确认。</dd>
+        <dt>理由</dt><dd>「阶段结束时带教人填写」<span class="ev p">L79</span> 在轮岗 6 站这里找不到填写人；站评同时是交接材料和定岗依据。</dd>
+        <dt>不拍板</dt><dd>R08 没有对象；二期考核开工时缺填写人。</dd></dl>
+        <div class="src">合并自：本体 Q3 · 带教 Q3</div></div>
+      <div class="dc"><div class="dc-h"><i>B4</i><h4>点评范围、时效，周期任务怎么算完成？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">站带教只评路径任务，时效 2 个工作日（建议值），再过 3 个工作日抄送管理员；周报只在机器人交、只看不评；轻测机器人判，未答不判逾期；月度物料本人声明 + 管理员确认；日报通道另定。</dd>
+        <dt>理由</dt><dd>周期任务都要评，工作量翻倍，带教是兼职 <span class="ev g">推演</span>；机器人项目已定周期任务走「提醒、本人声明、导师确认」<span class="ev x">旁证</span>；原型周颖的待点评 3 条里 1 条是周报。</dd>
+        <dt>不拍板</dt><dd>R02 期限、待点评队列、周期任务按钮都定不了；原型的轻测「贴链接」会被照着实现。</dd></dl>
+        <div class="src">合并自：带教 Q4 · 本体 Q12 · 管培生 Q16</div></div>
+      <div class="dc"><div class="dc-h"><i>B5</i><h4>任务的时间规则怎么定？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">到开放日自动转进行中（开放日 = 截止 − 建议用时）；需改进时给修改截止（默认 3 个工作日，建议值）；本站带教和管理员可调截止，必须写原因并留痕；截止、换站按工作日日历推算；不支持草稿。</dd>
+        <dt>理由</dt><dd>「未开始 → 进行中」PRD 没写触发 <span class="ev p">L73</span>；打回即逾期会污染指标；示例 16 条路径任务里 7 条截止落在周末。</dd>
+        <dt>不拍板</dt><dd>逾期口径不稳，主指标和带教的「需要跟进」都会失真。</dd></dl>
+        <div class="src">合并自：本体 Q4、Q5 · T-12 T-14 · A-08 A-09</div></div>
+      <div class="dc"><div class="dc-h"><i>B6</i><h4>日程管到哪，和飞书日历怎么分？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">团队活动只读一本共享「管培生活动」日历；推算的截止、换站不写飞书，提醒交给机器人；「加入日历」改跳转；跟岗、1:1 一期不进，二期只读带教日历中参会人含所带管培生的日程，本职只取忙闲。</dd>
+        <dt>理由</dt><dd>PRD 已定读 <span class="ev p">L111</span>，没说读哪本；写进去会和「唯一数据源」冲突 <span class="ev p">L124</span>；个人日历涉及授权和隐私。</dd>
+        <dt>不拍板</dt><dd>二期飞书接口范围和权限申请没法开始；首页「加入日历」继续没有动作。</dd></dl>
+        <div class="src">合并自：本体 Q6、Q7 · 管培生 1 · 带教 Q5 · 管理员 问题 5</div></div>
+      <div class="dc"><div class="dc-h"><i>B7</i><h4>轮岗排期放一期吗？做到哪？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">一期上：按人 / 按岗位 / 按带教三视角，管理员点色块在抽屉里顺延、换站带教（取代个人路径分配页），带假期灰带和评估节点；拖拽编辑、活动叠加放二期。</dd>
+        <dt>理由</dt><dd>PRD 写了没排期；数据现成；示例排法里 7 格挤了 2 人、7 格空岗，现有页面看不出来。</dd>
+        <dt>不拍板</dt><dd>工作台仍然没有日历，最初的问题没有回答。</dd></dl>
+        <div class="src">合并自：本体 Q9 · 管培生 2 · 带教 Q5 · 管理员 问题 3</div></div>
+      <div class="dc"><div class="dc-h"><i>B8</i><h4>顶栏加「日程」「待办」，通知中心几期？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">一级导航 6 个不动，顶栏在搜索、通知旁加「日程」「待办」；通知中心和机器人推送规则一起放二期。</dd>
+        <dt>理由</dt><dd>跨板块的东西放全局，PRD 已经在这么用 <span class="ev p">L37</span>；待办来自 19 条规则，首页焦点只装得下两条 <span class="ev p">L50–52</span>。</dd>
+        <dt>不拍板</dt><dd>日程、待办又会被拆进各板块，下一个跨板块视图还会漏。</dd></dl>
+        <div class="src">合并自：本体 Q10、Q9</div></div>
+      <div class="dc"><div class="dc-h"><i>B9</i><h4>主指标用什么口径？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">主指标改为路径任务按期达标率（滚动 4 周、显示 n/N）：首次提交按期且最终评为达标以上才算，需修改后再交通过也算；未出结论的单列待定；按调整后的截止算，并列调整条数和调整人。期末看阶段评估达标率和定岗结果；进度给时间、完成两个数。</dd>
+        <dt>理由</dt><dd>按时提交率量交没交，不量行不行；原型算法在示例上 4 条「按时」里 3 条没有提交记录。</dd>
+        <dt>不拍板</dt><dd>管理员首页首位数字口径不定，会偏乐观。</dd></dl>
+        <div class="src">合并自：管理员 问题 1 · 管培生 3</div></div>
+      <div class="dc"><div class="dc-h"><i>B10</i><h4>新人入职第一天，要不要不经管理员操作就直接看到自己的路径？</h4></div><dl>
+        <dt>推荐</dt><dd class="rec">一期建期次对象和模板版本号，做最简期次启动向导；预置名单里的人首次飞书登录直接成为本期管培生。</dd>
+        <dt>理由</dt><dd>期次现在只是 team 的一个字段 <span class="ev p">L128</span>，一期按「没有期次」存，第二期要迁移；按 <span class="ev p">L28</span> 新人第一天看到的是同事首页。</dd>
+        <dt>不拍板</dt><dd>第二期开期要做数据迁移；新人首日体验断。</dd></dl>
+        <div class="src">合并自：管理员 问题 4 · 管培生 5</div></div>
+    </div>
+    <div class="blk-k" style="margin-top:40px"><h3>阈值一览：回答「是」即按推荐</h3></div>
+    <div class="tw"><table class="t min">
+      <thead><tr><th>规则</th><th>阈值</th><th>出处</th><th>推荐</th></tr></thead>
+      <tbody>
+        <tr><td class="id">R02</td><td>点评时效；超时后再过多久抄送管理员</td><td><span class="ev g">带教走查 Q4</span></td><td>2 个工作日；再 3 个工作日</td></tr>
+        <tr><td class="id">R03</td><td>需改进后的修改截止</td><td><span class="ev g">T-24</span></td><td>3 个工作日</td></tr>
+        <tr><td class="id">R06 R07</td><td>换站提醒提前量</td><td><span class="ev g">带教走查 Q10；管培生走查提 3 个</span></td><td>5 个工作日</td></tr>
+        <tr><td class="id">R08</td><td>交接要点期限</td><td><span class="ev g">带教走查 Q3</span></td><td>站结束后 2 个工作日</td></tr>
+        <tr><td class="id">R09</td><td>站末遗留兜底</td><td><span class="ev g">带教走查 Q12</span></td><td>站后 3 个工作日，转管理员</td></tr>
+        <tr><td class="id">B2</td><td>下一站带教只读窗口</td><td><span class="ev g">带教走查 Q2</span></td><td>开站前 5 个工作日起</td></tr>
+        <tr><td class="id">催办</td><td>同一任务催办限频</td><td><span class="ev g">M-14</span></td><td>24 小时一次</td></tr>
+        <tr><td class="id">推送</td><td>晚间提交合并推送的时刻</td><td><span class="ev g">带教走查 2.1 推演的晨报时刻</span></td><td>次日 08:30</td></tr>
+        <tr><td class="id">B9</td><td>主指标统计窗口</td><td><span class="ev g">管理员走查 问 7</span></td><td>滚动 4 周</td></tr>
+        <tr><td class="id">R01 R10 R11 R13–R17 R19</td><td>期限</td><td>无</td><td>没有依据，不给推荐，由常浩定</td></tr>
+      </tbody>
+    </table></div>
+    <p class="fig-cap" style="margin-top:20px"><b>可推迟</b>这 6 项到对应期次再定，不进清单：作品集由谁提名（二期）；资产上架后改版是否重审；站评是否含「推荐定岗到本线」；1:1 结论是否沉淀；结业后的角色与档案；代理带教（二期）。四份走查共 27 个拍板问题，合并对照见 coverage.md 第 4 节。</p>
+  </div>
+</section>
+
+<!-- 12 局限 -->
+<section class="stage" id="s12">
+  <div class="wrap">
+    <div class="st-head rev">
+      <div class="st-num" style="color:var(--ink3)">12</div>
+      <div><span class="k">口径与局限 · 哪些能信</span><h2>这是一份推演出来的结构，<em style="color:var(--ink)">要真实材料来验</em></h2><p>结构上的判断（分期缝、本体缺对象、带教关系挂错层）有 PRD 原文和原型代码作证；业务上的判断（一天怎么过、带教怎么做、量有多大）全部是推演。</p></div>
+    </div>
+    <div class="blk">
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>哪一块</th><th>现在靠什么</th><th>局限</th><th>要什么真实材料验证</th></tr></thead>
+        <tbody>
+          <tr><td><b>三类人的一天、一周、一站</b></td><td>三份角色走查（AI 自问自答）</td><td>没有真人访谈；作息、跟岗排法、1:1 频率、晚上集中提交都是推断</td><td><b>一位站带教完整带一站（两周）的记录</b>：每天做了什么、在哪看到提交、怎么写评语、交接说了什么；上一期 1–2 位管培生访谈</td></tr>
+          <tr><td><b>站带教分工</b></td><td><span class="ev p">L65</span> + 推演</td><td>机器人项目现状只有常浩一位导师、管培生 2 人 <span class="ev x">旁证 · CONTEXT.md 第 31 行</span>，每站一位带教还没人跑过</td><td>常浩确认每站带教名单；第一次换站后回看交接</td></tr>
+          <tr><td><b>量级</b>（每站几份、点评多久、同时在站几人）</td><td>原型示例数据</td><td>示例是虚构的 <span class="ev o">mock.ts:1</span>，只生成了部分任务实例；本报告只用它验证规则算得通</td><td><code>project_base</code> 导出（项目、任务、成员、时间），回放主指标新旧口径</td></tr>
+          <tr><td><b>规则阈值</b></td><td>走查建议值</td><td>2 个工作日、5 个工作日、3 个工作日等都没有业务出处</td><td>常浩拍板；试运行一站后按点评时效回看</td></tr>
+          <tr><td><b>飞书日历读取</b></td><td>推演</td><td>共享日历、应用身份读取、带教个人授权的权限点未核实</td><td>对照飞书开放平台核实；先建共享活动日历</td></tr>
+          <tr><td><b>现有工具</b></td><td>推演</td><td>常浩现在怎么排轮岗、管培生怎么记跟岗和截止，没有查</td><td>常浩现在用的排期表；管培生的备忘或自建表格</td></tr>
+          <tr><td><b>呈现</b></td><td>按 PRD 附录 A 色板手绘原型</td><td>不是可运行代码；关系图、状态机用 mermaid，由页面宿主渲染</td><td>拍板后改 <code>web/src</code> 再演示</td></tr>
+          <tr><td><b>原型示例数据瑕疵</b></td><td>只记录，不改仓库</td><td>许诺第 44 周周报截止写成周三 18:00 <span class="ev o">mock.ts:121</span>，和其他人的周日 22:00 不一致，P5 已按规则改为 11-01 周日；公告写「11.12 周三」，实为周四 <span class="ev o">mock.ts:183</span>；轻测写「带教人出题」<span class="ev o">mock.ts:114</span>；每站带教都填成主带教 <span class="ev o">mock.ts:71</span>；路径任务只生成了一部分实例</td><td>下一轮修原型时按拍板结果重做示例数据（M-25）</td></tr>
+          <tr><td><b>审查建议里没做的</b></td><td>—</td><td>没补站带教周颖的一天时间线（场景只有管培生一条）；没把各段各岗位人数、带教承载画成热力图（只在 P3 里以格子呈现）</td><td>下一轮补；周颖那条要等真人带教一站的记录再写，免得再推演一遍</td></tr>
+        </tbody>
+      </table></div>
+      <p class="fig-cap"><b>口径</b>页面上的计数和示例代入都由 <code>analysis.py</code> 生成到 <code>coverage.md</code>，同一个数两处一致。走查文件里少数 PRD 行号差一行（如「默认同事」写成第 29 行），本报告已按 PRD 原文重核；旁证行号也已核对（「未答」在业务共识第 107 行）。原型里发现的示例数据瑕疵（公告写周三、轻测写带教出题）只记录，不改仓库。</p>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="next"><p>下一步：常浩逐条回答第 11 章的 10 项（回答「是」即按推荐），把 prd-changes.md 里认可的条目落进 PRD，再按新分期拆票；同时找一位站带教把一站带完、留下记录，用来验第 2 章的推演。</p><div class="bars" aria-hidden="true"><b style="background:var(--s1)">1</b><b style="background:var(--s2)">2</b><b style="background:var(--s3)">3</b></div></div>
+    <div class="foot-grid">
+      <div><h4>依据与产出</h4><ul>
+        <li><i>01</i><div>PRD v1.0<small>docs/PRD.md · 235 行</small></div></li>
+        <li><i>02</i><div>一期前端原型<small>web/src · 示例数据 data/mock.ts</small></div></li>
+        <li><i>03</i><div>四份走查：管培生、带教人、管理员与同事、本体<small>scratchpad/redesign/roles/*.md</small></div></li>
+        <li><i>04</i><div>带教机器人项目文档（旁证）<small>管培生带教-AI协同 · CONTEXT.md、业务共识 v1.0</small></div></li>
+        <li><i>05</i><div>分析留痕与 PRD 修订提案<small>report/coverage.md · report/prd-changes.md · report/analysis.py</small></div></li>
+      </ul></div>
+      <div><h4>说明</h4><p>这是 AI 落地三步法第二步的技术方案，读者是产品和技术：看系统整体怎么建。它不代替常浩的业务确认，也不代替开发后的验收。所有人名、日期来自原型示例数据，均为虚构；标「推演」的都还没有被真人材料验证。</p><p class="disc">没有改动项目仓库里的任何文件。</p></div>
+    </div>
+  </div>
+</footer>
+</main>
+
+<script>
+(function(){
+var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var RM=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* 角色标签 */
+$$('.tabs').forEach(function(bar){
+  var box=bar.parentNode;
+  $$('button',bar).forEach(function(b){b.addEventListener('click',function(){
+    $$('button',bar).forEach(function(x){x.setAttribute('aria-selected',x===b?'true':'false')});
+    $$('.tabp',box).forEach(function(p){p.classList.toggle('on',p.dataset.panel===b.dataset.tab)});
+  })});
+});
+
+/* 甘特视角切换 */
+$$('[data-gv]').forEach(function(b){b.addEventListener('click',function(){
+  var root=b.closest('.ap');
+  $$('[data-gv]',root).forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+  $$('.gvw',root).forEach(function(v){v.classList.toggle('on',v.dataset.gview===b.dataset.gv)});
+})});
+
+function Demo(root,cfg){
+  var st={k:0,mode:cfg.mode,timer:null,playing:false,touched:false}, stage=$('.dm-stage',root);
+  var bPlay=$('[data-act=play]',root), bLab=$('span',bPlay), prog=$('.dm-prog',root);
+  function total(){return cfg.total(st.mode)}
+  function draw(fwd){cfg.render(st.k,st.mode,!!fwd&&!RM);prog.textContent=st.k+' / '+total();root.classList.toggle('is-done',st.k>=total())}
+  function setPlay(p){st.playing=p;bLab.textContent=p?'暂停':'播放';bPlay.firstElementChild.innerHTML=p?'<path d="M2 1h3v10H2zM7 1h3v10H7z"/>':'<path d="M2 1l9 5-9 5z"/>'}
+  function stop(){clearTimeout(st.timer);setPlay(false)}
+  function tick(){if(st.k>=total()){stop();return}st.k++;draw(true);if(st.k>=total()){stop();return}st.timer=setTimeout(tick,cfg.delay)}
+  function play(){if(st.k>=total()){st.k=0;draw(false)}setPlay(true);clearTimeout(st.timer);st.timer=setTimeout(tick,st.k===0?600:250)}
+  bPlay.addEventListener('click',function(){st.touched=true;st.playing?stop():play()});
+  $('[data-act=replay]',root).addEventListener('click',function(){st.touched=true;stop();st.k=0;draw(false);play()});
+  $('[data-act=step]',root).addEventListener('click',function(){st.touched=true;stop();if(st.k>=total()){st.k=0;draw(false)}else{st.k++;draw(true)}});
+  $$('[data-mode]',root).forEach(function(b){b.addEventListener('click',function(){
+    st.touched=true;stop();st.mode=b.dataset.mode;
+    $$('[data-mode]',root).forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+    if(RM){st.k=total();draw(false)}else{st.k=0;draw(false);play()}
+  })});
+  function lock(){
+    stage.style.minHeight='';var h=0,keepK=st.k,keepM=st.mode;
+    (cfg.modes||[st.mode]).forEach(function(m){st.mode=m;for(var k=0;k<=cfg.total(m);k++){cfg.render(k,m,false);h=Math.max(h,stage.offsetHeight)}});
+    st.mode=keepM;st.k=keepK;draw(false);stage.style.minHeight=h+'px';
+  }
+  st.k=RM?total():0;lock();
+  var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(lock,200)});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(lock);
+  if(!RM&&'IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){io.disconnect();if(!st.touched&&!st.playing&&st.k===0)play()}})},{threshold:.35});
+    io.observe(stage);
+  }
+}
+
+/* 待办链路演示 */
+(function(){
+  var root=$('[data-demo=chain]'); if(!root)return;
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+  var D={
+    A:{title:'A · 一次提交 → 点评 → 写回',end:'一次提交走到写回，每一步都落在本体的一个字段上；哪一环断了，事件日志里看得出断在哪。',steps:[
+      {n:'数据源',tag:'网页',at:'11-04 16:50',d:'林夏在任务详情提交飞书链接（示例 sb-4）。',p:'POST /api/tasks/t-l-6/submissions\nurl   https://example.feishu.cn/docx/LinScriptRecording\nnote  5 段录音放在文档里，第 4 段投诉场景有点卡壳。\nat    2026-11-04 16:50（截止 11-04 18:00，按期）'},
+      {n:'事件',tag:'E10',at:'11-04 16:50',d:'追加一条事件，只追加不改写。',p:'event_log  +1\ntype         submission.created  (E10)\nsubject      task_instance t-l-6 话术演练录音\nperson_id    林夏        source  web\ndedup_key    submission.created:sb-4'},
+      {n:'规则',tag:'R02',at:'',d:'按规则决定谁、多久。',p:'R02 待点评\n条件    路径任务 ✓（客服站 · 话术演练录音）\n负责人  所属站（客服站）的站带教 = 周颖（示意；为空则落管理员）\n期限    提交 + 2 个工作日 = 11-06 16:50   ← 建议值\n推送    16:50 不是晚间 → 即时推给机器人'},
+      {n:'待办',tag:'todo',at:'11-04 16:50',d:'生成一条有负责人、有期限的待办。',p:'todo  +1\nowner    周颖         rule    R02\ntitle    点评 · 林夏 · 话术演练录音\ndue_at   2026-11-06 16:50     status  open'},
+      {n:'呈现',tag:'P2',at:'11-05 10:24',d:'在带教首页和飞书卡片里出现。',p:'周颖打开「我带的人」：焦点第一张，剩 1 天 6 小时。\n飞书卡片深链 /growth/tasks/t-l-6，落在点评表单，顶部是提交说明。\n林夏那边：「我在等 · 期限 11-06 16:50」。'},
+      {n:'写回',tag:'E11',at:'示意',d:'点评后写回，关闭待办。示例数据里还没有点评，这一步是示意。',p:'POST /api/submissions/sb-4/review\nreview          +1   grade 达标\ntask_instance   状态 → 已通过\nevent_log       review.created (E11)\ntodo R02        status → done   closed_by_event = E11\n若选「需改进」：写修改截止，生成 R03 给林夏'}
+    ]},
+    B:{title:'B · 一次换站 → 三个人的待办',end:'换站这件事没有任何人录入：个人路径 × 工作日日历 × 今天，就推出了每个人该做的事。',steps:[
+      {n:'数据源',tag:'系统推算',at:'11-05',d:'个人路径和工作日日历，不需要人操作。',p:'personal_module  赵一然 · 销售  2026-11-12 09:00 – 11-25 18:00\n上一站           内容  10-29 – 11-11\n新站带教         周颖（示意）\n今天             2026-11-05 = 开站前第 5 个工作日'},
+      {n:'事件',tag:'E05',at:'11-05',d:'推算事件同样写进事件日志。',p:'event_log  +1\ntype        module.switch_due  (E05 换站，开站前 5 个工作日)\nsubject     personal_module 赵一然·销售\nsource      system（推算）\ndedup_key   switch_due:{personal_module_id}'},
+      {n:'规则',tag:'R06 R07 R08',at:'',d:'这条事件触发 R06、R07；R08 等站结束事件；有一条反例。',p:'R06 换站接人  新站带教 ≠ 原站带教 ✓ → 周颖\nR07 换站预告  → 赵一然\nR08 交接要点  由 E34 站结束（11-11 18:00）触发，期限 11-13 18:00\n             示例里内容站没有站带教 → 暂落管理员\n可见性窗口    周颖自今天起可只读赵一然此前各站\n反例          林夏、许诺换站后仍是周颖：R06、R08 不生成'},
+      {n:'待办',tag:'todo',at:'11-05',d:'今天生成两条，第三条站结束时生成。',p:'todo  +2\n周颖     接人准备 · 赵一然 · 11-12 到站     due 11-12 09:00\n赵一然   换站准备 · 下一站 销售            due 11-12 09:00'},
+      {n:'呈现',tag:'P1 P2 P3',at:'11-05 10:24',d:'三个视图同时变化。',p:'周颖「我带的人」：将到组出现赵一然；焦点「下一个换站节点」。\n轮岗排期：11-12 那一列是换站线。\n赵一然「我的本周」：站带下方写「下一站 销售 · 11-12」。'},
+      {n:'写回',tag:'todo.done',at:'示意',d:'各自完成后写回，接人卡跟着变。',p:'POST /api/todos/{R06}/done                 → todo.done（E37）\nPUT  /api/personal-modules/{内容站}/handover\n     → handover_note +1 → E36 handover.created\n     → 关闭 R08；周颖的接人卡显示「上一站要点 · 已就绪」'}
+    ]}
+  };
+  var title=$('.ch-title',root), steps=$('.ch-steps',root), pay=$('.ch-pay',root), at=$('.ch-at',root), end=$('.ch-end',root);
+  function render(k,mode,fwd){
+    var S=D[mode]; title.textContent=S.title; end.textContent=S.end;
+    steps.innerHTML=S.steps.map(function(s,i){
+      var cls=i<k-1?'done':i===k-1?'now done':'pend';
+      return '<div class="tc '+cls+(fwd&&i===k-1?' enter':'')+'"><div class="tc-h"><i>'+(i+1)+'</i>'+s.n+'<small>'+s.tag+'</small></div><div class="tc-b">'+esc(s.d)+'</div></div>';
+    }).join('');
+    if(k===0){pay.innerHTML='<div class="ph-empty">点「播放」或「逐步」，看这一条示例数据每一步写了什么。</div>';at.textContent='';return}
+    var s=S.steps[k-1];
+    at.textContent=s.at;
+    pay.innerHTML='<div class="'+(fwd?'enter':'')+'"><div style="font-size:13px;font-weight:700;margin-bottom:8px">'+(k)+' · '+s.n+' · '+esc(s.tag)+'</div><pre class="code">'+esc(s.p)+'</pre></div>';
+  }
+  Demo(root,{mode:'A',modes:['A','B'],total:function(m){return D[m].steps.length},delay:1500,render:render});
+})();
+})();
+</script>

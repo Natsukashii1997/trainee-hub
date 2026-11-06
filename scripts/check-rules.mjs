@@ -10,14 +10,21 @@ const RULES = {
   time: '页面上的时间经统一的格式化函数按北京时间显示，不直接截取 ISO 字符串（全局坑 G-02）；截取的确实是北京时间字符串时，在行内注释写「北京时间」',
 };
 // 要扫的源码目录，按项目结构改；不存在的目录跳过
-const SCAN = ['src', 'server'];
+const SCAN = ['web/src', 'server'];
 const EXTS = ['.js', '.jsx', '.mjs', '.cjs', '.ts', '.tsx'];
 // 截取 *At 字段当日期时间显示，或把 ISO 的 T 换成空格：多半把 UTC 当成了北京时间
 const TIME = [/\b\w*(?:At|_at)\.slice\(\s*(?:0\s*,\s*1[06]|5\s*,\s*16|11\s*,\s*16)\s*\)/, /\.replace\(\s*["']T["']\s*,\s*["'] ["']\s*\)/];
 const TIME_OK = /\/[/*]\s*北京时间/;
 const LISTEN_OK = /\.listen\(\s*[\w.]+\s*,\s*['"]127\.0\.0\.1['"]/;
 // package.json 用白名单：黑名单认不出新出的库，白名单逼着每个新依赖都过一遍交接
-const ALLOWED_DEPS = [];
+const ALLOWED_DEPS = [
+  // 前端运行时（2026-11-06 UI 原型）：React 19、路由、自托管 Geist 字体（国内访问不依赖 Google Fonts）
+  'react', 'react-dom', 'react-router-dom', '@fontsource/geist-sans', '@fontsource/geist-mono',
+  // V3「柔光」数字字体（2026-11-06 第 2 批）：Manrope 自托管，只用 latin 子集，同样为国内访问不走 Google Fonts
+  '@fontsource/manrope',
+  // 开发与测试
+  'vite', '@vitejs/plugin-react', 'typescript', 'vitest', 'jsdom', '@testing-library/react', '@types/react', '@types/react-dom',
+];
 
 function files(dir) {
   if (!fs.existsSync(dir)) return [];

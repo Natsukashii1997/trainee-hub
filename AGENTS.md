@@ -7,7 +7,8 @@
 | 要做的事 | 先读 |
 |---|---|
 | 改需求、加功能 | [docs/PRD.md](docs/PRD.md) |
-| 做界面、新页面 | [docs/PRD.md](docs/PRD.md) 附录 A 视觉规范；[docs/design/home-01.html](docs/design/home-01.html) |
+| 做界面、新页面 | [docs/PRD.md](docs/PRD.md) 附录 A 视觉规范（V3 柔光）；[web/src/components/README.md](web/src/components/README.md) 组件用法与示例页 `/dev/kit`；视觉基准 [v3-home.html](docs/research/2026-11-06-structure/design/v3-home.html) |
+| 改数据、加规则或查询 | [web/src/data/README.md](web/src/data/README.md)（全部导出与对应 PRD 小节） |
 | 排障、改脚本、装 launchd 或定时任务 | 先 `grep -n 关键词 docs/LESSONS.md`，再搜全局坑 `/Users/nat/Documents/ChatGPT/个人/work/agent-kit/LESSONS.md` |
 | 开需求、拆任务、实现、审查 | 下面「Agent skills」一节 |
 | 写交接、验收别人的交接 | [docs/templates/handoff.md](docs/templates/handoff.md) 骨架；[OPERATIONS](docs/OPERATIONS.md)「交接写法」「报告与验收」 |
@@ -23,6 +24,10 @@
 ## 运行
 
 ```sh
+npm install                      # 首次装依赖
+npm run dev                      # 前端原型（示例数据），只监听 127.0.0.1
+npm test                         # vitest + 交接格式 + 通用规则（含自测），提交前跑
+npm run typecheck                # tsc --noEmit
 node --test tests/*.test.mjs     # 交接格式 + 通用规则（含自测）
 node scripts/check-rules.mjs     # 只跑通用规则检查
 ```
@@ -34,7 +39,8 @@ AGENTS.md            入口（本文件）
 CURRENT.md           当前状态与唯一下一步；每轮交接写在顶部
 docs/
   PRD.md             需求（共识清单、页面、数据模型、机器人接口、分期；附录 A 是视觉规范）
-  design/home-01.html  首页三种角色的视觉稿（01 器方向），做界面时对照
+  design/home-01.html  v1.0 的视觉稿（01 器，已被 V3 柔光取代，仅存档）
+  research/          需求研究归档（2026-11-06 结构重排报告、走查、视觉候选稿）
   agents/            Matt Pocock 技能读的约定：issue 看板、分流标签、领域文档
   LESSONS.md         本项目的坑（排障、改脚本前先搜）
   OPERATIONS.md      操作手册：交接写法、报告与验收

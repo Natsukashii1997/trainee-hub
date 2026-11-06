@@ -1,0 +1,112 @@
+
+<!-- 05 待办链路 -->
+<section class="stage s2" id="s5">
+  <div class="wrap">
+    <div class="st-head rev">
+      <div class="st-num">05</div>
+      <div><span class="k">待办链路 · 每类待办怎么产生、怎么结束</span><h2>待办 = <em>事件 × 规则</em></h2><p>原型里的待点评、审核队列、逾期都是现算的列表 <span class="ev o">api.ts:176-195</span>，没有统一对象，也说不清「谁的、多久算晚」。这里把它们都变成同一种东西：一条事件按一条规则生成一条待办，完成时由另一条事件关闭。</p></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>事件表和待办表怎么建</h3></div>
+      <div class="two">
+<pre class="code"><span class="c">-- 只追加：不更新、不删除</span>
+<span class="kw">event_log</span>
+  id            bigserial    PK
+  type          text         NOT NULL  <span class="c">-- E01…E41，如 submission.created</span>
+  subject_type  text         NOT NULL  <span class="c">-- task_instance / personal_module …</span>
+  subject_id    uuid         NOT NULL
+  person_id     uuid                   <span class="c">-- 属于哪位管培生（时间线按它取）</span>
+  actor_id      uuid                   <span class="c">-- 操作人；推算事件为空</span>
+  source        text         NOT NULL  <span class="c">-- web / bot / feishu / system</span>
+  occurred_at   timestamptz  NOT NULL
+  visibility    text         NOT NULL  <span class="c">-- public / restricted / owner / admin</span>
+  payload       jsonb                  <span class="c">-- 证据：链接、原截止、新截止、原因</span>
+  dedup_key     text         UNIQUE    <span class="c">-- task.overdue:{task_id}:{due_at}</span></pre>
+<pre class="code"><span class="kw">todo</span>
+  id                  uuid         PK
+  owner_id            uuid         NOT NULL
+  rule_id             text         NOT NULL  <span class="c">-- R01…R19</span>
+  event_id            bigint       → event_log
+  subject_type, subject_id
+  title               text
+  due_at              timestamptz            <span class="c">-- 工作日日历推算</span>
+  priority            smallint
+  status              text   <span class="c">-- open / done / cancelled</span>
+  closed_by_event_id  bigint       → event_log
+  UNIQUE (rule_id, subject_id, owner_id)
+    WHERE status = 'open'   <span class="c">-- 一条规则可给多人</span>
+
+<span class="c">-- 推算事件：定时任务扫描路径、规则与工作日日历，</span>
+<span class="c">-- 条件成立就写一条事件，dedup_key 保证只写一次</span></pre>
+      </div>
+      <p class="fig-cap"><b>图 6</b>动态流 = 可见级别为 public 的事件；档案时间线 = person_id 是这个人的事件，按查看人权限过滤 <span class="ev p">L58</span>；贡献 = 资产上架、被标「我用过」、作品集入选、主讲确认等事件的派生，三期上线积分时按历史补算 <span class="ev p">L120</span>。前提是事件从一期就开始存。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>规则配置：19 条，一期 12 条</h3><span class="k">阈值有出处的写出处，没有的标建议值或待定</span></div>
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>规则</th><th>来源事件</th><th>条件</th><th>负责人</th><th>期限 · 出处</th><th>关闭 / 撤销</th><th>期</th></tr></thead>
+        <tbody>
+          <tr><td class="id">R01</td><td>E01 首次登录</td><td>角色为同事，且 open_id 不在任何期次预置名单</td><td>管理员</td><td>待定</td><td>角色或路径已分配</td><td>一期</td></tr>
+          <tr><td class="id">R02</td><td>E10 提交</td><td>路径任务，或规则要求点评的周期任务</td><td>任务所属站的站带教（空 = 管理员）</td><td>提交后 2 个工作日；再过 3 个工作日抄送管理员 <span class="ev g">建议值 · 带教走查 Q4</span></td><td>点评写入</td><td>一期</td></tr>
+          <tr><td class="id">R03</td><td>E11 点评 = 需改进</td><td>—</td><td>本人</td><td>修改截止 = 点评后 N 个工作日 <span class="ev g">建议值 3 · T-24</span></td><td>再次提交</td><td>一期</td></tr>
+          <tr><td class="id">R04</td><td>E08 即将截止</td><td>截止在今天或明天且未完成；含今天的测验</td><td>本人</td><td>= 截止 <span class="ev p">L50「今天和明天截止」</span></td><td>提交、成绩写回或周报已交；截止被调后撤销</td><td>一期</td></tr>
+          <tr><td class="id">R05</td><td>E09 逾期 · E15 周报未交</td><td>未完成且过截止（需修改看修改截止）；轻测未答不算</td><td>每人各一条：本人（补交）；路径任务的站带教 / 周期任务的主带教（跟进，主带教空 = 管理员）。管理员「有逾期的人」是汇总查询，不生成待办</td><td>立即 <span class="ev p">L51–52</span><span class="ev p">L73</span></td><td>提交；截止被调到未来后撤销</td><td>一期</td></tr>
+          <tr><td class="id">R06</td><td>E05 换站（推算）</td><td>新站带教 ≠ 原站带教</td><td>新站带教</td><td>开站前 5 个工作日出现，期限 = 开站日 <span class="ev g">建议值 · 带教走查 Q10</span></td><td>带教点「已准备」；开站日仍未确认则提示管理员</td><td>一期</td></tr>
+          <tr><td class="id">R07</td><td>E05 换站（推算）</td><td>—</td><td>本人</td><td>开站前 5 个工作日出现 <span class="ev g">建议值；管培生走查提 3 个，统一为 5</span></td><td>开站日自动关闭</td><td>一期</td></tr>
+          <tr><td class="id">R08</td><td>E34 站结束（推算）</td><td>下一站带教 ≠ 本站带教</td><td>原站带教</td><td>站结束后 2 个工作日 <span class="ev g">建议值 · 带教走查 Q3</span></td><td>交接要点写入</td><td>一期</td></tr>
+          <tr><td class="id">R09</td><td>E06 离站仍有未通过任务</td><td>—</td><td>原站带教</td><td>站后 3 个工作日，超时转管理员 <span class="ev g">建议值 · 带教走查 Q12</span></td><td>遗留任务都有结论</td><td>一期</td></tr>
+          <tr><td class="id">R10</td><td>E20 资产提交</td><td>—</td><td>管理员</td><td>待定</td><td>通过或退回 <span class="ev p">L104</span></td><td>一期</td></tr>
+          <tr><td class="id">R11</td><td>E22 资产退回</td><td>—</td><td>作者</td><td>待定</td><td>重提</td><td>一期</td></tr>
+          <tr><td class="id">R12</td><td>E32 接口或同步异常</td><td>—</td><td>管理员</td><td>立即 <span class="ev p">L52 连接状态</span></td><td>恢复正常</td><td>一期</td></tr>
+          <tr><td class="id">R13</td><td>E16 阶段结束</td><td>—</td><td>主带教（空 = 管理员）</td><td>阶段结束后 N 个工作日，待定 <span class="ev p">L79</span></td><td>评估已填</td><td>二期</td></tr>
+          <tr><td class="id">R14</td><td>E17 阶段评估已填</td><td>—</td><td>管理员</td><td>待定</td><td>确认或退回</td><td>二期</td></tr>
+          <tr><td class="id">R15</td><td>E26 同步到新资料</td><td>—</td><td>管理员</td><td>待定</td><td>补标签、挂任务 <span class="ev p">L90</span></td><td>二期</td></tr>
+          <tr><td class="id">R16</td><td>E30 活动结束</td><td>—</td><td>管理员</td><td>待定</td><td>挂妙记并确认主讲（才写贡献）</td><td>二期</td></tr>
+          <tr><td class="id">R17</td><td>E24 作品集提名</td><td>—</td><td>本人</td><td>待定</td><td>同意或拒绝 <span class="ev p">L86</span></td><td>二期</td></tr>
+          <tr><td class="id">R18</td><td>E33 只读归档日到达</td><td>—</td><td>管理员</td><td>= 归档日 <span class="ev p">L159</span></td><td>确认切换完成</td><td>二期</td></tr>
+          <tr><td class="id">R19</td><td>E31 兑换申请</td><td>—</td><td>管理员</td><td>待定</td><td>线下发放后标记 <span class="ev p">L118</span></td><td>三期</td></tr>
+        </tbody>
+      </table></div>
+      <p class="fig-cap"><b>表 3</b>去重：同一规则、同一对象、同一负责人只有一条未关闭的待办（唯一约束含 owner_id，R05 这类一事多人的规则才建得出来）。负责人为空时（比如站带教还没指定），待办落到管理员；站带教后补或更换时，这一站未关闭的 R02、R06、R08、R09 待办改派给新带教，并追加 E41 待办重派。每个角色的待办来源：管培生 R03 R04 R05 R07 R17；带教 R02 R05 R06 R08 R09 R13；管理员 R01 R10 R12 R14 R15 R16 R18 R19，外加负责人为空时落下来的 R02 R05 R06 R08 R09。本体走查的 E19「培养期临近结束」并进二期答辩日程，一期不设规则。原型只给待点评和审核留了入口 <span class="ev o">Layout.tsx:37</span><span class="ev o">Layout.tsx:41</span>。</p>
+    </div>
+
+    <div class="blk band dark s1" data-demo="chain">
+      <div class="dm-head">
+        <div><h4>顺着一条示例数据，从数据源走到写回</h4><p>两条链：A 一次提交怎么变成点评并写回；B 一次换站怎么生成三个人的待办。人名、时间来自示例数据，带教分配按「站带教」模型重排后的样子（示意）。</p></div>
+        <div class="dm-ctl">
+          <div class="seg-sw"><button type="button" data-mode="A" aria-pressed="true">A 点评链</button><button type="button" data-mode="B" aria-pressed="false">B 换站链</button></div>
+          <button class="btn pri" type="button" data-act="play"><svg viewBox="0 0 12 12"><path d="M2 1l9 5-9 5z"/></svg><span>播放</span></button>
+          <button class="btn" type="button" data-act="replay">重播</button>
+          <button class="btn" type="button" data-act="step">逐步 →</button>
+          <span class="dm-prog">0 / 6</span>
+        </div>
+      </div>
+      <div class="dm-stage d1">
+        <div class="win" style="display:flex;flex-direction:column"><div class="win-bar"><span class="dots"><i></i><i></i><i></i></span><b class="ch-title">链路</b><span class="demo-note" style="font-family:var(--mono);font-size:11px">示意</span></div><div class="steps ch-steps"></div></div>
+        <div class="win" style="display:flex;flex-direction:column"><div class="win-bar"><b>这一步写了什么</b><span class="ch-at" style="font-family:var(--mono);font-size:11px"></span></div><div class="pay ch-pay"></div></div>
+      </div>
+      <div class="dm-end ch-end"></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>边界和反例</h3></div>
+      <div class="tw"><table class="t min">
+        <thead><tr><th>情况</th><th>处理</th><th>依据</th></tr></thead>
+        <tbody>
+          <tr><td>晚上提交</td><td>点评提醒合并到次日早上一次推，不打扰下班时间；时刻由常浩定</td><td><span class="ev g">推演 · 示例提交多在 20–22 点 mock.ts:143-147</span></td></tr>
+          <tr><td>轻测没作答</td><td>记「未答」，不生成逾期，不追加催答</td><td><span class="ev x">旁证 · 业务共识第 107 行</span></td></tr>
+          <tr><td>周报交了</td><td>只看不评，不进待点评；原型 3 条待点评里有 1 条是周报 <span class="ev o">api.ts:176-182</span></td><td>拍板 B4</td></tr>
+          <tr><td>连续两站同一位带教</td><td>R06 换站接人、R08 交接要点都不生成</td><td><span class="ev g">带教走查 Q17</span></td></tr>
+          <tr><td>截止被调整</td><td>原逾期待办撤销；事件 E35 留原截止、新截止、原因、操作人；主指标按新截止算，旁边并列调整过的条数和调整人</td><td>拍板 B5、B9</td></tr>
+          <tr><td>同一任务反复催</td><td>催办经机器人发，同一任务 24 小时内一次</td><td><span class="ev g">建议值 · M-14</span></td></tr>
+          <tr><td>换站时还有没评完的</td><td>仍归原站带教（负责带教跟着所属站走，管培生换站不转），原型改带教会把未通过任务整体转走 <span class="ev o">api.ts:43</span></td><td>R09；拍板 B4</td></tr>
+          <tr><td>站带教开站后才补指定，或中途更换</td><td>负责带教不单存，取所属站的站带教，所以点评归属自动跟上；这一站未关闭的 R02 R06 R08 R09 改派给新带教（E41），已写的点评不动</td><td>拍板 B1；P5 孟川投放站</td></tr>
+          <tr><td>有人中止培养</td><td>未关闭待办全部撤销；指标分母剔除</td><td><span class="ev g">A-22</span></td></tr>
+          <tr><td>同一推算重复执行</td><td>去重键保证事件只写一次，待办只生成一次</td><td>表结构</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,205 @@
+
+<!-- 07 信息架构 -->
+<section class="stage s3" id="s7">
+  <div class="wrap">
+    <div class="st-head rev">
+      <div class="st-num">07</div>
+      <div><span class="k">呈现（二）· 信息架构与需求对照</span><h2>板块装东西，<em>顶栏放切面</em></h2><p>六个板块按对象归属组织，一个对象只有一个家；跨对象的看法放顶栏。PRD 已经把搜索、通知放在「全局」<span class="ev p">L37</span>，日程和待办属于同一类，只是被拆散进了成长、团队和首页。</p></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>重排后的导航树和每页职责</h3></div>
+      <div class="two">
+<pre class="code"><span class="kw">顶栏 · 跨板块切面</span>
+├─ 搜索 ⌘K      资料 / AI 资产 / FAQ / 作品集            <span class="c">二期</span>
+├─ <span class="kw">日程</span>（新）   按角色默认视角，可切换                    <span class="c">一期</span>
+│   ├─ 我的本周       管培生默认                         <span class="c">P1</span>
+│   ├─ 我带的人       带教默认                           <span class="c">P2</span>
+│   ├─ 轮岗排期       管理员默认，其他人只读              <span class="c">P3</span>
+│   └─ 团队活动       全员；二期接共享日历               <span class="c">P4</span>
+├─ <span class="kw">待办</span>（新）   我负责的全部待办；首页焦点=前两条        <span class="c">P5</span>
+├─ 通知         刚发生、与我有关的事件                   <span class="c">二期</span>
+└─ 头像 → 我的档案
+
+<span class="kw">一级导航 · 对象的家（6 个不变）</span>
+├─ 首页   焦点 → 本周（日程切片）→ 角色卡片 → 团队动态
+├─ 成长   路径总览 · 我的路径 · 任务详情 · 带教看板
+│         · 轮岗排期（深链）· 考核（轻测记录、阶段评估）
+├─ 知识   资料库 · FAQ · 作品集
+├─ AI     首页 · 资产库 · 资产详情 · 提交 · 学习路径 · 用例墙
+├─ 团队   成员 · 个人档案（时间线、交接卡、答辩材料包）
+│         · 公告与动态 · 活动（月历深链）· 周报汇总
+└─ 激励   贡献榜 · 我的积分 · 兑换商城 · 我的兑换申请</pre>
+<pre class="code"><span class="kw">管理后台 · 按「什么时候用」分组</span>
+├─ 待处理     = 管理员的待办                         <span class="c">P5</span>
+│   审核队列（资产 / 资料 / 作品集）· 待分配角色与路径
+│   · 阶段评估待确认 · 兑换处理
+├─ 期次与排期
+│   期次与期次启动（新）                             <span class="c">P8</span>
+│   · 轮岗排期编辑（取代「个人路径分配」）           <span class="c">P3</span>
+│   · 工作日日历（新）
+├─ 路径
+│   路径模板（带版本、截止规则）· 周期任务规则（新）  <span class="c">P7</span>
+├─ 内容     公告发布 · 标签维护
+├─ 系统     知识库同步 · 机器人接口密钥 · 积分规则
+└─ 汇报（新，二期，推演）
+
+<span class="c">原则</span>
+<span class="c">· 一个对象只有一个家：在家里看详情、编辑</span>
+<span class="c">· 切面不存数据：日程、待办、通知都是查询</span>
+<span class="c">· 首页焦点 = 待办前两条；后台首屏 = 待处理组</span></pre>
+      </div>
+      <p class="fig-cap"><b>图 11</b>一级导航不动，因为六个板块是 35 轮问答定的 <span class="ev p">L33</span>，而且对象归属清楚；这次的问题出在「跨板块视图没有位置」，不在板块划分。日程放顶栏而不是成长里，是因为团队活动属于团队板块，一个视图横跨两个板块。</p>
+    </div>
+
+    <div class="blk">
+      <div class="blk-k"><h3>和 PRD 第 3 节逐页对照</h3><span class="k">保留 24 · 修订 15 · 删除（并入）1 · 新增 8</span></div>
+      <p class="lead">逐页写原型现状、新结构的处置、期次和对应原型。「原型图」一列就是需求 → 视图对照：一期的修订和新增页都有原型（P1–P8），只有工作日日历、机器人接口密钥两个简单设置页没画；改动只在数据或规则层的写「沿用原型界面」；原型里只是占位或没做、本次也没画的，写「某期另出」。下面先列有改动的 16 页和新增 8 页，40 页全表折叠在后面。</p>
+<!--PAGES_TABLE-->
+    </div>
+  </div>
+
+  <div class="wrap">
+  <div class="blk panel dark s3">
+    <div class="dm-head"><div><h4>P5–P8 · 待办、点评与交接卡、周期任务规则、期次启动</h4><p>四个较小的新增或修订界面。数据仍取示例数据；带教分配按示意（老师线吴桐、客户线周颖、市场未指定）。</p></div></div>
+    <div class="gal4">
+      <!-- P5 -->
+      <div class="pscroll"><div class="ap nos" style="min-width:520px"><div class="ap-main">
+        <div class="ap-top"><div class="ap-crumb">待办 / <b>常浩</b></div><div class="ap-tools"><span class="ap-tool">全部</span><span class="ap-tool new">待处理 7</span></div></div>
+        <div class="ap-body" style="gap:4px">
+          <div class="td-g">审核 · R10 · 3</div>
+          <div class="td"><span class="tg acc">Skill</span><div><b>行研报告结构检查</b><span class="src">陈默提交 · E20</span></div><span style="display:flex;gap:4px"><span class="ab pri">通过</span><span class="ab">退回</span></span></div>
+          <div class="td"><span class="tg acc">Skill</span><div><b>销售跟进话术生成</b><span class="src">许诺提交 · E20</span></div><span style="display:flex;gap:4px"><span class="ab pri">通过</span><span class="ab">退回</span></span></div>
+          <div class="td"><span class="tg acc">Prompt</span><div><b>家长沟通开场白</b><span class="src">孟川提交 · E20</span></div><span style="display:flex;gap:4px"><span class="ab pri">通过</span><span class="ab">退回</span></span></div>
+          <div class="td-g">点评 · R02 · 2 · 所属站没有站带教，落到你</div>
+          <div class="td"><span class="tg warn">待点评</span><div><b>赵一然 · 公众号选题清单</b><span class="m">内容站 · 11-05 09:10 提交 · 期限 11-09 09:10</span></div><span style="display:flex;gap:4px"><span class="ab pri">去点评</span><span class="ab">指定站带教</span></span></div>
+          <div class="td"><span class="tg warn">待点评</span><div><b>陈默 · 投放数据周报</b><span class="m">投放站 · 11-05 09:30 提交 · 期限 11-09 09:30</span></div><span style="display:flex;gap:4px"><span class="ab pri">去点评</span><span class="ab">指定站带教</span></span></div>
+          <div class="td-g">换站 · R06 · 1</div>
+          <div class="td"><span class="tg neu">接人</span><div><b>孟川 · 11-12 到投放站</b><span class="m">新站带教未指定；指定后这条改派给新带教</span></div><span class="ab pri">指定站带教</span></div>
+          <div class="td-g">跟进 · R05 · 1 · 周期任务的主带教是你</div>
+          <div class="td"><span class="tg bad">逾期 3 天</span><div><b>许诺 · 第 44 周周报</b><span class="m">按规则 11-01 周日 22:00 截止（示例数据写的是 11-04 18:00，属瑕疵 mock.ts:121）</span></div><span class="ab">催一下</span></div>
+          <div class="td-g">汇总 · 查询，不是待办</div>
+          <div class="ac soft" style="font-size:11.5px;line-height:1.6">有逾期的人：孟川 · 试讲复盘 逾期 2 天（待办在孟川和教学站带教吴桐那里）。<br>本周排期：11-12 周四 6 人换站，3 人换了带教：接人待办 2 条已发给周颖、吴桐，1 条（孟川）落在你这里。<br>点评积压：周颖 1 · 吴桐 0 · 市场线未指定 2（就是上面两条）。</div>
+        </div>
+      </div></div></div>
+      <!-- P6 -->
+      <div class="pscroll"><div class="ap nos" style="min-width:520px"><div class="ap-main">
+        <div class="ap-top"><div class="ap-crumb">成长 / 任务详情 / <b>话术演练录音</b></div><div class="ap-tools"><span class="ap-tool">林夏 · 客服站</span></div></div>
+        <div class="ap-body" style="gap:8px">
+          <div class="ac soft" style="font-size:11.5px"><b>提交 v1</b> · 11-04 16:50 · 飞书文档<br>说明：5 段录音放在文档里，第 4 段投诉场景有点卡壳。</div>
+          <div class="ac"><div class="ac-h"><b>点评</b><span>负责带教 = 客服站站带教 周颖；林夏换站不转</span></div>
+            <div class="rad"><span>优秀</span><span class="on">达标</span><span>需改进</span></div>
+            <div class="inp" style="margin-top:6px;color:var(--a-mute);min-height:40px">一两句总评；细节可以写在飞书文档批注里</div>
+            <div style="font-size:11px;color:var(--a-mute);margin-top:6px">选「需改进」时出现：修改截止（默认 N 个工作日后，建议值）。再交时这里并排显示「上次你的评语 | 这次的修改说明」。</div>
+          </div>
+          <div class="ac"><div class="ac-h"><b>交接卡 · 林夏</b><span>下一站带教开站前 5 个工作日起可见</span></div>
+            <table class="tbl"><tbody>
+              <tr><td><b>教研站</b></td><td>课程拆解报告 <span class="tg ok">优秀</span><br><span style="color:var(--a-mute)">「结构图画得好，改进点有落地性。」</span></td></tr>
+              <tr><td><b>教学站</b></td><td>试讲复盘 <span class="tg ok">达标</span><br><span style="color:var(--a-mute)">「…下次把学生反馈的数据放到最前面，结论会更有说服力。」</span></td></tr>
+              <tr><td><b>交接要点</b></td><td><span class="tg p2">一期新增</span> 示例数据里没有，上线后由原站带教在站后 2 个工作日内写，最多 3 条</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div></div></div>
+      <!-- P7 -->
+      <div class="pscroll"><div class="ap nos" style="min-width:520px"><div class="ap-main">
+        <div class="ap-top"><div class="ap-crumb">后台 / 路径 / <b>周期任务规则</b></div><div class="ap-tools"><span class="ap-pri">新建规则</span></div></div>
+        <div class="ap-body" style="gap:8px">
+          <table class="tbl"><thead><tr><th>规则</th><th>频率与截止</th><th>完成方式</th><th>带教</th></tr></thead><tbody>
+            <tr><td><b>第 N 周周报</b></td><td>每周日 22:00</td><td>机器人收周报</td><td>只看</td></tr>
+            <tr><td><b>轻测</b></td><td>每周一次 · 20:00</td><td>机器人出题、写成绩；未答记未答</td><td>不评</td></tr>
+            <tr><td><b>月度营销物料</b></td><td>每月最后一天 22:00</td><td>本人声明 + 管理员确认</td><td>—</td></tr>
+            <tr><td><b>日报</b></td><td>工作日 · 待定</td><td><span class="tg p2">待定</span> 机器人接口没有日报</td><td>待定</td></tr>
+          </tbody></table>
+          <div class="ac"><div class="ac-h"><b>任务模板 · 客服岗小结</b><span>路径模板 v1</span></div>
+            <div class="fld"><span>建议用时</span><div class="inp">2 天</div></div>
+            <div class="fld" style="margin-top:4px"><span>截止规则</span><div class="inp">锚定站结束 · 偏移 0 · 18:00</div></div>
+            <div style="font-size:11px;color:var(--a-mute);margin-top:6px">客服站 11-11 结束 → 截止 11-11 18:00、开放日 11-09，和示例数据一致；站被顺延，小结跟着走。对照：「话术演练录音」锚定站开始、第 5 个工作日 → 11-04。</div>
+          </div>
+        </div>
+      </div></div></div>
+      <!-- P8 -->
+      <div class="pscroll"><div class="ap nos" style="min-width:520px"><div class="ap-main">
+        <div class="ap-top"><div class="ap-crumb">后台 / 期次 / <b>新建期次 · 2026 秋季班</b></div><div class="ap-tools"><span class="ap-pri">下一步：甘特预览</span></div></div>
+        <div class="ap-body" style="gap:8px">
+          <div class="stepbar"><div class="ok"><b>1</b>模板版本</div><div class="ok"><b>2</b>预置成员</div><div class="ok"><b>3</b>开学日</div><div class="ok"><b>4</b>轮岗矩阵</div><div class="cur"><b>5</b>站带教</div><div><b>6</b>甘特预览</div><div><b>7</b>发布</div></div>
+          <table class="tbl"><thead><tr><th>站</th><th>业务线</th><th>站带教</th><th>本期同时最多</th></tr></thead><tbody>
+            <tr><td>教研</td><td>老师线</td><td>吴桐</td><td>2 人</td></tr>
+            <tr><td>教学</td><td>老师线</td><td>吴桐</td><td>1 人</td></tr>
+            <tr><td>客服</td><td>客户线</td><td>周颖</td><td>2 人</td></tr>
+            <tr><td>销售</td><td>客户线</td><td>周颖</td><td>2 人</td></tr>
+            <tr><td>内容</td><td>市场</td><td><span class="tg bad">未指定</span></td><td>2 人</td></tr>
+            <tr><td>投放</td><td>市场</td><td><span class="tg bad">未指定</span></td><td>2 人</td></tr>
+          </tbody></table>
+          <div class="ac soft" style="font-size:11.5px;line-height:1.6"><b>冲突检查</b>：吴桐第 1、2 段同时带 3 人；市场线若由一人兼两站，第 6 段同时 4 人；第 1 站 10-01 开始，落在国庆假期（示意）。预置名单里的人首次飞书登录直接成为本期管培生。</div>
+        </div>
+      </div></div></div>
+    </div>
+    <div class="pnote">
+      <div><b>P5 待办 · 7 条</b>审核 3 + 落到管理员的 R02 2 条、R06 1 条 + 主带教为空的 R05 1 条；「有逾期的人」是汇总查询。示意分配下暴露出市场线没有站带教 <span class="ev g">M-25</span>。</div>
+      <div><b>P6 点评与交接卡</b>评语只要总评，不设字数下限 <span class="ev g">带教走查 Q8</span>；点评文字取自示例数据 <span class="ev o">mock.ts:158-159</span>。</div>
+      <div><b>P7 / P8 后台</b>周期规则的频率、完成方式见 <span class="ev x">旁证 · 业务共识第 99、111–126 行</span>；期次启动把逐人分配变成一次发布 <span class="ev g">A-02</span>。</div>
+    </div>
+    <p class="fig-cap"><b>图 12</b>P5 对应需求 #34 N3；P6 对应 #7 #23 N6；P7 对应 #10 #32 N4；P8 对应 #31 N5。数字见 coverage.md 5.3、5.9。</p>
+  </div>
+  </div>
+</section>
+
+<!-- 08 写回 -->
+<section class="stage s2" id="s8">
+  <div class="wrap">
+    <div class="st-head">
+      <div class="st-num">08</div>
+      <div><span class="k">回流字段 · 系统怎么越用越准</span><h2>每个动作，<em>写回一个字段、追加一条事件</em></h2><p>界面动作 → 接口 → 写回字段 → 事件。写回的字段都能在第 4 章字段表里找到；以别的系统为准的数据，界面不直接改。接口路径是建议命名，字段细节在拆 issue 时定 <span class="ev p">L124</span>。事件沿用本体走查的 E01–E33，这一版新增 E34 站结束、E35–E41（截止调整、交接要点、待办完成、催办、催办送达、规则变更、待办重派），<code>event_log.type</code> 用一套点分命名（如 <code>submission.created</code>），编号只作对照。</p></div>
+    </div>
+    <div class="blk">
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>动作（在哪）</th><th>接口</th><th>写回</th><th>追加事件 → 触发</th></tr></thead>
+        <tbody>
+          <tr><td>提交产出（任务详情 / 机器人）</td><td><code>POST /api/tasks/:id/submissions</code></td><td>submission（版本、渠道、修改说明）；task_instance.状态 = 已提交</td><td>E10 → R02 待点评</td></tr>
+          <tr><td>写点评（任务详情 P6）</td><td><code>POST /api/submissions/:id/review</code></td><td>review；task_instance.状态；需改进时 task_instance.修改截止</td><td>E11 → 关闭 R02；需改进时 R03</td></tr>
+          <tr><td>调整截止（任务详情、待办）</td><td><code>POST /api/tasks/:id/due</code></td><td>task_instance.截止；首次调整时写原截止；调整原因</td><td>E35 due.changed → 撤销已失效的 R05</td></tr>
+          <tr><td>顺延一站、换站带教（轮岗排期抽屉 P3）</td><td><code>PATCH /api/personal-modules/:id</code></td><td>personal_module 起止、站带教；后续各站起止；未开始任务截止。换站带教时，这一站未关闭的 R02 R06 R08 R09 改派新带教</td><td>E03 → 重算 R06 R07 R08；改派时追加 E41 todo.reassigned</td></tr>
+          <tr><td>写交接要点（待办 / 档案）</td><td><code>PUT /api/personal-modules/:id/handover</code></td><td>handover_note</td><td>E36 handover.created → 关闭 R08；接人卡显示「已就绪」</td></tr>
+          <tr><td>接人已准备（待办 P2）</td><td><code>POST /api/todos/:id/done</code></td><td>todo.状态</td><td>E37 todo.done → 关闭 R06</td></tr>
+          <tr><td>催一下（待办 P5、看板）</td><td><code>POST /api/tasks/:id/nudges</code></td><td>无业务字段</td><td>E38 nudge.sent → 机器人推送 → 写回执 E39 nudge.delivered</td></tr>
+          <tr><td>审核资产（待办 P5）</td><td><code>POST /api/assets/:id/review</code></td><td>asset.状态、asset_version</td><td>E21 / E22 → 贡献派生 / R11</td></tr>
+          <tr><td>发布期次（期次启动 P8）</td><td><code>POST /api/cohorts/:id/launch</code></td><td>personal_path、personal_module、task_instance、stage_assessment 占位</td><td>E02 → 周期实例展开 E04</td></tr>
+          <tr><td>保存周期规则（P7）</td><td><code>PUT /api/recurring-rules/:id</code></td><td>recurring_rule；未开始的周期实例重排</td><td>E40 rule.changed</td></tr>
+          <tr><td>机器人写周报、写成绩</td><td><code>POST /bot/v1/weekly-reports</code> · <code>/bot/v1/quiz-results</code></td><td>weekly_report / quiz_result；对应周期实例状态</td><td>E14 / E13 → 关闭 R04 R05</td></tr>
+          <tr><td>机器人读（晨报、此刻提醒）</td><td><code>GET /bot/v1/people/:id/schedule</code> · <code>/bot/v1/mentors/:id/pending-reviews</code> · <code>/bot/v1/pushes</code></td><td>只读</td><td>—</td></tr>
+          <tr><td>四个时间视图</td><td><code>GET /api/schedule?view=week|mentor|rotation|events</code></td><td>只读；服务端按可见性过滤后返回日程项</td><td>—</td></tr>
+        </tbody>
+      </table></div>
+      <div class="two" style="margin-top:20px">
+        <div class="fig"><div class="k" style="margin-bottom:8px">以别的系统为准，界面不直接改</div><p style="font-size:14px;color:var(--ink2)">团队活动的时间、地点以飞书日历为准，工作台只补主讲、主题、回放；周报、轻测成绩以机器人写入为准，网页没有改的入口；飞书文档正文不进工作台，权限由飞书判断 <span class="ev p">L72</span><span class="ev p">L90</span>。</p></div>
+        <div class="fig"><div class="k" style="margin-bottom:8px">越用越准靠什么</div><p style="font-size:14px;color:var(--ink2)">事件从一期开始存：点评时效、需修改后再交通过率、站末遗留、换站集中度都从事件里算；下一期调模板时，能看到上一期哪些任务最常逾期、最常需修改（三期界面）。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 差异 -->
+<section class="stage s3" id="s9">
+  <div class="wrap">
+    <div class="st-head rev">
+      <div class="st-num">09</div>
+      <div><span class="k">差异专题 · 哪些地方要分开做</span><h2>七个维度逐个过，<em>没有一处要整套分开</em></h2><p>差异都落在字段、规则或页面层；页面层有三处：首页按角色 × 阶段换焦点候选、带教首页按在带状态分组、同事首页按「和我有关」排。全部是推演，没有真人材料验证。</p></div>
+    </div>
+    <div class="blk">
+      <div class="tw"><table class="t wide">
+        <thead><tr><th>维度</th><th>差异是什么</th><th>依据</th><th>落在哪层</th><th>本案怎么做</th></tr></thead>
+        <tbody>
+          <tr><td><b>角色</b></td><td>带教至少两种：站带教、主带教；管理员身兼排期者、唯一编辑和对上汇报；机器人是做事的角色；同事会变成主讲或站带教</td><td><span class="ev p">L23</span><span class="ev p">L65</span><span class="ev p">L129</span>；<span class="ev o">mock.ts:71</span>；<span class="ev x">旁证：现状导师为常浩，管培生 2 人，CONTEXT.md 第 31 行</span></td><td>数据关系 + 规则</td><td>站带教唯一来源、主带教可选；权限由关系起止推出</td></tr>
+          <tr><td><b>熟练度和阶段</b></td><td>管培生：新人 / 中段 / 答辩前要的完全不同；带教：首次缺标准、老手缺不漏人；管理员：首期从零搭、后续要复用</td><td><span class="ev g">T 1.2</span><span class="ev g">M 1.2</span><span class="ev g">A 1.3</span></td><td>页面 + 内容</td><td>焦点候选随阶段换；三档说明与本站带教清单（二期）；模板版本</td></tr>
+          <tr><td><b>业务线</b></td><td>老师线跟课表、客户线跟来电和客户、市场跟排期；产出形式和点评方式不同</td><td><span class="ev o">mock.ts:35-40</span><span class="ev o">mock.ts:53-63</span>；<span class="ev g">推演</span></td><td>字段</td><td>模块带业务线；任务模板加点评方式（二期）；甘特按线着色。不分线做流程</td></tr>
+          <tr><td><b>服务对象</b></td><td>产出依赖真实客户、真实课堂，没分到客户时逾期不是管培生的错</td><td><span class="ev o">mock.ts:53</span><span class="ev o">mock.ts:58</span>；<span class="ev g">T-13</span></td><td>规则</td><td>调整截止 + 原因 + 留痕；主指标按调整后截止并列调整条数</td></tr>
+          <tr><td><b>情境</b></td><td>全员同一天换站；节假日；请假；跟岗时不在电脑前；晚上提交；多期重叠（培养期 180 天，下一期开学时上一期可能还在定岗）</td><td><span class="ev o">mock.ts:68-69</span>；<span class="ev p">L166</span>；<span class="ev g">推演</span></td><td>规则 + 渠道分工</td><td>工作日日历；路径顺延；此刻提醒归机器人；晚间提交次日合并推；带教承载按全部在册期次算，甘特默认当前期次、可叠加（是否多期并行待常浩确认）</td></tr>
+          <tr><td><b>结果</b></td><td>培养的结果是能力长出来、定岗；带教的结果是点评及时且让产出变好</td><td><span class="ev p">L178–179</span>；<span class="ev x">旁证：业务共识第 154 行</span></td><td>指标</td><td>主指标改量结果；带教侧点评时效达标率、需修改后再交通过率（第 10 章）</td></tr>
+          <tr><td><b>现有工具</b></td><td>带教在飞书文档里写批注、用飞书日历约 1:1；常浩用多维表格 <code>project_base</code> 和机器人</td><td><span class="ev p">L150–157</span>；<span class="ev g">推演</span></td><td>集成边界</td><td>点评只要三档 + 总评；日程只读飞书；历史从 project_base 一次性导入</td></tr>
+        </tbody>
+      </table></div>
+      <p class="fig-cap"><b>表 5</b>「补的就是系统缺的」：常浩现在用什么排轮岗、上一期管培生用什么记跟岗和截止，这两件事查到了会直接改变甘特和日程的优先级，列进第 12 章要补的材料。</p>
+    </div>
+  </div>
+</section>
