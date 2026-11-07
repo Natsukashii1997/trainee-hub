@@ -75,15 +75,14 @@ const SOON: Record<'knowledge' | 'incentive' | 'admin', { phase: string; crumbs:
   },
   admin: {
     phase: '二期', crumbs: [{ label: '管理后台', to: '/admin' }, { label: '内容与系统' }], title: '内容与系统', em: '二期开放',
-    desc: '公告、标签、知识库同步、机器人接口和积分规则的后台设置，随二期、三期功能一起上线。',
+    desc: '公告、标签、知识库同步和积分规则的后台设置，随二期、三期功能一起上线。机器人接口密钥已并入一期的「AI 与接入」。',
     features: [
       { icon: 'mega', domain: 'team', title: '公告发布', desc: '只由管理员发，进团队动态' },
       { icon: 'filter', domain: 'week', title: '标签维护', desc: '主题、类型、岗位三个固定列表，贡献者只能选' },
       { icon: 'sync', domain: 'ment', title: '知识库同步', desc: '同步飞书知识库目录，新资料待标注' },
-      { icon: 'bot', domain: 'acc', title: '机器人接口密钥', desc: '带教机器人写回周报、轻测成绩用' },
       { icon: 'award', domain: 'ai', title: '积分规则与加权', desc: '各类贡献的分值与上限，审核时可手动加权', phase: '三期' },
     ],
-    why: '一期能用的后台：审核队列、成员与角色、期次、轮岗排期、工作日日历、路径模板、周期任务规则。',
+    why: '一期能用的后台：审核队列、成员与角色、期次、轮岗排期、工作日日历、路径模板、周期任务规则、AI 与接入。',
   },
 };
 
@@ -102,7 +101,7 @@ export function Soon({ which }: { which: keyof typeof SOON }) {
       />
       <div className="bento">
         {s.features.map(f => (
-          <section key={f.title} className="card s4 sn-f" aria-label={f.title}>
+          <section key={f.title} className={`card ${s.features.length === 4 ? 's3' : 's4'} sn-f stretch`} aria-label={f.title}>
             <div className="row"><Tile icon={f.icon} domain={f.domain} size="lg" /><StatusPill tone="plain">{f.phase ?? s.phase}</StatusPill></div>
             <h3>{f.title}</h3>
             <p>{f.desc}</p>
