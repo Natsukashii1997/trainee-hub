@@ -19,4 +19,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      # 后端测试要本机 PostgreSQL 16：ubuntu-latest（24.04）自带，装在 /usr/lib/postgresql/16/bin；scripts/db.mjs 默认找的是 Homebrew 路径
       - run: npm test
+        env:
+          PG_BIN: /usr/lib/postgresql/16/bin
