@@ -1,0 +1,5 @@
+[
+  {"name":"所属战役","type":"link","link_table":"tblaUHNEhPhYjfJw","bidirectional":true,"bidirectional_link_field_name":"结果与复盘"},
+  {"name":"关联主题","type":"link","link_table":"tbl9e453vNx7Owhx","bidirectional":true,"bidirectional_link_field_name":"结果记录"},
+  {"name":"关联物料","type":"link","link_table":"tblIKSOh0K6q18xd","bidirectional":true,"bidirectional_link_field_name":"结果记录"}
+]

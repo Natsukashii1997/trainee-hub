@@ -1,0 +1,165 @@
+{
+  "status": "structure_landed_not_connected",
+  "base_token": "LgqpbDFz8a9XmNs3TxccAP0Hn7b",
+  "release_id": null,
+  "runnable": false,
+  "final_accepted": false,
+  "business_design_v3": {
+    "fields": {
+      "campaign.analysis_input": {
+        "table_id": "tblaUHNEhPhYjfJw",
+        "field_id": "fldySL9qfw",
+        "name": "策略分析输入",
+        "type": "text"
+      },
+      "campaign.environment": {
+        "table_id": "tblaUHNEhPhYjfJw",
+        "field_id": "fld3l1zNHN",
+        "name": "数据环境",
+        "type": "select"
+      },
+      "campaign.collaboration_facts": {
+        "table_id": "tblaUHNEhPhYjfJw",
+        "field_id": "fldOIO5ZGK",
+        "name": "技术｜战役协同事实",
+        "type": "text"
+      },
+      "strategy.adoption_decision": {
+        "table_id": "tblxJ9NKRGHZpkO6",
+        "field_id": "fld32Fe4Kf",
+        "name": "采用决定",
+        "type": "select"
+      },
+      "strategy.version_facts": {
+        "table_id": "tblxJ9NKRGHZpkO6",
+        "field_id": "fldAlwKBWL",
+        "name": "技术｜策略版本事实",
+        "type": "text"
+      },
+      "theme.strategy_links": {
+        "table_id": "tbl9e453vNx7Owhx",
+        "field_id": "fldNuju5Bb",
+        "name": "依据策略",
+        "type": "link"
+      },
+      "material.scope_item_id": {
+        "table_id": "tblIKSOh0K6q18xd",
+        "field_id": "fldDytTrlx",
+        "name": "应交项编号",
+        "type": "text"
+      },
+      "material.coordinator": {
+        "table_id": "tblIKSOh0K6q18xd",
+        "field_id": "fldbkW6VI6",
+        "name": "物料对接人",
+        "type": "user"
+      },
+      "material.handoff_destination": {
+        "table_id": "tblIKSOh0K6q18xd",
+        "field_id": "fldTPkw3ZF",
+        "name": "交接去向",
+        "type": "text"
+      },
+      "material.collaboration_facts": {
+        "table_id": "tblIKSOh0K6q18xd",
+        "field_id": "fldMsylhVu",
+        "name": "技术｜物料协同事实",
+        "type": "text"
+      }
+    },
+    "template": {
+      "version": "MKT-CAMPAIGN-TASKS-v3.0",
+      "records": [
+        {
+          "step_id": "MKT3-001",
+          "record_id": "recvuCwWJhlsq5",
+          "name": "提交策略分析输入",
+          "enabled": false
+        },
+        {
+          "step_id": "MKT3-002",
+          "record_id": "recvuCwWJhJPV1",
+          "name": "形成并确认本场策略",
+          "enabled": false
+        },
+        {
+          "step_id": "MKT3-003",
+          "record_id": "recvuCwWJhJ957",
+          "name": "提交主题与节奏",
+          "enabled": false
+        },
+        {
+          "step_id": "MKT3-004",
+          "record_id": "recvuCwWJhXUTY",
+          "name": "提交应交清单与制作输入",
+          "enabled": false
+        },
+        {
+          "step_id": "MKT3-005",
+          "record_id": "recvuCwWJhVHBC",
+          "name": "完成本场物料交付",
+          "enabled": false
+        }
+      ]
+    },
+    "views": [
+      {
+        "table_id": "tblxJ9NKRGHZpkO6",
+        "name": "维护｜策略完整信息",
+        "type": "grid",
+        "visible_fields": [
+          "fldRq4kHaA",
+          "fldmiLL6cr",
+          "fld32Fe4Kf",
+          "fldLQIXD6U",
+          "fldCgoIxyR",
+          "fldcfKG8OK",
+          "fldsu392Hs",
+          "fldOIyWJ2e",
+          "fld8kIPIVv",
+          "fld1s3udMR",
+          "fldDPxAoMN",
+          "fldAlwKBWL"
+        ],
+        "filter": {
+          "conditions": []
+        },
+        "view_id": "vewMxr5zqV"
+      },
+      {
+        "table_id": "tblhZYixbGWKn1bS",
+        "name": "五项主任务｜待接入",
+        "type": "grid",
+        "visible_fields": [
+          "fldJExdV3O",
+          "fldni5pQNs",
+          "fld4mVEXnN",
+          "fldACDXLEA",
+          "fldJFqWx9e",
+          "fld3GrE6bA",
+          "fldxkHlBaq",
+          "fld0OMbs9g",
+          "fldITn4NIl"
+        ],
+        "filter": {
+          "logic": "and",
+          "conditions": [
+            [
+              "fldTASYLFx",
+              "==",
+              "MKT-CAMPAIGN-TASKS-v3.0"
+            ]
+          ]
+        },
+        "sort_config": [
+          {
+            "field": "fld4mVEXnN",
+            "desc": false
+          }
+        ],
+        "view_id": "vewsDIuKVK"
+      }
+    ]
+  },
+  "evidence_path": "/Users/nat/Documents/AI 项目/营销战役AI协同MVP/work/base-ux-20260908/step1"
+}

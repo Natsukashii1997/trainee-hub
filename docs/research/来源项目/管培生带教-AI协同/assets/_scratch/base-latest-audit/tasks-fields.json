@@ -1,0 +1,154 @@
+{
+  "ok": true,
+  "identity": "user",
+  "data": {
+    "fields": [
+      {
+        "bidirectional": true,
+        "bidirectional_link_field_id": "fld7v0WFJ9",
+        "id": "fldfhHpt7e",
+        "link_table": "tbl1y77tCORXoZAr",
+        "name": "所属项目",
+        "type": "link"
+      },
+      {
+        "default_value": null,
+        "id": "fldMk2RykL",
+        "name": "实际完成时间",
+        "style": {
+          "format": "yyyy/MM/dd"
+        },
+        "type": "datetime"
+      },
+      {
+        "default_value": null,
+        "id": "fld7osfuqb",
+        "multiple": false,
+        "name": "是否逾期",
+        "options": [
+          {
+            "hue": "Red",
+            "lightness": "Darker",
+            "name": "是"
+          },
+          {
+            "hue": "Wathet",
+            "lightness": "Dark",
+            "name": "否"
+          }
+        ],
+        "type": "select"
+      },
+      {
+        "bidirectional": false,
+        "id": "fldEc87zaP",
+        "link_table": "tblc3pkZfjaOnOwY",
+        "name": "父记录",
+        "type": "link"
+      },
+      {
+        "default_value": null,
+        "id": "flddr5MDL5",
+        "name": "开始时间",
+        "style": {
+          "format": "yyyy/MM/dd"
+        },
+        "type": "datetime"
+      },
+      {
+        "bidirectional": true,
+        "bidirectional_link_field_id": "fldeYKgxg6",
+        "id": "fldCVc5BGc",
+        "link_table": "tblHWD7DAQcKpXaM",
+        "name": "主责任人",
+        "type": "link"
+      },
+      {
+        "default_value": null,
+        "id": "fldbesdvlG",
+        "name": "任务事项",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldGt3EfDL",
+        "name": "交付物",
+        "style": {
+          "type": "url"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldd9dqGzh",
+        "multiple": false,
+        "name": "环节阶段",
+        "options": [
+          {
+            "hue": "Blue",
+            "lightness": "Dark",
+            "name": "启动阶段"
+          },
+          {
+            "hue": "Yellow",
+            "lightness": "Dark",
+            "name": "计划阶段"
+          },
+          {
+            "hue": "Gray",
+            "lightness": "Dark",
+            "name": "调研阶段"
+          },
+          {
+            "hue": "Red",
+            "lightness": "Dark",
+            "name": "实施阶段"
+          },
+          {
+            "hue": "Green",
+            "lightness": "Dark",
+            "name": "收尾阶段"
+          },
+          {
+            "hue": "Purple",
+            "lightness": "Dark",
+            "name": "监控阶段"
+          }
+        ],
+        "type": "select"
+      },
+      {
+        "id": "fldsg5KmKr",
+        "name": "是否完成",
+        "type": "checkbox"
+      },
+      {
+        "default_value": null,
+        "id": "fldYruSac7",
+        "name": "截止时间",
+        "style": {
+          "format": "yyyy/MM/dd"
+        },
+        "type": "datetime"
+      }
+    ],
+    "total": 11
+  },
+  "_notice": {
+    "skills": {
+      "command": "lark-cli update",
+      "current": "1.0.89",
+      "message": "lark-cli skills 1.0.89 out of sync with binary 1.0.94, run: lark-cli update",
+      "target": "1.0.94"
+    },
+    "update": {
+      "command": "lark-cli update",
+      "current": "1.0.94",
+      "latest": "1.0.95",
+      "message": "lark-cli 1.0.95 available, current 1.0.94, run: lark-cli update"
+    }
+  }
+}

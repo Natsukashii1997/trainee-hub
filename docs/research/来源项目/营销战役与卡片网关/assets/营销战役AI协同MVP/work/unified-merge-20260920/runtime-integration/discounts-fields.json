@@ -1,0 +1,262 @@
+{
+  "ok": true,
+  "identity": "user",
+  "data": {
+    "fields": [
+      {
+        "default_value": null,
+        "id": "fldhkh9NlM",
+        "multiple": false,
+        "name": "SKU名称",
+        "options": [
+          {
+            "hue": "Blue",
+            "lightness": "Lighter",
+            "name": "安心学Max"
+          },
+          {
+            "hue": "Orange",
+            "lightness": "Lighter",
+            "name": "学考无忧Pass"
+          },
+          {
+            "hue": "Wathet",
+            "lightness": "Lighter",
+            "name": "补考护航Pass"
+          },
+          {
+            "hue": "Yellow",
+            "lightness": "Lighter",
+            "name": "先修班课"
+          },
+          {
+            "hue": "Turquoise",
+            "lightness": "Lighter",
+            "name": "论文稳Pass"
+          },
+          {
+            "hue": "Red",
+            "lightness": "Lighter",
+            "name": "选课指导"
+          },
+          {
+            "hue": "Purple",
+            "lightness": "Lighter",
+            "name": "灵活学Lite"
+          }
+        ],
+        "type": "select"
+      },
+      {
+        "default_value": null,
+        "description": "以当月1日表达 YYYY-MM 业务月份。",
+        "id": "fldPpOkaTv",
+        "name": "适用月份",
+        "style": {
+          "format": "yyyy-MM-dd"
+        },
+        "type": "datetime"
+      },
+      {
+        "default_value": null,
+        "id": "fldiMBT9Ku",
+        "multiple": false,
+        "name": "数据环境",
+        "options": [
+          {
+            "hue": "Red",
+            "lightness": "Lighter",
+            "name": "UAT"
+          },
+          {
+            "hue": "Orange",
+            "lightness": "Lighter",
+            "name": "正式"
+          },
+          {
+            "hue": "Red",
+            "lightness": "Lighter",
+            "name": "已归档模拟"
+          }
+        ],
+        "type": "select"
+      },
+      {
+        "default_value": null,
+        "id": "fldXPQrE3I",
+        "name": "正价价格",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "expression": "TEXT([填写日期],\"MM\")",
+        "id": "fldzYZPDMo",
+        "name": "月份",
+        "type": "formula"
+      },
+      {
+        "default_value": null,
+        "id": "fld57jCeKB",
+        "name": "同步时间",
+        "style": {
+          "format": "yyyy-MM-dd HH:mm"
+        },
+        "type": "datetime"
+      },
+      {
+        "default_value": null,
+        "id": "fldPp7oqKH",
+        "name": "同步说明",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "bidirectional": true,
+        "bidirectional_link_field_id": "fldkU6kDHf",
+        "description": "折扣记录与SKU主数据的稳定关联。",
+        "id": "fldCplEt6K",
+        "link_table": "tblwaujJdrNHoVea",
+        "name": "关联SKU",
+        "type": "link"
+      },
+      {
+        "default_value": null,
+        "id": "fldDr9nLM1",
+        "name": "试听价格",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldRQ6hItB",
+        "name": "续费活动",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldJxAWyRe",
+        "name": "填写日期",
+        "style": {
+          "format": "yyyy-MM-dd"
+        },
+        "type": "datetime"
+      },
+      {
+        "default_value": null,
+        "id": "fldhzfqucz",
+        "name": "来源引用",
+        "style": {
+          "type": "url"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldKAyPrOD",
+        "name": "同步批次ID",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldBhv2VrI",
+        "name": "新签活动",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldnSAdPR2",
+        "multiple": false,
+        "name": "同步状态",
+        "options": [
+          {
+            "hue": "Purple",
+            "lightness": "Light",
+            "name": "待核验"
+          },
+          {
+            "hue": "Green",
+            "lightness": "Light",
+            "name": "已同步"
+          },
+          {
+            "hue": "Blue",
+            "lightness": "Light",
+            "name": "历史已核验"
+          },
+          {
+            "hue": "Red",
+            "lightness": "Light",
+            "name": "失败"
+          }
+        ],
+        "type": "select"
+      },
+      {
+        "default_value": null,
+        "id": "fldUscjVht",
+        "multiple": false,
+        "name": "业务线",
+        "options": [
+          {
+            "hue": "Purple",
+            "lightness": "Lighter",
+            "name": "大学辅导"
+          },
+          {
+            "hue": "Turquoise",
+            "lightness": "Lighter",
+            "name": "国际课程"
+          }
+        ],
+        "type": "select"
+      },
+      {
+        "default_value": null,
+        "id": "fldbAfnd8i",
+        "multiple": false,
+        "name": "确认人",
+        "type": "user"
+      },
+      {
+        "default_value": null,
+        "description": "YYYY-MM|业务线|SKU，自然键唯一口径。",
+        "id": "fldZMmZlYc",
+        "name": "同步幂等键",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      }
+    ],
+    "total": 18
+  },
+  "_notice": {
+    "skills": {
+      "command": "lark-cli update",
+      "current": "1.0.89",
+      "message": "lark-cli skills 1.0.89 out of sync with binary 1.0.94, run: lark-cli update",
+      "target": "1.0.94"
+    },
+    "update": {
+      "command": "lark-cli update",
+      "current": "1.0.94",
+      "latest": "1.0.96",
+      "message": "lark-cli 1.0.96 available, current 1.0.94, run: lark-cli update"
+    }
+  }
+}
