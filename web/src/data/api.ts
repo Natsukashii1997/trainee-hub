@@ -22,6 +22,7 @@ export * from './rules';
 export * from './schedule';
 export * from './metrics';
 export * from './actions';
+export * from './aiAccess';
 export { ADMIN_ID, COHORT_ID, DEMO_NOW } from './mock';
 
 // 初始化：把示例数据里已发生的事补成事件，再推算一次

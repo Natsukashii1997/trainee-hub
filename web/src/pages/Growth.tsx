@@ -816,7 +816,7 @@ export function TaskDetail() {
           <PeopleCard d={d} />
           {d.assets.length > 0 && (
             <section className="reco" aria-label="这一步可以用" style={{ padding: 18 }}>
-              <div className="r1"><span className="tile"><Icon name="spark" /></span>这一步可以用 · AI 推荐</div>
+              <div className="r1"><span className="tile"><Icon name="spark" /></span>这一步可以用 · 推荐 AI 资产</div>
               {d.assets.slice(0, 2).map(a => (
                 <div key={a.id} style={{ marginTop: 12 }}>
                   <Link to={`/ai/assets/${a.id}`} style={{ color: '#fff' }}><h2 style={{ fontSize: 17 }}>{a.title}<span className="kbd">{a.type.toUpperCase()}</span></h2></Link>

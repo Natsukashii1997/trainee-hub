@@ -29,6 +29,7 @@ const CohortAdmin = lazy(() => import('./pages/Admin').then(m => ({ default: m.C
 const RotationAdmin = lazy(() => import('./pages/Admin').then(m => ({ default: m.RotationAdmin })));
 const WorkdayCalendar = lazy(() => import('./pages/Admin').then(m => ({ default: m.WorkdayCalendar })));
 const RulesAdmin = lazy(() => import('./pages/Admin').then(m => ({ default: m.RulesAdmin })));
+const AIAccess = lazy(() => import('./pages/Admin').then(m => ({ default: m.AIAccess })));
 const Login = lazy(() => import('./pages/Misc').then(m => ({ default: m.Login })));
 const Soon = lazy(() => import('./pages/Misc').then(m => ({ default: m.Soon })));
 
@@ -73,6 +74,7 @@ createRoot(document.getElementById('root')!).render(
               <Route path="admin/calendar" element={<WorkdayCalendar />} />
               <Route path="admin/path" element={<PathEditor />} />
               <Route path="admin/rules" element={<RulesAdmin />} />
+              <Route path="admin/ai" element={<AIAccess />} />
               <Route path="admin/soon" element={<Soon which="admin" />} />
               {/* 二期、三期占位 */}
               <Route path="knowledge" element={<Soon which="knowledge" />} />

@@ -63,7 +63,7 @@
 | `.quote` | 点评气泡 | 「最新点评」 |
 | `.kv` / `.dl` | 竖排键值 / 左右键值 | 进度卡右侧、详情「说明 / 关联」 |
 | `.note`（`.warn` `.due` `.ok`） | 提示条，前面放 `<Icon name="info" />` | — |
-| `.reco` | AI 推荐深色块（`.r1` / `h2` + `.kbd` / `p` / `.how` + `<CopyBox>`） | 首页右下 |
+| `.reco` | 推荐 AI 资产深色块（`.r1` / `h2` + `.kbd` / `p` / `.how` + `<CopyBox>`） | 首页右下 |
 | `.field` > `span` + `.input` / `.select` / `.textarea` + `small` / `.errmsg`；`.input.err`；`.form-grid` 两栏 | 表单 | — |
 | `.btn` + `.pri` / `.sec` / `.ghost` / `.dark` / `.danger`，尺寸 `.sm` `.xs` `.full` | 按钮 | 「提交产出」「继续写」「开始轻测」 |
 | `.tag`（`.on`）、`.typ`、`.kbd`、`.go`、`.pill` | 筛选标签、类型小字、代号、文字链接、玻璃胶囊 | — |

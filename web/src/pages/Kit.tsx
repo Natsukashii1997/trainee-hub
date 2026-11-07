@@ -167,7 +167,7 @@ export default function Kit() {
           <div className="row muted" style={{ marginTop: 'auto', paddingTop: 12, fontSize: 11.5, gap: 6 }}><Icon name="sync" size={13} />按当前轮岗站推送</div>
         </section>
         <section className="reco" style={{ gridArea: 'ai' }} aria-label="这一步可以用">
-          <div className="r1"><span className="tile"><Icon name="spark" /></span>这一步可以用 · AI 推荐<span className="for">适合你正在写的<b>一周来电归因复盘</b></span></div>
+          <div className="r1"><span className="tile"><Icon name="spark" /></span>这一步可以用 · 推荐 AI 资产<span className="for">适合你正在写的<b>一周来电归因复盘</b></span></div>
           <div className="row" style={{ alignItems: 'flex-end', gap: 24 }}>
             <div className="grow1">
               <h2>通话记录归因<span className="kbd">SKILL</span></h2>

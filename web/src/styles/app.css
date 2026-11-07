@@ -11,7 +11,7 @@
   --glass-hi: rgba(255,255,255,.9);
   --well: rgba(255,255,255,.75);        /* 卡内的浅白小块（引用、资料行、详情格） */
   --sunk: rgba(21,25,38,.045);          /* 卡内凹槽（阶段条、分段控件底） */
-  --dark: #1A1D2C;                      /* 全屏唯一强调块（AI 推荐） */
+  --dark: #1A1D2C;                      /* 全屏唯一强调块（推荐 AI 资产） */
   /* 墨色三级 + 最淡 */
   --ink: #151926; --ink2: #363C4E; --mute: #5A6175; --faint: #8A90A0;
   /* 描边 */
@@ -582,7 +582,7 @@ button.tl-ev:hover .box, a.tl-ev:hover .box { box-shadow: 0 0 0 1px color-mix(in
 .spark circle { fill: var(--c, var(--acc)); stroke: #fff; stroke-width: 2; }
 .metrics { display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: var(--gap); }
 
-/* AI 推荐深色块 */
+/* 推荐 AI 资产深色块 */
 .reco { position: relative; overflow: hidden; padding: 20px 22px; display: flex; flex-direction: column; }
 .reco .r1 { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #C9CCE0; }
 .reco .r1 .tile { width: 24px; height: 24px; border-radius: 8px; background: var(--ai); color: #2A1C00; }

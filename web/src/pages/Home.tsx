@@ -222,7 +222,7 @@ function TraineeHome({ me }: { me: User }) {
     return { task: x, mentor: api.userById(api.responsibleMentorId(x)), dueAt: td?.dueAt };
   });
 
-  // AI 推荐：给正在做的路径任务
+  // 推荐 AI 资产（规则推荐，不调用 AI，PRD 15.3）：给正在做的路径任务
   const working = api.tasksOf(me.id).filter(x => x.kind === 'path' && api.isOpen(x)).sort((a, b) => Number(b.status === 'doing') - Number(a.status === 'doing'))[0];
   const rec = api.assetsForTemplate(api.templateById(working?.templateId))[0] ?? api.listAssets()[0];
   const recFor = rec && working && api.assetsForTemplate(api.templateById(working.templateId)).includes(rec) ? working.name : null;
@@ -327,7 +327,7 @@ function TraineeHome({ me }: { me: User }) {
 
         {rec ? (
           <section className="reco" style={{ gridArea: 'ai' }} aria-label="这一步可以用">
-            <div className="r1"><span className="tile"><Icon name="spark" /></span>这一步可以用 · AI 推荐{recFor ? <span className="for">适合你正在写的<b>{recFor}</b></span> : <span className="for">团队里用得最多</span>}</div>
+            <div className="r1"><span className="tile"><Icon name="spark" /></span>这一步可以用 · 推荐 AI 资产{recFor ? <span className="for">适合你正在写的<b>{recFor}</b></span> : <span className="for">团队里用得最多</span>}</div>
             <div className="row" style={{ alignItems: 'flex-end', gap: 24 }}>
               <div className="grow1">
                 <h2><Link to={`/ai/assets/${rec.id}`} style={{ color: 'inherit' }}>{rec.title}</Link><span className="kbd">{rec.type.toUpperCase()}</span></h2>
