@@ -10,6 +10,7 @@
 | 做界面、新页面 | [docs/PRD.md](docs/PRD.md) 附录 A 视觉规范（V3 柔光）；[web/src/components/README.md](web/src/components/README.md) 组件用法与示例页 `/dev/kit`；视觉基准 [v3-home.html](docs/research/2026-11-06-structure/design/v3-home.html) |
 | 改数据、加规则或查询 | [web/src/data/README.md](web/src/data/README.md)（全部导出与对应 PRD 小节） |
 | 排障、改脚本、装 launchd 或定时任务 | 先 `grep -n 关键词 docs/LESSONS.md`，再搜全局坑 `/Users/nat/Documents/ChatGPT/个人/work/agent-kit/LESSONS.md` |
+| 加或改用到 AI 的功能、改机器人接口 | 下面「AI 接入」一节；[docs/PRD.md](docs/PRD.md) 第 15 节 |
 | 开需求、拆任务、实现、审查 | 下面「Agent skills」一节 |
 | 写交接、验收别人的交接 | [docs/templates/handoff.md](docs/templates/handoff.md) 骨架；[OPERATIONS](docs/OPERATIONS.md)「交接写法」「报告与验收」 |
 
@@ -75,6 +76,24 @@ single-context：根目录 `GLOSSARY.md` 与 `docs/adr/`，用到时再建。见
 - 只做电脑版（≥1280px），不做窄屏适配；要加手机版须用户明确提出。
 - 可见性规则（产出、点评、考核只给本人、带教人、管理员）在服务端执行，不能只靠前端隐藏。
 - 页面上的时间经统一的格式化函数按北京时间显示，不直接截取 ISO 字符串（全局坑 G-02，`check-rules` 会查）。
+
+## AI 接入
+
+全局规则 P-13 的项目落地。详细规则在 [docs/PRD.md](docs/PRD.md) 第 15 节，界面在管理后台「AI 与接入」页。本节、PRD 第 15 节、设置页三处内容一致，改 AI 功能时三处一起改。
+
+- **本应用当前不调用 AI。** 默认执行方：无（以后接入时支持 Claude、Codex，现在都是「未启用」）。
+- 功能清单：
+
+| 功能 | 期 | 执行方 | 接入方式 | 读哪些数据 | 产出写到哪里 |
+|---|---|---|---|---|---|
+| 这一步可以用 · 推荐 AI 资产 | 一期 | 无，规则推荐 | 无 | 任务模板的推荐资产、资产使用记录 | 只显示，不存 |
+| FAQ 答案 | 二期 | 带教机器人里的 AI（机器人待定，在机器人项目里切换） | 对外开放：机器人凭密钥写入 | 由机器人决定 | `faq`，每条带留痕 |
+| 资料卡片摘要 | 二期 | 无，截取文档开头 | 无 | 飞书文档 | `resource_card` |
+| 轻测 | 二期 | 无（题目留在机器人里） | 对外开放：机器人写成绩 | 无 | `quiz_result` |
+
+- 对外开放：带教机器人接口（HTTP 接口，不是 MCP），对带教机器人开放；读写范围见 PRD 第 10 节，按密钥的权限范围逐项开；在「AI 与接入」页吊销密钥即关闭。
+- 数据对象：AI 资产库（人工贡献、管理员审核，不是 AI 产出）；Tidings 入口（只跳转，不取数据）。
+- 硬性要求：AI 产出必须带执行方、接入方式、模型、时间、审核人的留痕，缺执行方的接口拒收；密钥只存哈希，页面只显示「已配置 / 未配置」，不进仓库；以后新加 AI 功能，默认同时支持 Claude 和 Codex，执行方不可用时直接报错、指向设置页，不自动换家（PRD 15.4）。
 
 ## 交接格式
 
