@@ -1,0 +1,6 @@
+[
+  {"name":"所属战役","type":"link","link_table":"tblaUHNEhPhYjfJw","bidirectional":true,"bidirectional_link_field_name":"任务事项"},
+  {"name":"交付链接","type":"text","style":{"type":"url"}},
+  {"name":"状态版本","type":"number","style":{"type":"plain","precision":0,"percentage":false,"thousands_separator":false}},
+  {"name":"主卡片消息ID","type":"text"}
+]

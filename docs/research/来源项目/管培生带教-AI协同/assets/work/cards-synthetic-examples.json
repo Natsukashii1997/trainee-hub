@@ -1,0 +1,782 @@
+{
+  "synthetic_only": true,
+  "sent": false,
+  "remote_verification": false,
+  "warning": "所有内容、身份、链接与 verified attestation 均为本地合成测试夹具；不得据此发送或声称真实档案已核验。",
+  "examples": {
+    "answer": [
+      {
+        "msg_type": "post",
+        "content": {
+          "zh_cn": {
+            "title": "带教答疑 · 答案 v1 · 待导师审核 · 1/1",
+            "content": [
+              [
+                {
+                  "tag": "text",
+                  "text": "【合成答案】先确认问题、证据与尚未确定的事项，再形成判断。"
+                }
+              ]
+            ]
+          }
+        }
+      },
+      {
+        "msg_type": "post",
+        "content": {
+          "zh_cn": {
+            "title": "依据与追溯 · 答案 v1 · 1/1",
+            "content": [
+              [
+                {
+                  "tag": "text",
+                  "text": "案件 case-d53b078848c148b1b108febabc4c3ee8\n1. 合成来源，仅用于结构演示 · 版本 synthetic-v1 · 条目 synthetic-knowledge"
+                }
+              ]
+            ]
+          }
+        }
+      }
+    ],
+    "answer_review": [
+      {
+        "msg_type": "interactive",
+        "content": {
+          "schema": "2.0",
+          "config": {
+            "update_multi": true,
+            "enable_forward": false
+          },
+          "header": {
+            "title": {
+              "tag": "plain_text",
+              "content": "答案审核 · 待导师审核"
+            },
+            "subtitle": {
+              "tag": "plain_text",
+              "content": "答案 v1 · 仅导师可提交审核"
+            },
+            "template": "blue"
+          },
+          "body": {
+            "direction": "vertical",
+            "vertical_spacing": "12px",
+            "padding": "12px",
+            "elements": [
+              {
+                "tag": "column_set",
+                "flex_mode": "none",
+                "columns": [
+                  {
+                    "tag": "column",
+                    "width": "weighted",
+                    "weight": 1,
+                    "background_style": "blue-50",
+                    "padding": "12px",
+                    "vertical_spacing": "4px",
+                    "elements": [
+                      {
+                        "tag": "markdown",
+                        "content": "**本次问答摘要**"
+                      },
+                      {
+                        "tag": "div",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "问题：【合成示例，未发送】形成判断前需要做什么？",
+                          "lines": 3,
+                          "text_size": "normal",
+                          "text_color": "default"
+                        }
+                      },
+                      {
+                        "tag": "div",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "答案：【合成答案】先确认问题、证据与尚未确定的事项，再形成判断。",
+                          "lines": 6,
+                          "text_size": "normal",
+                          "text_color": "default"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "column_set",
+                "flex_mode": "none",
+                "columns": [
+                  {
+                    "tag": "column",
+                    "width": "weighted",
+                    "weight": 1,
+                    "background_style": "default",
+                    "padding": "12px",
+                    "vertical_spacing": "4px",
+                    "elements": [
+                      {
+                        "tag": "markdown",
+                        "content": "**依据与追溯**"
+                      },
+                      {
+                        "tag": "div",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "1. 合成来源，仅用于结构演示 · 版本 synthetic-v1 · 条目 synthetic-knowledge",
+                          "lines": 4,
+                          "text_size": "notation",
+                          "text_color": "grey"
+                        }
+                      },
+                      {
+                        "tag": "div",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "案件 case-d53b078848c148b1b108febabc4c3ee8\n答案 v1 · 待导师审核 · 当前答案 v1",
+                          "lines": 3,
+                          "text_size": "notation",
+                          "text_color": "grey"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "column_set",
+                "flex_mode": "none",
+                "columns": [
+                  {
+                    "tag": "column",
+                    "width": "weighted",
+                    "weight": 1,
+                    "background_style": "default",
+                    "padding": "12px",
+                    "vertical_spacing": "4px",
+                    "elements": [
+                      {
+                        "tag": "markdown",
+                        "content": "**完整档案**"
+                      },
+                      {
+                        "tag": "div",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "请以全文审核；档案保留原答、历史版本、来源和审核过程。答案通过后，入库位置仍须另行确认。",
+                          "lines": 3,
+                          "text_size": "notation",
+                          "text_color": "grey"
+                        }
+                      },
+                      {
+                        "tag": "button",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "打开完整档案"
+                        },
+                        "type": "default",
+                        "behaviors": [
+                          {
+                            "type": "open_url",
+                            "default_url": "https://example.feishu.cn/docx/SyntheticArchiveNeverSent"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "form",
+                "name": "mentor_review",
+                "vertical_spacing": "8px",
+                "elements": [
+                  {
+                    "tag": "div",
+                    "text": {
+                      "tag": "plain_text",
+                      "content": "通过本版可不填。定稿、改稿、退回须填写对应内容；每次最多 1000 字。",
+                      "lines": 3,
+                      "text_size": "notation",
+                      "text_color": "grey"
+                    }
+                  },
+                  {
+                    "tag": "input",
+                    "name": "text",
+                    "input_type": "multiline_text",
+                    "rows": 3,
+                    "required": false,
+                    "max_length": 1000,
+                    "width": "fill",
+                    "label": {
+                      "tag": "plain_text",
+                      "content": "导师定稿 / 修改原则 / 退回理由"
+                    },
+                    "placeholder": {
+                      "tag": "plain_text",
+                      "content": "请先阅读完整档案；超过 1000 字请勿删减后提交。"
+                    }
+                  },
+                  {
+                    "tag": "column_set",
+                    "flex_mode": "none",
+                    "columns": [
+                      {
+                        "tag": "column",
+                        "width": "weighted",
+                        "weight": 1,
+                        "elements": [
+                          {
+                            "tag": "button",
+                            "name": "review_approve",
+                            "text": {
+                              "tag": "plain_text",
+                              "content": "通过本版"
+                            },
+                            "width": "fill",
+                            "type": "primary_filled",
+                            "form_action_type": "submit",
+                            "behaviors": [
+                              {
+                                "type": "callback",
+                                "value": {
+                                  "protocol": "trainee-collab/v1",
+                                  "case_id": "case-d53b078848c148b1b108febabc4c3ee8",
+                                  "version": 1,
+                                  "scope": "answer",
+                                  "decision": "approve"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "column",
+                        "width": "weighted",
+                        "weight": 1,
+                        "elements": [
+                          {
+                            "tag": "button",
+                            "name": "review_final",
+                            "text": {
+                              "tag": "plain_text",
+                              "content": "以导师定稿替换"
+                            },
+                            "width": "fill",
+                            "type": "default",
+                            "form_action_type": "submit",
+                            "behaviors": [
+                              {
+                                "type": "callback",
+                                "value": {
+                                  "protocol": "trainee-collab/v1",
+                                  "case_id": "case-d53b078848c148b1b108febabc4c3ee8",
+                                  "version": 1,
+                                  "scope": "answer",
+                                  "decision": "final"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "column_set",
+                    "flex_mode": "none",
+                    "columns": [
+                      {
+                        "tag": "column",
+                        "width": "weighted",
+                        "weight": 1,
+                        "elements": [
+                          {
+                            "tag": "button",
+                            "name": "review_principles",
+                            "text": {
+                              "tag": "plain_text",
+                              "content": "按原则改稿"
+                            },
+                            "width": "fill",
+                            "type": "default",
+                            "form_action_type": "submit",
+                            "behaviors": [
+                              {
+                                "type": "callback",
+                                "value": {
+                                  "protocol": "trainee-collab/v1",
+                                  "case_id": "case-d53b078848c148b1b108febabc4c3ee8",
+                                  "version": 1,
+                                  "scope": "answer",
+                                  "decision": "principles"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "column",
+                        "width": "weighted",
+                        "weight": 1,
+                        "elements": [
+                          {
+                            "tag": "button",
+                            "name": "review_reject",
+                            "text": {
+                              "tag": "plain_text",
+                              "content": "退回重答"
+                            },
+                            "width": "fill",
+                            "type": "danger",
+                            "form_action_type": "submit",
+                            "behaviors": [
+                              {
+                                "type": "callback",
+                                "value": {
+                                  "protocol": "trainee-collab/v1",
+                                  "case_id": "case-d53b078848c148b1b108febabc4c3ee8",
+                                  "version": 1,
+                                  "scope": "answer",
+                                  "decision": "reject"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "answer_review_completed": [
+      {
+        "msg_type": "interactive",
+        "content": {
+          "schema": "2.0",
+          "config": {
+            "update_multi": true,
+            "enable_forward": false
+          },
+          "header": {
+            "title": {
+              "tag": "plain_text",
+              "content": "答案审核 · 已审核通过"
+            },
+            "subtitle": {
+              "tag": "plain_text",
+              "content": "答案 v1 · 仅导师可提交审核"
+            },
+            "template": "grey"
+          },
+          "body": {
+            "direction": "vertical",
+            "vertical_spacing": "12px",
+            "padding": "12px",
+            "elements": [
+              {
+                "tag": "column_set",
+                "flex_mode": "none",
+                "columns": [
+                  {
+                    "tag": "column",
+                    "width": "weighted",
+                    "weight": 1,
+                    "background_style": "blue-50",
+                    "padding": "12px",
+                    "vertical_spacing": "4px",
+                    "elements": [
+                      {
+                        "tag": "markdown",
+                        "content": "**本次问答摘要**"
+                      },
+                      {
+                        "tag": "div",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "问题：【合成示例，未发送】形成判断前需要做什么？",
+                          "lines": 3,
+                          "text_size": "normal",
+                          "text_color": "default"
+                        }
+                      },
+                      {
+                        "tag": "div",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "答案：【合成答案】先确认问题、证据与尚未确定的事项，再形成判断。",
+                          "lines": 6,
+                          "text_size": "normal",
+                          "text_color": "default"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "column_set",
+                "flex_mode": "none",
+                "columns": [
+                  {
+                    "tag": "column",
+                    "width": "weighted",
+                    "weight": 1,
+                    "background_style": "default",
+                    "padding": "12px",
+                    "vertical_spacing": "4px",
+                    "elements": [
+                      {
+                        "tag": "markdown",
+                        "content": "**依据与追溯**"
+                      },
+                      {
+                        "tag": "div",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "1. 合成来源，仅用于结构演示 · 版本 synthetic-v1 · 条目 synthetic-knowledge",
+                          "lines": 4,
+                          "text_size": "notation",
+                          "text_color": "grey"
+                        }
+                      },
+                      {
+                        "tag": "div",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "案件 case-d53b078848c148b1b108febabc4c3ee8\n答案 v1 · 已审核通过 · 当前答案 v1",
+                          "lines": 3,
+                          "text_size": "notation",
+                          "text_color": "grey"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "column_set",
+                "flex_mode": "none",
+                "columns": [
+                  {
+                    "tag": "column",
+                    "width": "weighted",
+                    "weight": 1,
+                    "background_style": "default",
+                    "padding": "12px",
+                    "vertical_spacing": "4px",
+                    "elements": [
+                      {
+                        "tag": "markdown",
+                        "content": "**完整档案**"
+                      },
+                      {
+                        "tag": "div",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "请以全文审核；档案保留原答、历史版本、来源和审核过程。答案通过后，入库位置仍须另行确认。",
+                          "lines": 3,
+                          "text_size": "notation",
+                          "text_color": "grey"
+                        }
+                      },
+                      {
+                        "tag": "button",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "打开完整档案"
+                        },
+                        "type": "default",
+                        "behaviors": [
+                          {
+                            "type": "open_url",
+                            "default_url": "https://example.feishu.cn/docx/SyntheticArchiveNeverSent"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "archive_review": [
+      {
+        "msg_type": "interactive",
+        "content": {
+          "schema": "2.0",
+          "config": {
+            "update_multi": true,
+            "enable_forward": false
+          },
+          "header": {
+            "title": {
+              "tag": "plain_text",
+              "content": "归档审核 · 待确认位置与内容"
+            },
+            "subtitle": {
+              "tag": "plain_text",
+              "content": "方案 v1 · 答案已审，归档独立确认"
+            },
+            "template": "blue"
+          },
+          "body": {
+            "direction": "vertical",
+            "vertical_spacing": "12px",
+            "padding": "12px",
+            "elements": [
+              {
+                "tag": "column_set",
+                "flex_mode": "none",
+                "columns": [
+                  {
+                    "tag": "column",
+                    "width": "weighted",
+                    "weight": 1,
+                    "background_style": "blue-50",
+                    "padding": "12px",
+                    "vertical_spacing": "4px",
+                    "elements": [
+                      {
+                        "tag": "markdown",
+                        "content": "**本次归档摘要**"
+                      },
+                      {
+                        "tag": "div",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "问题：【合成示例，未发送】形成判断前需要做什么？",
+                          "lines": 2,
+                          "text_size": "normal",
+                          "text_color": "default"
+                        }
+                      },
+                      {
+                        "tag": "div",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "已审答案：【合成答案】先确认问题、证据与尚未确定的事项，再形成判断。",
+                          "lines": 4,
+                          "text_size": "normal",
+                          "text_color": "default"
+                        }
+                      },
+                      {
+                        "tag": "div",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "1. 合成来源，仅用于结构演示 · 版本 synthetic-v1 · 条目 synthetic-knowledge",
+                          "lines": 3,
+                          "text_size": "notation",
+                          "text_color": "grey"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "column_set",
+                "flex_mode": "none",
+                "columns": [
+                  {
+                    "tag": "column",
+                    "width": "weighted",
+                    "weight": 1,
+                    "background_style": "default",
+                    "padding": "12px",
+                    "vertical_spacing": "4px",
+                    "elements": [
+                      {
+                        "tag": "markdown",
+                        "content": "**精确入库位置**"
+                      },
+                      {
+                        "tag": "div",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "知识库父节点：synthetic-parent\n协作多维表格：synthetic-base\n问答主表：synthetic-cases\n过程事件表：synthetic-events",
+                          "lines": 6,
+                          "text_size": "normal",
+                          "text_color": "default"
+                        }
+                      },
+                      {
+                        "tag": "div",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "案件 case-d53b078848c148b1b108febabc4c3ee8\n方案 v1 · 答案 v1\n方案指纹 bc70b28c451fe273bb8e4e395a439e6261efb94ac600c49c58333cc1bc316218",
+                          "lines": 4,
+                          "text_size": "notation",
+                          "text_color": "grey"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "column_set",
+                "flex_mode": "none",
+                "columns": [
+                  {
+                    "tag": "column",
+                    "width": "weighted",
+                    "weight": 1,
+                    "background_style": "default",
+                    "padding": "12px",
+                    "vertical_spacing": "4px",
+                    "elements": [
+                      {
+                        "tag": "markdown",
+                        "content": "**全文与归档方案**"
+                      },
+                      {
+                        "tag": "div",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "请打开全文核对拟写入内容与位置。本次确认只授权这版方案；回执入队不代表入库成功。",
+                          "lines": 3,
+                          "text_size": "notation",
+                          "text_color": "grey"
+                        }
+                      },
+                      {
+                        "tag": "button",
+                        "text": {
+                          "tag": "plain_text",
+                          "content": "打开完整档案与方案"
+                        },
+                        "type": "default",
+                        "behaviors": [
+                          {
+                            "type": "open_url",
+                            "default_url": "https://example.feishu.cn/docx/SyntheticArchiveNeverSent"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "form",
+                "name": "mentor_review",
+                "vertical_spacing": "8px",
+                "elements": [
+                  {
+                    "tag": "div",
+                    "text": {
+                      "tag": "plain_text",
+                      "content": "确认后才执行下述位置与内容的入库。退回须填写意见；每次最多 1000 字。",
+                      "lines": 3,
+                      "text_size": "notation",
+                      "text_color": "grey"
+                    }
+                  },
+                  {
+                    "tag": "input",
+                    "name": "text",
+                    "input_type": "multiline_text",
+                    "rows": 3,
+                    "required": false,
+                    "max_length": 1000,
+                    "width": "fill",
+                    "label": {
+                      "tag": "plain_text",
+                      "content": "归档意见"
+                    },
+                    "placeholder": {
+                      "tag": "plain_text",
+                      "content": "请先阅读完整档案；超过 1000 字请勿删减后提交。"
+                    }
+                  },
+                  {
+                    "tag": "column_set",
+                    "flex_mode": "none",
+                    "columns": [
+                      {
+                        "tag": "column",
+                        "width": "weighted",
+                        "weight": 1,
+                        "elements": [
+                          {
+                            "tag": "button",
+                            "name": "review_approve",
+                            "text": {
+                              "tag": "plain_text",
+                              "content": "确认本方案入库"
+                            },
+                            "width": "fill",
+                            "type": "primary_filled",
+                            "form_action_type": "submit",
+                            "behaviors": [
+                              {
+                                "type": "callback",
+                                "value": {
+                                  "protocol": "trainee-collab/v1",
+                                  "case_id": "case-d53b078848c148b1b108febabc4c3ee8",
+                                  "version": 1,
+                                  "scope": "archive",
+                                  "decision": "approve",
+                                  "proposal_hash": "bc70b28c451fe273bb8e4e395a439e6261efb94ac600c49c58333cc1bc316218"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "column",
+                        "width": "weighted",
+                        "weight": 1,
+                        "elements": [
+                          {
+                            "tag": "button",
+                            "name": "review_reject",
+                            "text": {
+                              "tag": "plain_text",
+                              "content": "退回归档方案"
+                            },
+                            "width": "fill",
+                            "type": "danger",
+                            "form_action_type": "submit",
+                            "behaviors": [
+                              {
+                                "type": "callback",
+                                "value": {
+                                  "protocol": "trainee-collab/v1",
+                                  "case_id": "case-d53b078848c148b1b108febabc4c3ee8",
+                                  "version": 1,
+                                  "scope": "archive",
+                                  "decision": "reject",
+                                  "proposal_hash": "bc70b28c451fe273bb8e4e395a439e6261efb94ac600c49c58333cc1bc316218"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

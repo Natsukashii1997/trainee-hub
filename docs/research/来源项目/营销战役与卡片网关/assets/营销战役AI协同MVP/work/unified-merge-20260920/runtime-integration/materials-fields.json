@@ -1,0 +1,329 @@
+{
+  "ok": true,
+  "identity": "user",
+  "data": {
+    "fields": [
+      {
+        "default_value": null,
+        "description": "机械邪龙兽主卡消息，用于原位更新。",
+        "id": "fldO9cCPoT",
+        "name": "卡片消息ID",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "description": "原始提需消息或指令引用。",
+        "id": "fld0xtRx7p",
+        "name": "来源消息ID",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldc4T1CS5",
+        "multiple": false,
+        "name": "验收人",
+        "type": "user"
+      },
+      {
+        "default_value": null,
+        "id": "fldCzimEi9",
+        "name": "成品链接",
+        "style": {
+          "type": "url"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "description": "最后一次已处理的卡片或命令事件，用于防重复。",
+        "id": "fldGeWHryl",
+        "name": "最近事件ID",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldjH0LdMP",
+        "name": "提交时间",
+        "style": {
+          "format": "yyyy-MM-dd HH:mm"
+        },
+        "type": "datetime"
+      },
+      {
+        "default_value": null,
+        "id": "fldQX8dN7M",
+        "name": "验收时间",
+        "style": {
+          "format": "yyyy-MM-dd HH:mm"
+        },
+        "type": "datetime"
+      },
+      {
+        "default_value": null,
+        "id": "fldD6odKJW",
+        "name": "审核意见",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldvLpiYKx",
+        "multiple": false,
+        "name": "物料类型",
+        "options": [
+          {
+            "hue": "Orange",
+            "lightness": "Lighter",
+            "name": "文案"
+          },
+          {
+            "hue": "Orange",
+            "lightness": "Lighter",
+            "name": "海报/视觉"
+          },
+          {
+            "hue": "Purple",
+            "lightness": "Lighter",
+            "name": "落地页"
+          },
+          {
+            "hue": "Yellow",
+            "lightness": "Lighter",
+            "name": "视频"
+          },
+          {
+            "hue": "Purple",
+            "lightness": "Lighter",
+            "name": "邮件"
+          },
+          {
+            "hue": "Wathet",
+            "lightness": "Lighter",
+            "name": "社媒"
+          },
+          {
+            "hue": "Gray",
+            "lightness": "Lighter",
+            "name": "其他"
+          }
+        ],
+        "type": "select"
+      },
+      {
+        "default_value": null,
+        "description": "允许开工的内容、参考素材、文案或链接。",
+        "id": "fldIN932Hw",
+        "name": "制作输入",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "bidirectional": true,
+        "bidirectional_link_field_id": "fld0QqOnyE",
+        "description": "承接该物料提需、制作或验收的项目任务。",
+        "id": "fldevK1KGC",
+        "link_table": "tblc3pkZfjaOnOwY",
+        "name": "关联任务",
+        "type": "link"
+      },
+      {
+        "default_value": null,
+        "id": "fld1Dmr5GJ",
+        "multiple": false,
+        "name": "制作负责人",
+        "type": "user"
+      },
+      {
+        "default_value": null,
+        "id": "fldw6id8b4",
+        "multiple": false,
+        "name": "审核人",
+        "type": "user"
+      },
+      {
+        "id": "fld0IeSnUu",
+        "name": "最后更新时间",
+        "style": {
+          "format": "yyyy-MM-dd HH:mm"
+        },
+        "type": "updated_at"
+      },
+      {
+        "bidirectional": true,
+        "bidirectional_link_field_id": "fldsymAdao",
+        "description": "物料所属的统一工作项目。",
+        "id": "fld972X02H",
+        "link_table": "tbl1y77tCORXoZAr",
+        "name": "所属项目",
+        "type": "link"
+      },
+      {
+        "default_value": null,
+        "description": "目标、受众、渠道、规格、截止要求和验收标准。",
+        "id": "fldslxwPun",
+        "name": "需求说明",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fld0XyoV0O",
+        "name": "审核时间",
+        "style": {
+          "format": "yyyy-MM-dd HH:mm"
+        },
+        "type": "datetime"
+      },
+      {
+        "default_value": [
+          "草稿"
+        ],
+        "id": "flduqcRy7H",
+        "multiple": false,
+        "name": "流程状态",
+        "options": [
+          {
+            "hue": "Gray",
+            "lightness": "Lighter",
+            "name": "草稿"
+          },
+          {
+            "hue": "Blue",
+            "lightness": "Lighter",
+            "name": "待制作"
+          },
+          {
+            "hue": "Blue",
+            "lightness": "Dark",
+            "name": "制作中"
+          },
+          {
+            "hue": "Orange",
+            "lightness": "Light",
+            "name": "待审核"
+          },
+          {
+            "hue": "Red",
+            "lightness": "Light",
+            "name": "审核退回"
+          },
+          {
+            "hue": "Purple",
+            "lightness": "Light",
+            "name": "待交接"
+          },
+          {
+            "hue": "Turquoise",
+            "lightness": "Light",
+            "name": "待验收"
+          },
+          {
+            "hue": "Red",
+            "lightness": "Dark",
+            "name": "验收退回"
+          },
+          {
+            "hue": "Green",
+            "lightness": "Dark",
+            "name": "已完成"
+          }
+        ],
+        "type": "select"
+      },
+      {
+        "default_value": null,
+        "id": "fld0Gwu5BR",
+        "name": "交接时间",
+        "style": {
+          "format": "yyyy-MM-dd HH:mm"
+        },
+        "type": "datetime"
+      },
+      {
+        "default_value": 0,
+        "description": "每次提交新成果递增，审核卡只对精确版本生效。",
+        "id": "fldPIGRiGE",
+        "name": "成果版本",
+        "style": {
+          "percentage": false,
+          "precision": 0,
+          "thousands_separator": false,
+          "type": "plain"
+        },
+        "type": "number"
+      },
+      {
+        "id": "fldk5HceR6",
+        "name": "成品附件",
+        "style": {
+          "type": "plain"
+        },
+        "type": "attachment"
+      },
+      {
+        "default_value": null,
+        "id": "fldtvCXkh4",
+        "name": "验收意见",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldQopSXT6",
+        "multiple": false,
+        "name": "提需人",
+        "type": "user"
+      },
+      {
+        "default_value": null,
+        "id": "fldrmfqpo7",
+        "name": "期望交付时间",
+        "style": {
+          "format": "yyyy-MM-dd HH:mm"
+        },
+        "type": "datetime"
+      },
+      {
+        "default_value": null,
+        "id": "fldVWLB0kX",
+        "name": "物料名称",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      }
+    ],
+    "total": 25
+  },
+  "_notice": {
+    "skills": {
+      "command": "lark-cli update",
+      "current": "1.0.89",
+      "message": "lark-cli skills 1.0.89 out of sync with binary 1.0.94, run: lark-cli update",
+      "target": "1.0.94"
+    },
+    "update": {
+      "command": "lark-cli update",
+      "current": "1.0.94",
+      "latest": "1.0.96",
+      "message": "lark-cli 1.0.96 available, current 1.0.94, run: lark-cli update"
+    }
+  }
+}

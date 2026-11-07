@@ -1,0 +1,204 @@
+{
+  "ok": true,
+  "identity": "user",
+  "data": {
+    "fields": [
+      {
+        "default_value": null,
+        "id": "fld5RM57Rn",
+        "multiple": true,
+        "name": "节点类型",
+        "options": [
+          {
+            "hue": "Gray",
+            "lightness": "Lighter",
+            "name": "普通任务"
+          },
+          {
+            "hue": "Purple",
+            "lightness": "Light",
+            "name": "审核门禁"
+          },
+          {
+            "hue": "Red",
+            "lightness": "Darker",
+            "name": "里程碑"
+          }
+        ],
+        "type": "select"
+      },
+      {
+        "default_value": null,
+        "id": "fldd9dqGzh",
+        "multiple": true,
+        "name": "环节阶段",
+        "options": [
+          {
+            "hue": "Blue",
+            "lightness": "Dark",
+            "name": "启动阶段"
+          },
+          {
+            "hue": "Yellow",
+            "lightness": "Dark",
+            "name": "计划阶段"
+          },
+          {
+            "hue": "Gray",
+            "lightness": "Dark",
+            "name": "调研阶段"
+          },
+          {
+            "hue": "Red",
+            "lightness": "Dark",
+            "name": "实施阶段"
+          },
+          {
+            "hue": "Green",
+            "lightness": "Dark",
+            "name": "收尾阶段"
+          },
+          {
+            "hue": "Purple",
+            "lightness": "Dark",
+            "name": "监控阶段"
+          }
+        ],
+        "type": "select"
+      },
+      {
+        "id": "fldsg5KmKr",
+        "name": "是否完成",
+        "type": "checkbox"
+      },
+      {
+        "default_value": null,
+        "description": "模板任务的稳定业务顺序；一级任务按参考视图，子任务按所属一级任务顺序。",
+        "id": "fldPRwXni7",
+        "name": "模板序号",
+        "style": {
+          "percentage": false,
+          "precision": 0,
+          "thousands_separator": false,
+          "type": "plain"
+        },
+        "type": "number"
+      },
+      {
+        "default_value": null,
+        "id": "fldYruSac7",
+        "name": "截止时间",
+        "style": {
+          "format": "yyyy/MM/dd"
+        },
+        "type": "datetime"
+      },
+      {
+        "default_value": null,
+        "id": "flddr5MDL5",
+        "name": "开始时间",
+        "style": {
+          "format": "yyyy/MM/dd"
+        },
+        "type": "datetime"
+      },
+      {
+        "default_value": null,
+        "id": "fldbesdvlG",
+        "name": "任务事项",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "expression": "IF(ISBLANK([实际完成时间]),IF(ISBLANK([截止时间]),\"\",IF(TODAY()\u003e[截止时间],\"进行中·已逾期\",\"进行中\")),IF([实际完成时间]\u003e[截止时间],\"已逾期\",\"未逾期\"))",
+        "id": "fldehFJp5O",
+        "name": "逾期状态",
+        "type": "formula"
+      },
+      {
+        "default_value": null,
+        "id": "fldMk2RykL",
+        "name": "实际完成时间",
+        "style": {
+          "format": "yyyy/MM/dd"
+        },
+        "type": "datetime"
+      },
+      {
+        "default_value": null,
+        "description": "相对项目开始日期的任务开始偏移；未配置时新任务日期保持空。",
+        "id": "fldfGicwkq",
+        "name": "开始偏移天数",
+        "style": {
+          "percentage": false,
+          "precision": 0,
+          "thousands_separator": false,
+          "type": "plain"
+        },
+        "type": "number"
+      },
+      {
+        "bidirectional": false,
+        "id": "fldEc87zaP",
+        "link_table": "tblDhQCi5CCZCvUT",
+        "name": "父记录",
+        "type": "link"
+      },
+      {
+        "bidirectional": true,
+        "bidirectional_link_field_id": "fld0JqtHC4",
+        "id": "fldfhHpt7e",
+        "link_table": "tbl1y77tCORXoZAr",
+        "name": "所属项目",
+        "type": "link"
+      },
+      {
+        "default_value": null,
+        "id": "fldGt3EfDL",
+        "name": "交付物",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "description": "相对项目开始日期的任务截止偏移；未配置时新任务日期保持空。",
+        "id": "fldGAjjFb6",
+        "name": "截止偏移天数",
+        "style": {
+          "percentage": false,
+          "precision": 0,
+          "thousands_separator": false,
+          "type": "plain"
+        },
+        "type": "number"
+      },
+      {
+        "bidirectional": true,
+        "bidirectional_link_field_id": "fldHzAr5T3",
+        "id": "fldCVc5BGc",
+        "link_table": "tblHWD7DAQcKpXaM",
+        "name": "主责任人",
+        "type": "link"
+      }
+    ],
+    "total": 15
+  },
+  "_notice": {
+    "skills": {
+      "command": "lark-cli update",
+      "current": "1.0.89",
+      "message": "lark-cli skills 1.0.89 out of sync with binary 1.0.94, run: lark-cli update",
+      "target": "1.0.94"
+    },
+    "update": {
+      "command": "lark-cli update",
+      "current": "1.0.94",
+      "latest": "1.0.96",
+      "message": "lark-cli 1.0.96 available, current 1.0.94, run: lark-cli update"
+    }
+  }
+}

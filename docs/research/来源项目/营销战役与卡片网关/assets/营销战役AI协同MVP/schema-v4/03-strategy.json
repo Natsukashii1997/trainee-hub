@@ -1,0 +1,11 @@
+[
+  {"name":"策略单元名称","type":"text"},
+  {"name":"策略编号","type":"auto_number","style":{"rules":[{"type":"text","text":"STR-"},{"type":"incremental_number","length":3}]}},
+  {"name":"WHO｜目标用户","type":"text"},
+  {"name":"WHY｜待办事项","type":"text"},
+  {"name":"用户现状/判断依据","type":"text"},
+  {"name":"策略确认状态","type":"select","multiple":false,"options":[{"name":"待确认"},{"name":"已确认"}]},
+  {"name":"下一动作","type":"text"},
+  {"name":"来源依据","type":"text","style":{"type":"url"}},
+  {"name":"数据环境","type":"select","multiple":false,"options":[{"name":"UAT"},{"name":"正式"},{"name":"已归档模拟"}]}
+]

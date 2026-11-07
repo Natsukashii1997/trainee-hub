@@ -1,0 +1,52 @@
+{
+  "ok": true,
+  "identity": "user",
+  "data": {
+    "fields": [
+      {
+        "bidirectional": true,
+        "bidirectional_link_field_id": "fldYgcGzwm",
+        "id": "fldxvhxwuB",
+        "link_table": "tbl1y77tCORXoZAr",
+        "name": "项目名称",
+        "type": "link"
+      },
+      {
+        "bidirectional": true,
+        "bidirectional_link_field_id": "fldCVc5BGc",
+        "id": "fldeYKgxg6",
+        "link_table": "tblc3pkZfjaOnOwY",
+        "name": "任务",
+        "type": "link"
+      },
+      {
+        "expression": "[账号]",
+        "id": "fld6J4kgn8",
+        "name": "成员名",
+        "type": "formula"
+      },
+      {
+        "default_value": null,
+        "id": "fldWDOBEU7",
+        "multiple": true,
+        "name": "账号",
+        "type": "user"
+      }
+    ],
+    "total": 4
+  },
+  "_notice": {
+    "skills": {
+      "command": "lark-cli update",
+      "current": "1.0.89",
+      "message": "lark-cli skills 1.0.89 out of sync with binary 1.0.94, run: lark-cli update",
+      "target": "1.0.94"
+    },
+    "update": {
+      "command": "lark-cli update",
+      "current": "1.0.94",
+      "latest": "1.0.95",
+      "message": "lark-cli 1.0.95 available, current 1.0.94, run: lark-cli update"
+    }
+  }
+}

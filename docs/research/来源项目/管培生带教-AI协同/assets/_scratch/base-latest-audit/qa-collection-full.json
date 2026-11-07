@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "identity": "user",
+  "data": {
+    "document": {
+      "content": "<title id=\"Rfrzdrf5roshOzx64OicNXLznDr\">管培生带教问答集</title><h1 id=\"doxcnEhD7P54ItYnXmocpbMSaRe\" seq=\"auto\" seq-level=\"auto\" seq-marker=\"1.\">业务思考项目的步骤是什么</h1><callout id=\"Q4sKdglVCoLUJMxUDXQcbWbcnyc\" background-color=\"rgb(240,244,255)\" border-color=\"rgb(186,206,253)\" emoji=\"✅\"><p id=\"N8Rpd0trBolibFxwsxuc9PxBnyg\">**业务思考项目建议按“项目问题解决四步法”推进：<b>定义问题 → 拆解问题 → 解决问题 → 复盘验收</b>；核心不是写出一份方案，而是解决一个可验证的真实业务问题。**<br/><br/><b>**项目问题解决四步法**</b><br/><br/>1. 定义问题<br/>说清背景、对象、范围、真实目标、交付物和验收标准。</p><p id=\"DueKdqz7ToPkbJxSlWhcs3JPnTg\">形成：一句话问题定义。<br/><br/>2. 拆解问题<br/>区分已知事实、待验证假设和未知信息，找出主要矛盾、关键原因及处理优先级。<br/>形成：问题结构和关键突破点。<br/><br/>3. 解决问题</p><p id=\"H83edOdgpo88thxpJD1c6rwuneg\">围绕关键突破点制定方案，明确谁做、做什么、何时完成、需要什么资源、 如何验证，并在执行中持续校准。<br/>形成：可执行、可验证的行动方案。<br/><br/>4. 复盘验收<br/>先按原定标准判断问题是否解决，再分析成败原因、适用边界和后续动作。<br/>形成：验收结论、经验沉淀和下一步。<br/><br/><br/>**最容易犯的错误**<br/>不要一拿到题目就搜资料、列方案。定义错了问题，后续执行越高效，偏离真实目标越远。一个业务思考项目完成时，至少应能回答五件事：解决谁的什么问题、依据是什么、关键突破点在哪里、具体如何改变、结果如何验证。</p></callout><h1 id=\"DOGmd8yD1oZGpxxBjApcffzHnnb\" seq=\"auto\" seq-level=\"auto\" seq-marker=\"2.\">调研的步骤是什么</h1><callout id=\"MB7edAgu2oLzh0xxWBwcJ4bXnVe\" background-color=\"rgb(254,241,241)\" border-color=\"rgb(251,191,188)\" emoji=\"✅\"><p id=\"SJaAd6kFtoBCuxx2sHKcB4b4n1b\">**结论：调研应围绕具体决策，按照“<b>定题 → 设证 → 取证 → 验真 → 归因 → 收敛</b>”六个步骤推进。核心不是尽可能多地收集信息，而是用证据验证关键假设，最终形成明确判断和下一步行动。**<br/><br/><b>**三点依据**</b><br/><br/>1. 先定题、再设证，确保问对问题。** 先明确调研要支持什么决策、研究对象是谁、问题边界在哪里；再列出影响决策的关键假设，以及哪些证据能够支持或推翻这些假设。<br/><br/>2. 取证与验真结合，避免仅凭单一信息下结论。** 根据问题选择访谈、观察、问卷、业务数据分析或实验，并设计相应样本；取得信息后，还要交叉核对用户说法、实际行为和业务记录，同时检查反例、样本偏差与口径冲突。<br/><br/>3. 完成归因与收敛，才能把发现转化为行动。** 在分析中区分表面现象、相关关系和可干预原因，并排查其他合理解释；最后根据证据形成“立即执行、继续验证或停止当前方案”的明确判断。只有“发现了什么”，却没有回答“因此做什么”，调研还没有完成。<br/><br/><b>**适用边界** </b></p><p id=\"HGhJdM7gdoXr5mx1npLcHTQInFd\">这套步骤适用于围绕具体决策开展的调研。具体采用哪种取证方法、如何设计样本，需要根据实际问题确定；如果证据不足、反例尚未排除，或者样本偏差与口径冲突仍未解决，应将结论标记为“继续验证”，不能直接进入执行阶段。</p></callout><p id=\"TXDFdTjUToFwfkxwDYQcd2lPnTe\"></p>",
+      "document_id": "Rfrzdrf5roshOzx64OicNXLznDr",
+      "revision_id": 149
+    }
+  },
+  "_notice": {
+    "skills": {
+      "command": "lark-cli update",
+      "current": "1.0.89",
+      "message": "lark-cli skills 1.0.89 out of sync with binary 1.0.94, run: lark-cli update",
+      "target": "1.0.94"
+    },
+    "update": {
+      "command": "lark-cli update",
+      "current": "1.0.94",
+      "latest": "1.0.95",
+      "message": "lark-cli 1.0.95 available, current 1.0.94, run: lark-cli update"
+    }
+  }
+}
