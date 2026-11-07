@@ -29,4 +29,6 @@ const stopAll = code => {
   process.exitCode = code;
 };
 for (const c of children) c.on('exit', code => stopAll(code ?? 0));
+// 子进程没起来（如 vite 没装）：不处理会让主进程直接崩掉，另一个子进程被留在后台
+for (const c of children) c.on('error', e => { console.error(`启动失败：${e.message}`); stopAll(1); });
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => stopAll(0));

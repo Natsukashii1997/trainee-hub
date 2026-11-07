@@ -33,7 +33,7 @@ export function readDbEnv() {
 
 function init() {
   if (!fs.existsSync(path.join(PG_BIN, 'initdb'))) throw new Error(`找不到 ${bin('initdb')}：先 brew install postgresql@16，或用 PG_BIN 指向它的 bin 目录`);
-  fs.mkdirSync(DATA_ROOT, { recursive: true });
+  fs.mkdirSync(DATA_ROOT, { recursive: true, mode: 0o700 });
   const password = randomBytes(18).toString('base64url');
   const pwfile = path.join(DATA_ROOT, '.pwfile');
   fs.writeFileSync(pwfile, password, { mode: 0o600 });
@@ -70,6 +70,9 @@ async function ensureDatabases() {
 
 export async function up() {
   if (!fs.existsSync(path.join(PGDATA, 'PG_VERSION'))) init();
+  // 已有的目录和文件也每次收紧一遍：writeFileSync 的 mode 只在新建文件时生效（PR #27 审核 P3-03）
+  fs.chmodSync(DATA_ROOT, 0o700);
+  if (fs.existsSync(ENV_FILE)) fs.chmodSync(ENV_FILE, 0o600);
   if (!running()) {
     run('pg_ctl', ['-D', PGDATA, '-l', LOG, '-w', 'start']);
     console.log(`数据库已启动：127.0.0.1:${PORT}（日志 ${LOG}）`);

@@ -26,6 +26,15 @@ describe('后端健康状态', () => {
     expect(await fetchHealth()).toMatchObject({ state: 'warn', label: '数据库未迁移' });
   });
 
+  it('后端自己出错（JSON 的 403、500）：说成后端出错，不说成数据库断了', async () => {
+    vi.stubGlobal('fetch', reply(403, { error: '不接受其他网站发来的请求' }));
+    expect(await fetchHealth()).toMatchObject({ state: 'down', label: '后端出错', detail: '后端返回 HTTP 403：不接受其他网站发来的请求' });
+    vi.stubGlobal('fetch', reply(500, { error: '服务内部出错' }));
+    expect(await fetchHealth()).toMatchObject({ state: 'down', label: '后端出错', detail: '后端返回 HTTP 500：服务内部出错' });
+    vi.stubGlobal('fetch', reply(502, {}));
+    expect(await fetchHealth()).toMatchObject({ state: 'down', label: '后端出错', detail: '后端返回 HTTP 502' });
+  });
+
   it('后端没起：代理返回非 JSON 或请求失败，都不抛错', async () => {
     vi.stubGlobal('fetch', reply(502, ''));
     expect(await fetchHealth()).toMatchObject({ state: 'down', label: '后端连不上', detail: '后端没有正常响应（HTTP 502）' });

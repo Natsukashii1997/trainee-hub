@@ -17,7 +17,7 @@ export async function fetchHealth(): Promise<HealthView> {
   } catch {
     return { state: 'down', label: '后端连不上', detail: '请求没有发出去：后端可能没有启动' };
   }
-  let body: { ok?: boolean; db?: string; migration?: string | null; message?: string; checkedAt?: string };
+  let body: { ok?: boolean; db?: string; migration?: string | null; message?: string; checkedAt?: string; error?: string };
   try {
     body = await res.json();
   } catch {
@@ -27,7 +27,9 @@ export async function fetchHealth(): Promise<HealthView> {
   if (body.db === 'up' && body.ok && body.migration)
     return { state: 'ok', label: `迁移 ${body.migration.split('_')[0]}`, detail: `数据库正常，当前迁移 ${body.migration}`, checkedAt };
   if (body.db === 'up') return { state: 'warn', label: '数据库未迁移', detail: body.message ?? '数据库已连通，但还没有执行迁移', checkedAt };
-  return { state: 'down', label: '数据库连不上', detail: body.message ?? `后端返回 HTTP ${res.status}`, checkedAt };
+  if (body.db === 'down') return { state: 'down', label: '数据库连不上', detail: body.message ?? `后端返回 HTTP ${res.status}`, checkedAt };
+  // 不是健康检查的应答（来源校验 403、服务出错 500 等）：问题在后端，不能说成数据库断了
+  return { state: 'down', label: '后端出错', detail: `后端返回 HTTP ${res.status}${body.error ? `：${body.error}` : ''}` };
 }
 
 // 演示视角切换等会让外壳重新挂载，留住上一次结果，避免闪「检查中」
