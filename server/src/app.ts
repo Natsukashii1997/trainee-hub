@@ -5,6 +5,7 @@ import { type Actor, authorize } from './authorize.ts';
 import { CommandError, isCommandId, runCommand } from './commands/index.ts';
 import { DEMO_COOKIE } from './demo.ts';
 import { currentMigration } from './migrate.ts';
+import { runView } from './views/index.ts';
 
 export interface Health {
   ok: boolean;
@@ -149,6 +150,16 @@ export function createApp(pool: pg.Pool, options: AppOptions = {}): http.Server 
           const code = (e as { code?: string }).code;
           // 数据库约束兜底（23xxx）：命令里的校验没拦住的情况，不暴露内部细节
           if (code?.startsWith('23')) return send(res, 409, { error: '数据不符合约束，没有写入' });
+          throw e;
+        }
+      }
+      // A 级查询：GET /api/views/…（views/index.ts），每个查询都过统一授权入口
+      if (pathname.startsWith('/api/views/')) {
+        if (req.method !== 'GET') return send(res, 405, { error: '只支持 GET' });
+        try {
+          return send(res, 200, { result: await runView(pool, actor as Actor, pathname.slice('/api/views/'.length)) });
+        } catch (e) {
+          if (e instanceof CommandError) return send(res, e.status, { error: e.message });
           throw e;
         }
       }
