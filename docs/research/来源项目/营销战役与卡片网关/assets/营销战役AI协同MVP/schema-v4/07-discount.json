@@ -1,0 +1,16 @@
+[
+  {"name":"方案编号","type":"formula","expression":"IF(ISBLANK([技术字段｜方案序号源（勿改）]),\"\",\"DIS-\"&TEXT(VALUE([技术字段｜方案序号源（勿改）])+8,\"000\"))"},
+  {"name":"方案名称","type":"text"},
+  {"name":"所属月份","type":"datetime","style":{"format":"yyyy-MM-dd"}},
+  {"name":"业务线","type":"select","multiple":false,"options":[{"name":"大学辅导"},{"name":"国际课程（国课）"}]},
+  {"name":"关联SKU","type":"link","link_table":"tblBUQTsWtKTOyrz"},
+  {"name":"试听价格","type":"text"},
+  {"name":"正价价格","type":"text"},
+  {"name":"新签活动","type":"text"},
+  {"name":"续费活动","type":"text"},
+  {"name":"确认人","type":"user","multiple":false},
+  {"name":"确认时间","type":"datetime","style":{"format":"yyyy-MM-dd HH:mm"}},
+  {"name":"来源消息ID","type":"text"},
+  {"name":"数据环境","type":"select","multiple":false,"options":[{"name":"UAT"},{"name":"正式"}]},
+  {"name":"技术字段｜方案序号源（勿改）","type":"auto_number","description":"仅用于方案编号续接；请勿编辑、删除或在业务视图中显示。","style":{"rules":[{"type":"incremental_number","length":3}]}}
+]

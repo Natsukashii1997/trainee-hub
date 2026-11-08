@@ -1,0 +1,10 @@
+[
+  {"type":"text","name":"项目名称","description":"一行一个项目，由该项目管培生负责人维护。填写可清楚识别项目的名称。"},
+  {"type":"user","name":"负责人","multiple":false,"description":"选择负责维护本行项目进展的管培生；常浩监督，机器人只读。"},
+  {"type":"select","name":"项目状态","multiple":false,"options":[{"name":"未开始","hue":"Gray"},{"name":"进行中","hue":"Blue"},{"name":"暂停","hue":"Orange"},{"name":"已完成","hue":"Green"}],"description":"负责人维护的项目状态，不代表导师已审核通过；不根据聊天或任务审核结果自动修改。"},
+  {"type":"text","name":"当前进展","description":"简述已推进的事实和当前情况；有变化时更新，不需要另填一份周报。"},
+  {"type":"text","name":"下一关键节点","description":"填写下一项需要关注的项目节点；暂不明确可留空，不需要拆细任务。"},
+  {"type":"datetime","name":"节点计划日期","style":{"format":"yyyy-MM-dd"},"description":"下一关键节点的计划日期，暂未约定可留空。留空不自动视为延期。"},
+  {"type":"text","name":"需关注／支持事项","description":"简述需要常浩关注、协调或支持的事项；没有可留空。"},
+  {"type":"updated_at","name":"最后更新时间","style":{"format":"yyyy-MM-dd HH:mm"},"description":"系统自动记录本行最后编辑时间；仅表示记录更新，不代表项目发生推进。"}
+]

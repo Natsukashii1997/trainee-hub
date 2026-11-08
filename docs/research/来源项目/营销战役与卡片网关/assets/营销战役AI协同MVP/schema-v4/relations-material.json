@@ -1,0 +1,9 @@
+[
+  {"name":"所属营销主题","type":"link","link_table":"tbl9e453vNx7Owhx","bidirectional":true,"bidirectional_link_field_name":"内容物料"},
+  {"name":"关联用户策略","type":"link","link_table":"tblxJ9NKRGHZpkO6","bidirectional":true,"bidirectional_link_field_name":"关联内容物料"},
+  {"name":"关联SKU","type":"link","link_table":"tblBUQTsWtKTOyrz","bidirectional":true,"bidirectional_link_field_name":"关联内容物料"},
+  {"name":"关联月度折扣方案","type":"link","link_table":"tblKuEA7MrkUUhf4","bidirectional":true,"bidirectional_link_field_name":"关联内容物料"},
+  {"name":"状态版本","type":"number","style":{"type":"plain","precision":0,"percentage":false,"thousands_separator":false}},
+  {"name":"终稿附件签名","type":"text"},
+  {"name":"主卡片消息ID","type":"text"}
+]

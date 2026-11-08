@@ -1,0 +1,111 @@
+{
+  "ok": true,
+  "identity": "user",
+  "data": {
+    "fields": [
+      {
+        "default_value": null,
+        "id": "fldTd0rtAb",
+        "multiple": true,
+        "name": "业务线",
+        "options": [
+          {
+            "hue": "Purple",
+            "lightness": "Lighter",
+            "name": "大学辅导"
+          },
+          {
+            "hue": "Turquoise",
+            "lightness": "Lighter",
+            "name": "国际课程"
+          }
+        ],
+        "type": "select"
+      },
+      {
+        "default_value": null,
+        "id": "fldnh7BJnY",
+        "name": "产品类别",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldiwcmwaE",
+        "multiple": false,
+        "name": "SKU状态",
+        "options": [
+          {
+            "hue": "Gray",
+            "lightness": "Lighter",
+            "name": "使用中"
+          },
+          {
+            "hue": "Orange",
+            "lightness": "Lighter",
+            "name": "待确认"
+          },
+          {
+            "hue": "Purple",
+            "lightness": "Lighter",
+            "name": "暂停"
+          }
+        ],
+        "type": "select"
+      },
+      {
+        "default_value": null,
+        "id": "fldihmqRpN",
+        "name": "别名/关键词",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "description": "迁移前的月份文本，仅作历史兼容；业务关系以月度折扣记录关联为准。",
+        "id": "fldIdy8KF6",
+        "name": "历史月份汇总（旧）",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "bidirectional": true,
+        "bidirectional_link_field_id": "fldCplEt6K",
+        "id": "fldkU6kDHf",
+        "link_table": "tblYMMX6YzcZVxqG",
+        "name": "月度折扣记录",
+        "type": "link"
+      },
+      {
+        "default_value": null,
+        "id": "fldMckU4gt",
+        "name": "SKU名称",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      }
+    ],
+    "total": 7
+  },
+  "_notice": {
+    "skills": {
+      "command": "lark-cli update",
+      "current": "1.0.89",
+      "message": "lark-cli skills 1.0.89 out of sync with binary 1.0.94, run: lark-cli update",
+      "target": "1.0.94"
+    },
+    "update": {
+      "command": "lark-cli update",
+      "current": "1.0.94",
+      "latest": "1.0.96",
+      "message": "lark-cli 1.0.96 available, current 1.0.94, run: lark-cli update"
+    }
+  }
+}

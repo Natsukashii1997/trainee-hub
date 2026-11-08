@@ -16,11 +16,12 @@ import { daysSince, fmtCn, fmtDate, fmtDateTime, fmtFull, fmtTime, fmtWeekday, i
    页面只读写 data/api；业务规则（重排、改派、可见性）都在数据层。 */
 
 // ---------- 外壳 ----------
-type Group = 'pending' | 'plan' | 'path';
+type Group = 'pending' | 'plan' | 'path' | 'system';
 const GROUPS: Record<Group, { label: string; tabs: { to: string; label: string; tag?: string }[] }> = {
   pending: { label: '待处理', tabs: [{ to: '/admin/review', label: '审核队列' }] },
   plan: { label: '期次与排期', tabs: [{ to: '/admin/members', label: '成员与角色' }, { to: '/admin/cohort', label: '期次与启动' }, { to: '/admin/rotation', label: '轮岗排期' }, { to: '/admin/calendar', label: '工作日日历' }] },
   path: { label: '路径', tabs: [{ to: '/admin/path', label: '路径模板' }, { to: '/admin/rules', label: '周期任务规则' }] },
+  system: { label: '内容与系统', tabs: [{ to: '/admin/ai', label: 'AI 与接入' }] },
 };
 
 function AdminSheet({ group, title, action, children }: { group: Group; title: string; action?: ReactNode; children: ReactNode }) {
@@ -1062,6 +1063,113 @@ export function RulesAdmin() {
   );
 }
 
+// =====================================================================
+// AI 与接入（PRD 第 15 节，全局规则 P-13）：四块——默认执行方、功能清单（按链路看）、对外开放、数据对象
+// 工作台自己不调用 AI：默认执行方只说明、不放切换按钮。配置在 data/aiAccess.ts。
+// =====================================================================
+const FEATURE_ICON: Record<api.AiFeature['id'], [IconName, Domain]> = { reco: ['spark', 'ai'], faq: ['doc', 'ment'], summary: ['book', 'week'], quiz: ['quiz', 'exam'] };
+
+export function AIAccess() {
+  const say = useToast();
+  const [pick, setPick] = useState<api.AiFeature['id']>('faq');
+  const f = api.AI_FEATURES.find(x => x.id === pick)!;
+  const steps: [string, api.AiFlowStep][] = [['读什么', f.read], ['谁做', f.exec], ['写到哪里', f.write], ['谁能看到', f.who]];
+  const def = api.AI_DEFAULT_EXECUTOR;
+  return (
+    <AdminSheet group="system" title="AI 与接入" action={null}>
+      <PageHead
+        kicker={<>管理后台<i aria-hidden="true" />内容与系统</>}
+        title={<>AI 与<em>接入</em></>}
+        sub="点左边一个功能，看它从哪儿读、交给谁做、写到哪里、谁能看到。灰色节点是规则或人工，金色节点是 AI；虚线框是发生在工作台外的那一段。"
+        right={<MetaPill>全局规则 <b>P-13</b></MetaPill>}
+      />
+
+      <section className="card ax-band" aria-label="默认执行方">
+        <Tile icon="spark" domain="ai" size="lg" />
+        <div className="grow1">
+          <span className="ax-k">默认执行方</span>
+          <b>{def ? api.AI_EXECUTORS.find(e => e.id === def)?.name : '无 · 本应用当前不调用 AI'}</b>
+          <small>没有功能需要交给 AI，所以这里没有切换按钮。第一次加 AI 功能时这里改为可切换，新功能默认同时支持 Claude 和 Codex；选定的一家不可用时直接报错，不自动换家。</small>
+        </div>
+        <div className="ax-ex">
+          {api.AI_EXECUTORS.map(e => (
+            <span key={e.id} className="ax-eb" title={`以后的接入方式：${e.plannedAccess}；最近检查：${e.checkedAt ? fmtDateTime(e.checkedAt) : '未检查'}`}>
+              <span className="ax-logo" aria-hidden="true">{e.mark}</span>{e.name}<StatusPill tone="plain">{e.status}</StatusPill>
+            </span>
+          ))}
+        </div>
+      </section>
+
+      <div className="bento ax-top">
+        <section className="card s4" aria-label="功能清单">
+          <CardHead title="功能清单" sub={`${api.AI_FEATURES.length} 项`} />
+          <div className="ax-fi">
+            {api.AI_FEATURES.map(x => (
+              <button key={x.id} type="button" className="ax-fb" aria-pressed={x.id === pick} onClick={() => setPick(x.id)}>
+                <Tile icon={FEATURE_ICON[x.id][0]} domain={FEATURE_ICON[x.id][1]} />
+                <span className="grow1"><b>{x.name}</b><small>{x.where}</small><span className="ax-chips">{x.aiOutput ? <span className="chip ai">AI 产出</span> : <span className="chip plain">不调用 AI</span>}<span className="chip plain">{x.phase}</span></span></span>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section className="card s8" aria-label="功能链路">
+          <div className="hd"><Tile icon={FEATURE_ICON[f.id][0]} domain={FEATURE_ICON[f.id][1]} /><span className="sub">{f.where} · {f.phase}</span><div className="r">{f.aiOutput ? <span className="chip ai">AI 产出</span> : <span className="chip plain">不调用 AI</span>}<span className="chip plain">{f.phase}</span></div></div>
+          <h2 className="ax-h">{f.name}</h2>
+          <p className="ax-lead">{f.what}</p>
+          <div className="ax-flow">
+            {steps.map(([q, s], i) => (
+              <div key={q} className="ax-cell">
+                <div className={['ax-st', i === 1 && (f.aiOutput ? 'ai' : 'rule'), s.outside && 'out'].filter(Boolean).join(' ')}>
+                  <span className="q">{q}</span><b>{s.main}</b><small>{s.note}</small>
+                </div>
+                <span className="ax-where">{s.outside ? '工作台外（机器人）' : '工作台内'}</span>
+                {i < steps.length - 1 && <span className="ax-ar" aria-hidden="true"><Icon name="right" /></span>}
+              </div>
+            ))}
+          </div>
+          <div className="ax-facts">
+            <div><span>接入方式</span><b>{f.access}</b></div>
+            <div><span>留痕</span><b>{f.trace}</b></div>
+            <div><span>现在能不能用</span><b>{f.now}</b></div>
+          </div>
+          <p className="ax-foot">切换：{f.switchNote}。</p>
+        </section>
+
+        {api.AI_OPEN_APIS.map(o => (
+          <section key={o.name} className="card s6" aria-label="对外开放">
+            <CardHead title="对外开放" sub="外部连进来读写">
+              <button type="button" className="btn xs sec" disabled={!o.keyConfigured}>吊销</button>
+              <button type="button" className="btn xs pri" onClick={() => say('原型演示：签发密钥随机器人接口一期上线，签发时只显示一次')}>签发密钥</button>
+            </CardHead>
+            <div className="ax-oh">
+              <div><b>{o.name}</b><small>{o.kind} · {o.to}</small></div>
+              {o.keyConfigured ? <StatusPill tone="ok" dot>已配置</StatusPill> : <StatusPill tone="warn" dot>未配置</StatusPill>}
+            </div>
+            <div className="ax-scope"><span className="chip info">能读 {o.canRead.length} 项</span><div className="ax-chips">{o.canRead.map(x => <span key={x} className="typ">{x}</span>)}</div></div>
+            <div className="ax-scope"><span className="chip grow">能写 {o.canWrite.length} 项</span><div className="ax-chips">{o.canWrite.map(x => <span key={x} className={x.includes('留痕') ? 'typ hot' : 'typ'}>{x}</span>)}</div></div>
+            <div className="ax-kv">
+              <div><span>签发时间</span><b>{o.issuedAt ? fmtDateTime(o.issuedAt) : '—'}</b></div>
+              <div><span>最近调用</span><b>{o.lastCalledAt ? fmtDateTime(o.lastCalledAt) : '—'}</b></div>
+              <div><span>在哪关掉</span><b>{o.closeHow}</b></div>
+            </div>
+            <p className="ax-foot">密钥只存哈希，这里只显示「已配置 / 未配置」；越权调用返回错误，并记进事件日志。</p>
+          </section>
+        ))}
+
+        <section className="card s6" aria-label="数据对象">
+          <CardHead title="数据对象" sub="只展示，不是 AI 产出，不进切换" />
+          <div className="ax-dl">
+            {api.AI_DATA_OBJECTS.map(d => (
+              <div key={d.name} className="ax-d"><b>{d.name}</b><span>{d.source}</span><span className="chip plain">不是 AI 产出</span></div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </AdminSheet>
+  );
+}
+
 // ---------- 页面私有样式（V3 token；如需复用可迁入 app.css） ----------
 const CSS = `
 .ad-block{display:grid;place-items:center;min-height:560px}
@@ -1200,4 +1308,53 @@ const CSS = `
 .ad-mode-f{display:flex;gap:10px;font-size:12px;padding-top:8px;border-top:1px dashed var(--line2)}
 .ad-mode-f span{color:var(--mute);width:28px;flex:none}
 .ad-mode-f b{font-weight:600;color:var(--ci)}
+.ax-band{margin-top:20px;display:flex;align-items:center;gap:14px;padding:14px 20px}
+.ax-band .ax-k{display:block;font-size:11.5px;color:var(--mute)}
+.ax-band b{display:block;font-size:15px;font-weight:600}
+.ax-band small{display:block;font-size:12px;color:var(--mute);margin-top:1px;line-height:1.6;max-width:720px}
+.ax-ex{display:flex;gap:8px;flex:none}
+.ax-eb{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 8px 0 7px;border-radius:12px;background:var(--well);box-shadow:0 0 0 1px var(--line);font-size:13px;font-weight:500}
+.ax-logo{width:26px;height:24px;border-radius:8px;display:grid;place-items:center;flex:none;font-family:var(--num);font-weight:700;font-size:10.5px;letter-spacing:-.02em;color:var(--ink2);background:#fff;box-shadow:0 0 0 1px var(--line2)}
+.bento.ax-top{margin-top:12px}
+.ax-fi{margin-top:10px;display:grid;gap:4px}
+.ax-fb{display:flex;gap:10px;align-items:flex-start;width:100%;padding:10px;border-radius:14px;text-align:left;transition:background var(--t),box-shadow var(--t)}
+.ax-fb:hover{background:rgba(255,255,255,.7)}
+.ax-fb[aria-pressed="true"]{background:#fff;box-shadow:0 0 0 1px var(--line2),0 6px 16px -10px rgba(28,36,64,.3)}
+.ax-fb b{display:block;font-size:13px;font-weight:600}
+.ax-fb small{display:block;font-size:11.5px;color:var(--mute);margin-top:1px}
+.ax-chips{display:flex;gap:6px;flex-wrap:wrap}
+.ax-fb .ax-chips{margin-top:6px;gap:4px}
+.ax-h{margin-top:10px;font-size:var(--fs-xl);font-weight:600;letter-spacing:-.01em}
+.ax-lead{margin-top:4px;font-size:13px;color:var(--ink2);line-height:1.7}
+.ax-flow{margin-top:18px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
+.ax-cell{position:relative;display:grid;gap:8px;min-width:0}
+.ax-st{display:grid;align-content:start;gap:6px;padding:12px;border-radius:16px;background:var(--well);box-shadow:0 0 0 1px var(--line);min-height:124px}
+.ax-st .q{font-size:11px;letter-spacing:.04em;color:var(--mute)}
+.ax-st b{font-size:13px;font-weight:600;line-height:1.5}
+.ax-st small{font-size:11.5px;color:var(--mute);line-height:1.6}
+.ax-st.ai{background:var(--ai-soft);box-shadow:0 0 0 1px rgba(224,164,54,.35)}
+.ax-st.ai .q,.ax-st.ai small{color:var(--ai-ink)}
+.ax-st.rule{background:var(--sunk);box-shadow:none}
+.ax-st.out{box-shadow:none;outline:1.5px dashed rgba(21,25,38,.22);outline-offset:-1.5px;background:transparent}
+.ax-st.ai.out{background:var(--ai-soft);outline-color:rgba(176,120,20,.45)}
+.ax-where{font-size:11px;color:var(--mute);text-align:center;border-top:1px dashed var(--line2);padding-top:4px}
+.ax-ar{position:absolute;right:-18px;top:54px;color:var(--faint)}
+.ax-ar .ico{width:14px;height:14px}
+.ax-facts{margin-top:16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ax-facts div{display:grid;gap:3px;padding:10px 12px;border-radius:14px;background:var(--sunk);align-content:start}
+.ax-facts span,.ax-kv span{font-size:11.5px;color:var(--mute)}
+.ax-facts b,.ax-kv b{font-size:12.5px;font-weight:500;line-height:1.55}
+.ax-foot{margin-top:12px;font-size:12px;line-height:1.7;color:var(--mute)}
+.ax-oh{margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:16px;background:var(--well);box-shadow:0 0 0 1px var(--line)}
+.ax-oh b{display:block;font-size:14.5px;font-weight:600}
+.ax-oh small{display:block;margin-top:2px;font-size:12px;color:var(--mute)}
+.ax-scope{margin-top:12px;display:grid;grid-template-columns:84px minmax(0,1fr);gap:10px;align-items:start}
+.ax-scope .chip{justify-self:start}
+.ax-scope .typ{background:#fff;box-shadow:0 0 0 1px var(--line)}
+.ax-scope .typ.hot{background:var(--ai-soft);color:var(--ai-ink);box-shadow:none}
+.ax-kv{margin-top:12px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ax-kv div{display:grid;gap:3px;min-width:0}
+.ax-dl{margin-top:12px;display:grid;gap:6px}
+.ax-d{display:grid;grid-template-columns:110px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 12px;border-radius:14px;background:var(--well);box-shadow:0 0 0 1px var(--line);font-size:12.5px;color:var(--ink2)}
+.ax-d b{font-size:13px;color:var(--ink);font-weight:600}
 `;

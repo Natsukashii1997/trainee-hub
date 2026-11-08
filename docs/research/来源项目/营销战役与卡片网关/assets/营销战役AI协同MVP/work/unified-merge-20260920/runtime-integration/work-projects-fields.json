@@ -1,0 +1,282 @@
+{
+  "ok": true,
+  "identity": "user",
+  "data": {
+    "fields": [
+      {
+        "id": "fldo9WA4rD",
+        "name": "最后更新时间",
+        "style": {
+          "format": "yyyy/MM/dd"
+        },
+        "type": "updated_at"
+      },
+      {
+        "default_value": null,
+        "id": "fld2pPEYpg",
+        "name": "项目名称",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "description": "机械邪龙兽标准化启动的可见状态；未知结果保持待核验。",
+        "id": "fldvPHCTHZ",
+        "multiple": false,
+        "name": "初始化状态",
+        "options": [
+          {
+            "hue": "Gray",
+            "lightness": "Light",
+            "name": "待初始化"
+          },
+          {
+            "hue": "Orange",
+            "lightness": "Light",
+            "name": "初始化中"
+          },
+          {
+            "hue": "Green",
+            "lightness": "Light",
+            "name": "已完成"
+          },
+          {
+            "hue": "Red",
+            "lightness": "Light",
+            "name": "失败"
+          },
+          {
+            "hue": "Purple",
+            "lightness": "Light",
+            "name": "待核验"
+          }
+        ],
+        "type": "select"
+      },
+      {
+        "bidirectional": true,
+        "bidirectional_link_field_id": "fldxvhxwuB",
+        "id": "fldYgcGzwm",
+        "link_table": "tblHWD7DAQcKpXaM",
+        "name": "🏃‍♂️ 团队成员",
+        "type": "link"
+      },
+      {
+        "default_value": null,
+        "id": "fldpAalnAz",
+        "name": "项目创建时间",
+        "style": {
+          "format": "yyyy/MM/dd"
+        },
+        "type": "datetime"
+      },
+      {
+        "default_value": null,
+        "description": "标准启动时冻结的模板版本与 revision，用于追溯。",
+        "id": "fldTqq9YW7",
+        "name": "模板版本",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "aggregate": "raw_value",
+        "from": "🏃‍♂️ 团队成员",
+        "id": "fldgWvqwtV",
+        "name": "成员",
+        "select": "账号",
+        "type": "lookup",
+        "where": {
+          "conditions": [
+            [
+              "任务",
+              "intersects",
+              {
+                "field": "对应任务",
+                "type": "field_ref"
+              }
+            ]
+          ],
+          "logic": "and"
+        }
+      },
+      {
+        "default_value": null,
+        "description": "业务项目实际开始日期；营销战役启动的必填前置条件。",
+        "id": "fldvRLzv3Z",
+        "name": "项目开始时间",
+        "style": {
+          "format": "yyyy-MM-dd"
+        },
+        "type": "datetime"
+      },
+      {
+        "expression": "SUM([对应任务].[是否完成])/IF([任务数量]=0,1,[任务数量])",
+        "id": "fldw8fLiXH",
+        "name": "任务完成度",
+        "type": "formula"
+      },
+      {
+        "default_value": [
+          {
+            "$slot": "current_user"
+          }
+        ],
+        "id": "fldCjsprqU",
+        "multiple": false,
+        "name": "总负责人",
+        "type": "user"
+      },
+      {
+        "bidirectional": true,
+        "bidirectional_link_field_id": "fldfhHpt7e",
+        "id": "fld7v0WFJ9",
+        "link_table": "tblc3pkZfjaOnOwY",
+        "name": "对应任务",
+        "type": "link"
+      },
+      {
+        "default_value": null,
+        "id": "fldJLIGgW6",
+        "name": "项目文档",
+        "style": {
+          "type": "url"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "description": "标准启动所用模板的稳定标识，如 product 或 marketing_campaign。",
+        "id": "fldhqygRdW",
+        "name": "模板标识",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "bidirectional": true,
+        "bidirectional_link_field_id": "fld972X02H",
+        "id": "fldsymAdao",
+        "link_table": "tbliViaC8diQgGFy",
+        "name": "内容物料",
+        "type": "link"
+      },
+      {
+        "default_value": null,
+        "id": "fldIo0kKua",
+        "name": "项目定义",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "bidirectional": true,
+        "bidirectional_link_field_id": "fldfhHpt7e",
+        "id": "fld0JqtHC4",
+        "link_table": "tblDhQCi5CCZCvUT",
+        "name": "营销战役推进（模板关联）",
+        "type": "link"
+      },
+      {
+        "bidirectional": true,
+        "bidirectional_link_field_id": "fldfhHpt7e",
+        "id": "fldMI1WNvj",
+        "link_table": "tblIEuoDOvkHeU3P",
+        "name": "产品项目推进",
+        "type": "link"
+      },
+      {
+        "default_value": null,
+        "description": "区分标准产品项目与营销战役，决定标准启动所用模板。",
+        "id": "fldd0JDKzw",
+        "multiple": false,
+        "name": "项目类型",
+        "options": [
+          {
+            "hue": "Blue",
+            "lightness": "Light",
+            "name": "产品项目"
+          },
+          {
+            "hue": "Carmine",
+            "lightness": "Light",
+            "name": "营销战役"
+          }
+        ],
+        "type": "select"
+      },
+      {
+        "default_value": null,
+        "id": "fldD78NnTo",
+        "name": "项目截止时间",
+        "style": {
+          "format": "yyyy/MM/dd"
+        },
+        "type": "datetime"
+      },
+      {
+        "aggregate": "raw_value",
+        "from": "",
+        "id": "fldS3MKJkW",
+        "name": "任务数量",
+        "select": "",
+        "type": "lookup",
+        "where": {
+          "conditions": [],
+          "logic": "and"
+        }
+      },
+      {
+        "bidirectional": false,
+        "id": "fldVDZU9qI",
+        "link_table": "tblc3pkZfjaOnOwY",
+        "name": "项目进展",
+        "type": "link"
+      },
+      {
+        "default_value": null,
+        "id": "fldZuO6JUA",
+        "multiple": false,
+        "name": "状态",
+        "options": [
+          {
+            "hue": "Blue",
+            "lightness": "Dark",
+            "name": "推进中"
+          },
+          {
+            "hue": "Orange",
+            "lightness": "Dark",
+            "name": "未启动"
+          },
+          {
+            "hue": "Green",
+            "lightness": "Dark",
+            "name": "已完成"
+          }
+        ],
+        "type": "select"
+      }
+    ],
+    "total": 22
+  },
+  "_notice": {
+    "skills": {
+      "command": "lark-cli update",
+      "current": "1.0.89",
+      "message": "lark-cli skills 1.0.89 out of sync with binary 1.0.94, run: lark-cli update",
+      "target": "1.0.94"
+    },
+    "update": {
+      "command": "lark-cli update",
+      "current": "1.0.94",
+      "latest": "1.0.96",
+      "message": "lark-cli 1.0.96 available, current 1.0.94, run: lark-cli update"
+    }
+  }
+}

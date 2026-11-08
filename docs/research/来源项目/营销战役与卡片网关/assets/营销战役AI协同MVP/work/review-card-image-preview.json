@@ -1,0 +1,221 @@
+{
+  "schema": "2.0",
+  "config": {
+    "update_multi": true,
+    "width_mode": "default",
+    "enable_forward": false,
+    "summary": {
+      "content": "待审核｜国际课程试听海报（携图样式预览）"
+    }
+  },
+  "header": {
+    "title": {
+      "tag": "plain_text",
+      "content": "待审核 | 国际课程试听海报"
+    },
+    "template": "orange",
+    "icon": {
+      "tag": "standard_icon",
+      "token": "image_colorful"
+    },
+    "text_tag_list": [
+      {
+        "tag": "text_tag",
+        "text": {
+          "tag": "plain_text",
+          "content": "样式预览"
+        },
+        "color": "orange"
+      }
+    ]
+  },
+  "body": {
+    "direction": "vertical",
+    "padding": "12px 12px 20px 12px",
+    "vertical_spacing": "large",
+    "elements": [
+      {
+        "tag": "column_set",
+        "flex_mode": "none",
+        "margin": "0px",
+        "columns": [
+          {
+            "tag": "column",
+            "width": "weighted",
+            "weight": 1,
+            "padding": "0px",
+            "margin": "0px",
+            "vertical_spacing": "2px",
+            "elements": [
+              {
+                "tag": "markdown",
+                "content": "**设计终稿已正式提交，请审核人查阅下方成图，完成对应审核流程**",
+                "margin": "0px"
+              },
+              {
+                "tag": "markdown",
+                "content": "<font color='grey'>查看设计Brief | </font>[设计 Brief 需求文档](https://vm94j8bzy7.feishu.cn/wiki/Mb2ewzW7Bix76jkQPTucViJpn5b)",
+                "text_size": "notation",
+                "margin": "0px"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tag": "column_set",
+        "flex_mode": "none",
+        "horizontal_spacing": "medium",
+        "margin": "0px",
+        "columns": [
+          {
+            "tag": "column",
+            "width": "weighted",
+            "weight": 1,
+            "padding": "12px",
+            "background_style": "blue-50",
+            "elements": [
+              {
+                "tag": "markdown",
+                "content": "**✅ 物料名称**\n国际课程试听海报"
+              }
+            ]
+          },
+          {
+            "tag": "column",
+            "width": "weighted",
+            "weight": 1,
+            "padding": "12px",
+            "background_style": "purple-50",
+            "elements": [
+              {
+                "tag": "markdown",
+                "content": "**✅ 类型需求**\n朋友圈 + 海报"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tag": "column_set",
+        "flex_mode": "none",
+        "horizontal_spacing": "medium",
+        "columns": [
+          {
+            "tag": "column",
+            "width": "weighted",
+            "weight": 1,
+            "padding": "12px",
+            "background_style": "purple-50",
+            "elements": [
+              {
+                "tag": "markdown",
+                "content": "**✅ 提需人**\n常浩"
+              }
+            ]
+          },
+          {
+            "tag": "column",
+            "width": "weighted",
+            "weight": 1,
+            "padding": "12px",
+            "background_style": "blue-50",
+            "elements": [
+              {
+                "tag": "markdown",
+                "content": "**✅ 审核人**\n常浩"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tag": "column_set",
+        "flex_mode": "none",
+        "horizontal_spacing": "medium",
+        "margin": "0px",
+        "columns": [
+          {
+            "tag": "column",
+            "width": "weighted",
+            "weight": 1,
+            "padding": "0px",
+            "margin": "0px",
+            "elements": [
+              {
+                "tag": "button",
+                "text": {
+                  "tag": "plain_text",
+                  "content": "审核通过"
+                },
+                "type": "primary_filled",
+                "size": "medium",
+                "width": "fill",
+                "margin": "0px",
+                "behaviors": [
+                  {
+                    "type": "callback",
+                    "value": {
+                      "action": "review_preview_pass",
+                      "preview_only": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "column",
+            "width": "weighted",
+            "weight": 1,
+            "padding": "0px",
+            "margin": "0px",
+            "elements": [
+              {
+                "tag": "button",
+                "text": {
+                  "tag": "plain_text",
+                  "content": "退回修改"
+                },
+                "type": "danger_filled",
+                "size": "medium",
+                "width": "fill",
+                "margin": "0px",
+                "behaviors": [
+                  {
+                    "type": "callback",
+                    "value": {
+                      "action": "review_preview_reject",
+                      "preview_only": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tag": "div",
+        "text": {
+          "tag": "plain_text",
+          "content": "视觉预览｜连接真实记录",
+          "text_size": "notation",
+          "text_color": "grey",
+          "lines": 2
+        }
+      },
+      {
+        "tag": "img",
+        "img_key": "img_v3_0214v_b32bdbaf-1a25-4580-aa6c-041d58e5f23g",
+        "alt": {
+          "tag": "plain_text",
+          "content": "国际课程试听海报终稿预览"
+        },
+        "scale_type": "fit_horizontal",
+        "corner_radius": "8px",
+        "preview": true
+      }
+    ]
+  }
+}

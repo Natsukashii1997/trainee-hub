@@ -1,0 +1,247 @@
+{
+  "ok": true,
+  "identity": "user",
+  "data": {
+    "fields": [
+      {
+        "default_value": null,
+        "id": "flddWhB7lp",
+        "name": "更新时间",
+        "style": {
+          "format": "yyyy-MM-dd HH:mm"
+        },
+        "type": "datetime"
+      },
+      {
+        "default_value": null,
+        "id": "fldUG5y6Mm",
+        "multiple": false,
+        "name": "答案审核状态",
+        "options": [
+          {
+            "hue": "Red",
+            "lightness": "Light",
+            "name": "待生成"
+          },
+          {
+            "hue": "Carmine",
+            "lightness": "Light",
+            "name": "待审核"
+          },
+          {
+            "hue": "Yellow",
+            "lightness": "Light",
+            "name": "待改稿"
+          },
+          {
+            "hue": "Green",
+            "lightness": "Dark",
+            "name": "已通过"
+          },
+          {
+            "hue": "Gray",
+            "lightness": "Dark",
+            "name": "已否决"
+          }
+        ],
+        "type": "select"
+      },
+      {
+        "default_value": null,
+        "id": "fldtOmdFrC",
+        "name": "问题",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "description": "流程生成的稳定标识；一次原始问题对应一条案件",
+        "id": "fldEPjBDOl",
+        "name": "案件ID",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldpDuzoDe",
+        "name": "创建时间",
+        "style": {
+          "format": "yyyy-MM-dd HH:mm"
+        },
+        "type": "datetime"
+      },
+      {
+        "default_value": null,
+        "id": "fldfvvCVZh",
+        "multiple": false,
+        "name": "实际写入状态",
+        "options": [
+          {
+            "hue": "Carmine",
+            "lightness": "Lighter",
+            "name": "未开始"
+          },
+          {
+            "hue": "Red",
+            "lightness": "Lighter",
+            "name": "执行中"
+          },
+          {
+            "hue": "Yellow",
+            "lightness": "Lighter",
+            "name": "待核验"
+          },
+          {
+            "hue": "Orange",
+            "lightness": "Lighter",
+            "name": "失败"
+          },
+          {
+            "hue": "Red",
+            "lightness": "Lighter",
+            "name": "已查回确认"
+          }
+        ],
+        "type": "select"
+      },
+      {
+        "default_value": null,
+        "description": "当前答案版本的完整正文；审核状态另列，原答及纠正历史见完整档案。",
+        "id": "fldjC4sJcy",
+        "name": "当前答案正文",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldI8I6wWI",
+        "name": "待处理原因",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "description": "机器人原始答案全部发送完成的时间。",
+        "id": "fldXQW4l1y",
+        "name": "回答时间",
+        "style": {
+          "format": "yyyy-MM-dd HH:mm"
+        },
+        "type": "datetime"
+      },
+      {
+        "default_value": null,
+        "id": "fldroV7G1u",
+        "name": "原入口",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "description": "流程生成的稳定标识；一次原始问题对应一条案件",
+        "id": "fldiEypjGR",
+        "name": "问题序号",
+        "style": {
+          "rules": [
+            {
+              "length": 3,
+              "type": "incremental_number"
+            }
+          ]
+        },
+        "type": "auto_number"
+      },
+      {
+        "default_value": null,
+        "id": "fldiEZm3Fz",
+        "name": "完整档案链接",
+        "style": {
+          "type": "url"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldncVm1yk",
+        "multiple": false,
+        "name": "归档审核状态",
+        "options": [
+          {
+            "hue": "Carmine",
+            "lightness": "Lighter",
+            "name": "未提议"
+          },
+          {
+            "hue": "Purple",
+            "lightness": "Light",
+            "name": "待确认"
+          },
+          {
+            "hue": "Yellow",
+            "lightness": "Light",
+            "name": "已批准"
+          },
+          {
+            "hue": "Gray",
+            "lightness": "Light",
+            "name": "已否决"
+          }
+        ],
+        "type": "select"
+      },
+      {
+        "default_value": null,
+        "id": "fldlWPEZvs",
+        "multiple": false,
+        "name": "提问人",
+        "type": "user"
+      },
+      {
+        "default_value": null,
+        "id": "fldEzs9ZlH",
+        "name": "当前答案版本",
+        "style": {
+          "percentage": false,
+          "precision": 0,
+          "thousands_separator": false,
+          "type": "plain"
+        },
+        "type": "number"
+      },
+      {
+        "default_value": null,
+        "description": "机器人原始答案的实际送达消息标识，按发送顺序保存。",
+        "id": "fld6U2tT5n",
+        "name": "回答消息",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      }
+    ],
+    "total": 16
+  },
+  "_notice": {
+    "skills": {
+      "command": "lark-cli update",
+      "current": "1.0.89",
+      "message": "lark-cli skills 1.0.89 out of sync with binary 1.0.94, run: lark-cli update",
+      "target": "1.0.94"
+    },
+    "update": {
+      "command": "lark-cli update",
+      "current": "1.0.94",
+      "latest": "1.0.95",
+      "message": "lark-cli 1.0.95 available, current 1.0.94, run: lark-cli update"
+    }
+  }
+}

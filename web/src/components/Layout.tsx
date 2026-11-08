@@ -79,6 +79,7 @@ function Sidebar() {
         { to: '/admin/rules', icon: 'repeat', label: '周期任务规则' },
       ] },
       { title: '内容与系统', sub: true, items: [
+        { to: '/admin/ai', icon: 'spark', label: 'AI 与接入' },
         { to: '/admin/soon', icon: 'gear', label: '公告与系统设置', dim: true, extra: <span className="tag">二期</span> },
       ] },
     ],

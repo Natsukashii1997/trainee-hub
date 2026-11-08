@@ -1,0 +1,4 @@
+[
+  {"name":"状态版本","type":"number","style":{"type":"plain","precision":0,"percentage":false,"thousands_separator":false}},
+  {"name":"主卡片消息ID","type":"text"}
+]

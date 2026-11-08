@@ -1,0 +1,5 @@
+[
+  {"name":"关联SKU","type":"link","link_table":"tblBUQTsWtKTOyrz","bidirectional":true,"bidirectional_link_field_name":"月度折扣方案"},
+  {"name":"来源链接","type":"text","style":{"type":"url"}},
+  {"name":"确认时间","type":"datetime","style":{"format":"yyyy-MM-dd HH:mm"}}
+]

@@ -1,0 +1,6 @@
+[
+  {"name":"所属战役","type":"link","link_table":"tblaUHNEhPhYjfJw","bidirectional":true,"bidirectional_link_field_name":"营销主题"},
+  {"name":"关联用户策略","type":"link","link_table":"tblxJ9NKRGHZpkO6","bidirectional":true,"bidirectional_link_field_name":"关联营销主题"},
+  {"name":"关联SKU","type":"link","link_table":"tblBUQTsWtKTOyrz","bidirectional":true,"bidirectional_link_field_name":"关联营销主题"},
+  {"name":"主卡片消息ID","type":"text"}
+]

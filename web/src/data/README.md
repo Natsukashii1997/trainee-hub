@@ -179,6 +179,10 @@
 
 `ASSET_TYPES`、`ASSET_TAGS`、`assetById(id)`、`uses(asset)`（使用人数）、`listAssets({ type?, tag?, q?, status? })`（默认只列上架的，按使用人数排序）、`assetsBy(userId)`、`assetsForTemplate(tpl?)`（任务推荐资产）、`tasksUsingAsset(assetId)`、`validateSkillMd(text): string | null`（SKILL.md 校验，返回错误文字）。
 
+## 读：AI 接入（PRD 15，`aiAccess.ts`）
+
+管理后台「AI 与接入」页的配置，工作台自己不调用 AI，所以全是说明性常量：`AI_DEFAULT_EXECUTOR`（`null` = 不调用 AI，页面不出切换）、`AI_EXECUTORS`（Claude、Codex，状态「未启用」）、`AI_FEATURES`（功能清单：读什么 / 谁做 / 写到哪 / 谁能看到，`outside` 标工作台外的一段）、`AI_OPEN_APIS`（带教机器人接口，密钥只有 `keyConfigured`）、`AI_DATA_OBJECTS`。改这里要同步 PRD 第 15 节和 AGENTS.md「AI 接入」，`aiAccess.test.ts` 会查功能名。
+
 ## 写操作（每个都会追加事件日志、重新推算待办）
 
 | 函数 | 谁能做 / 校验 | PRD |

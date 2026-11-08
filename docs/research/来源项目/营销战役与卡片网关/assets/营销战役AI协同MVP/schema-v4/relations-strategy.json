@@ -1,0 +1,4 @@
+[
+  {"name":"所属战役","type":"link","link_table":"tblaUHNEhPhYjfJw","bidirectional":true,"bidirectional_link_field_name":"用户策略"},
+  {"name":"WHAT｜主推SKU","type":"link","link_table":"tblBUQTsWtKTOyrz","bidirectional":true,"bidirectional_link_field_name":"关联用户策略"}
+]

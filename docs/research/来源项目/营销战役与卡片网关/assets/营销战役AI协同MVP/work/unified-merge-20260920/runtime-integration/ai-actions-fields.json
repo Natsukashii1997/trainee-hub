@@ -1,0 +1,157 @@
+{
+  "ok": true,
+  "identity": "user",
+  "data": {
+    "fields": [
+      {
+        "default_value": null,
+        "id": "fld8fI05he",
+        "name": "事件类型",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldzZ5QvtQ",
+        "name": "案件ID",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "description": "记录真实用户或机器人标识，不以记录创建者推断审核人",
+        "id": "fldHvmX30z",
+        "name": "实际操作人",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldnWd8QMy",
+        "name": "关联版本",
+        "style": {
+          "percentage": false,
+          "precision": 0,
+          "thousands_separator": false,
+          "type": "plain"
+        },
+        "type": "number"
+      },
+      {
+        "default_value": null,
+        "id": "fldzaJVNxU",
+        "name": "失败原因",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldtM5Yduk",
+        "multiple": false,
+        "name": "执行状态",
+        "options": [
+          {
+            "hue": "Orange",
+            "lightness": "Lighter",
+            "name": "已记录"
+          },
+          {
+            "hue": "Gray",
+            "lightness": "Lighter",
+            "name": "待执行"
+          },
+          {
+            "hue": "Red",
+            "lightness": "Lighter",
+            "name": "执行中"
+          },
+          {
+            "hue": "Green",
+            "lightness": "Lighter",
+            "name": "成功"
+          },
+          {
+            "hue": "Orange",
+            "lightness": "Lighter",
+            "name": "失败"
+          },
+          {
+            "hue": "Yellow",
+            "lightness": "Lighter",
+            "name": "待核验"
+          }
+        ],
+        "type": "select"
+      },
+      {
+        "default_value": null,
+        "id": "fldSyqpFzw",
+        "name": "外部引用",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldKpsVFyP",
+        "name": "意见或结果摘要",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fldsM0lgK1",
+        "name": "审核范围",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "description": "稳定幂等标识；同一动作不重复创建",
+        "id": "fldvVJUBnJ",
+        "name": "事件ID",
+        "style": {
+          "type": "plain"
+        },
+        "type": "text"
+      },
+      {
+        "default_value": null,
+        "id": "fld1bfrg60",
+        "name": "发生时间",
+        "style": {
+          "format": "yyyy-MM-dd HH:mm"
+        },
+        "type": "datetime"
+      }
+    ],
+    "total": 11
+  },
+  "_notice": {
+    "skills": {
+      "command": "lark-cli update",
+      "current": "1.0.89",
+      "message": "lark-cli skills 1.0.89 out of sync with binary 1.0.94, run: lark-cli update",
+      "target": "1.0.94"
+    },
+    "update": {
+      "command": "lark-cli update",
+      "current": "1.0.94",
+      "latest": "1.0.96",
+      "message": "lark-cli 1.0.96 available, current 1.0.94, run: lark-cli update"
+    }
+  }
+}
