@@ -2,7 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useId, useMemo, useR
 import { Link } from 'react-router-dom';
 import type { Grade, Role, TaskInstance, User } from '../data/types';
 import { STATUS_LABEL } from '../data/types';
-import { demoUserFor, isOverdue } from '../data/api';
+import { demoUserFor, isOverdue, userById } from '../data/api';
+import { type Actor, demoLogin, demoLogout, fetchIdentities, fetchMe, type Identity, ServerError } from '../data/server';
 
 /* 通用组件：只收 props，不读 data 层（Face / StatusChip / GradeChip / Session 是对数据类型的薄包装，保留给旧页面）。
    用法见 ./README.md，样子见 /dev/kit。 */
@@ -313,8 +314,16 @@ export function Drawer({ open, onClose, title, sub, head, children, footer, widt
   );
 }
 
-// ---------- 演示视角（原型用；正式版按登录身份决定，管理员才可预览其他视角） ----------
-type Session = { role: Role; me: User; setRole: (r: Role) => void };
+// ---------- 会话：登录身份来自后端（PRD 2.2；页面清单 G3、G4） ----------
+// status：loading 正在问后端；in 已登录；anon 演示模式下还没选身份；closed 非演示模式（业务接口不开放）；offline 连不上后端。
+// role / me / setRole 是给旧页面（v1.1 原型，B 级）的兼容层：role 由登录身份推出（有管理权限的带教 = admin），
+// me 是同 id 的示例用户；setRole 在演示模式下切到对应的示例身份。没连上后端时（如组件测试）退回本地记住的视角。
+export type SessionStatus = 'loading' | 'in' | 'anon' | 'closed' | 'offline';
+type Session = {
+  status: SessionStatus; actor: Actor | null; demo: boolean; identities: Identity[];
+  switchTo: (userId: string) => Promise<void>; logout: () => Promise<void>;
+  role: Role; me: User; setRole: (r: Role) => void;
+};
 const SessionCtx = createContext<Session | null>(null);
 const KEY = 'trainee-hub:demo-role';
 const isRole = (r: string | null): r is Role => r === 'trainee' || r === 'mentor' || r === 'admin' || r === 'colleague';
@@ -325,10 +334,51 @@ function readRole(): Role {
   try { const r = localStorage.getItem(KEY); if (isRole(r)) return r; } catch { /* 存储不可用时用默认 */ }
   return 'trainee';
 }
+const roleOf = (a: Actor): Role => (a.isAdmin ? 'admin' : a.role);
 export function SessionProvider({ children }: { children: ReactNode }) {
-  const [role, setRoleState] = useState<Role>(readRole);
-  const setRole = useCallback((r: Role) => { setRoleState(r); try { localStorage.setItem(KEY, r); } catch { /* 忽略 */ } }, []);
-  const value = useMemo(() => ({ role, me: demoUserFor(role), setRole }), [role, setRole]);
+  const [status, setStatus] = useState<SessionStatus>('loading');
+  const [actor, setActor] = useState<Actor | null>(null);
+  const [demo, setDemo] = useState(false);
+  const [identities, setIdentities] = useState<Identity[]>([]);
+  const [localRole, setLocalRole] = useState<Role>(readRole);
+
+  const load = useCallback(async () => {
+    // 先看演示模式开没开（非演示模式下后端没有演示接口，返回 404），再问当前身份
+    let ids: Identity[] = [];
+    try {
+      ids = await fetchIdentities();
+    } catch (e) {
+      const code = e instanceof ServerError ? e.status : 0;
+      setDemo(false); setIdentities([]); setActor(null);
+      setStatus(code === 404 || code === 401 ? 'closed' : 'offline');
+      return;
+    }
+    setDemo(true); setIdentities(ids);
+    try {
+      const r = await fetchMe();
+      setActor(r.me); setStatus('in');
+    } catch (e) {
+      setActor(null);
+      setStatus(e instanceof ServerError && e.status === 401 ? 'anon' : 'offline');
+    }
+  }, []);
+  useEffect(() => { void load(); }, [load]);
+
+  const switchTo = useCallback(async (userId: string) => { setActor(await demoLogin(userId)); setStatus('in'); }, []);
+  const logout = useCallback(async () => { await demoLogout(); setActor(null); setStatus('anon'); }, []);
+  const setRole = useCallback((r: Role) => {
+    // 旧页面的「切到某视角」：演示模式下换成对应的示例身份
+    const pick = r === 'admin' ? identities.find(i => i.isAdmin) : identities.find(i => i.role === r && !i.isAdmin);
+    if (actor && pick) { void switchTo(pick.id); return; }
+    setLocalRole(r);
+    try { localStorage.setItem(KEY, r); } catch { /* 忽略 */ }
+  }, [actor, identities, switchTo]);
+
+  const value = useMemo<Session>(() => {
+    const role = actor ? roleOf(actor) : localRole;
+    const me = (actor && userById(actor.id)) || demoUserFor(role);
+    return { status, actor, demo, identities, switchTo, logout, role, me, setRole };
+  }, [status, actor, demo, identities, switchTo, logout, localRole, setRole]);
   return <SessionCtx.Provider value={value}>{children}</SessionCtx.Provider>;
 }
 export function useSession() { const s = useContext(SessionCtx); if (!s) throw new Error('缺 SessionProvider'); return s; }
