@@ -75,7 +75,7 @@ function groupsFor(role: 'trainee' | 'mentor', isAdmin: boolean, meId: string, t
   return g;
 }
 
-function Sidebar() {
+export function Sidebar() {
   const { actor } = useSession();
   const { pathname } = useLocation();
   const todo = useTodoCount();

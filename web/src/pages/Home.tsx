@@ -692,7 +692,7 @@ export default function Home() {
 }
 
 // ---------- 本页样式（只作用于 hm- 前缀；需要时由主会话并入 app.css） ----------
-const CSS = `
+export const CSS = `
 .hm-t { margin-top: 20px; display: grid; gap: var(--gap); grid-template-columns: 1fr 1fr 1.08fr 1.08fr; grid-template-rows: 176px 292px auto auto;
   grid-template-areas: "f1 f2 week prog" "rv wait week prog" "res ai ai board" "feed feed feed tid"; align-items: stretch; }
 .hm-two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
