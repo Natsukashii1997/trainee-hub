@@ -1,118 +1,107 @@
-import { Component, Suspense, useEffect, type ReactNode } from 'react';
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Avatar, Empty, Icon, Mark, Segmented, useSession, useToast, type Domain, type IconName } from './ui';
+import { Component, Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
+import { Link, Navigate, NavLink, Outlet, useLocation } from 'react-router-dom';
+import { Avatar, Empty, Icon, Mark, useSession, useToast, type Domain, type IconName } from './ui';
 import { HealthStatus } from './Health';
-import { listAssets, myWeek, pendingReviews, tasksOf, todosOf, trainees, useDataVersion, userById } from '../data/api';
-import type { Role } from '../data/types';
-import { ROLE_LABEL } from '../data/types';
+import { myWeek, todoCount, view, type TodoView } from '../data/api';
 
-/* 应用外壳（V3「柔光」）：左侧玻璃侧栏 + 右侧主区。顶栏由各页面通过 <Sheet> 渲染（面包屑、演示视角、日程、待办、通知、主按钮）。
-   PRD v1.1 第 3 节：一级导航 6 个；「日程」「待办」是顶栏切面，不进侧栏。 */
+/* 应用外壳（V3「柔光」）：左侧玻璃侧栏 + 右侧主区。顶栏由各页面通过 <Sheet> 渲染。
+   结构按页面清单「全局」G1–G4（PRD 10.1）：四个工作域（工作台、项目实践、培养成长、知识与工具）+ 管理区（只对管理者显示）；
+   顶栏：待办（A，带数量）、日程（B）、搜索与通知（C 占位）、演示身份切换（只在演示模式出现）。 */
 
-const growthHome = (r: Role) => (r === 'trainee' ? '/growth/me' : r === 'colleague' ? '/growth/path' : '/growth/board');
-const base = (to: string) => to.split(/[?#]/)[0];
+type Item = { to: string; icon: IconName; label: string; domain?: Domain; extra?: ReactNode; later?: boolean; match?: string };
+type Group = { title: string; items: Item[] };
 
-type Item = { to: string; icon: IconName; label: string; domain?: Domain; extra?: ReactNode; dim?: boolean; match?: string };
-type Group = { title: string; sub?: boolean; items: Item[] };
+const later = <span className="tag">以后</span>;
 
-/** 外壳上的计数：待办 = 本人未关闭的待办（含抄送）；日程 = 今天落在本人日程上的项数（管培生）；其余为侧栏小计数。 */
-function useCounts() {
-  useDataVersion();
+/** 待办数：A 级查询「待办四类」（PRD 第 11 节）的条数；路由变化或换身份时重新查 */
+function useTodoCount() {
+  const { status, actor } = useSession();
+  const { pathname } = useLocation();
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (status !== 'in') { setN(0); return; }
+    let live = true;
+    view<TodoView>('todo').then(t => { if (live) setN(todoCount(t)); }, () => { if (live) setN(0); });
+    return () => { live = false; };
+  }, [status, actor?.id, pathname]);
+  return n;
+}
+
+/** 日程数（B 级原型，前端示例数据）：今天落在本人日程上的项数，只给管培生 */
+function useScheduleCount() {
   const { role, me } = useSession();
-  const todo = todosOf(me.id).length;
-  let schedule = 0;
-  if (role === 'trainee') {
-    try { schedule = myWeek(me.id).days.find(d => d.isToday)?.items.length ?? 0; } catch { schedule = 0; }
-  }
-  const pendingAssets = listAssets({ status: 'pending' }).length;
-  const toReview = role === 'mentor' || role === 'admin' ? pendingReviews(me).length : 0;
-  const mine = tasksOf(me.id);
-  const submitted = mine.filter(t => t.status === 'submitted' || t.status === 'passed').length;
-  const fav = listAssets().filter(a => a.favBy.includes(me.id)).length;
-  return { todo, schedule, toReview, pendingAssets, submitted, fav };
+  if (role !== 'trainee') return 0;
+  try { return myWeek(me.id).days.find(d => d.isToday)?.items.length ?? 0; } catch { return 0; }
+}
+
+function groupsFor(role: 'trainee' | 'mentor', isAdmin: boolean, meId: string, todo: number): Group[] {
+  const g: Group[] = [
+    { title: '工作台', items: [
+      { to: '/', icon: 'home', label: '首页', domain: 'acc' },
+      { to: '/todo', icon: 'todo', label: '待办', domain: 'acc', extra: todo ? <span className="cnt">{todo}</span> : null },
+      { to: '/schedule', icon: 'cal', label: '日程', domain: 'ment', match: '/schedule' },
+    ] },
+    { title: '项目实践', items: [{ to: '/projects', icon: 'flag', label: '项目', domain: 'acc', match: '/projects' }] },
+    { title: '培养成长', items: role === 'trainee'
+      ? [
+          { to: '/growth/path', icon: 'route', label: '我的路径', domain: 'grow', match: '/growth/path' },
+          { to: `/growth/people/${meId}`, icon: 'user', label: '成长档案', domain: 'grow', match: '/growth/people' },
+          { to: '/growth/overview', icon: 'layers', label: '路径总览', domain: 'grow' },
+        ]
+      : [
+          { to: '/growth/mentees', icon: 'team', label: '我带的人', domain: 'grow', match: '/growth/mentees' },
+          { to: '/growth/overview', icon: 'layers', label: '路径总览', domain: 'grow' },
+        ] },
+    { title: '知识与工具', items: [
+      { to: '/knowledge', icon: 'book', label: '知识与工具', domain: 'ai' },
+      { to: '/knowledge/resources', icon: 'doc', label: '知识资料', domain: 'ai', match: '/knowledge/resources' },
+      { to: '/knowledge/cases', icon: 'file', label: '业务案例', domain: 'ai', match: '/knowledge/cases' },
+      { to: '/knowledge/assets', icon: 'spark', label: 'AI 资产', domain: 'ai', match: '/knowledge/assets' },
+      { to: '/knowledge/faq', icon: 'q', label: 'FAQ', later: true, extra: later },
+    ] },
+  ];
+  if (isAdmin) g.push({ title: '管理', items: [
+    { to: '/admin/members', icon: 'user', label: '成员与带教' },
+    { to: '/admin/competencies', icon: 'star', label: '能力项' },
+    { to: '/admin/cohort', icon: 'flag', label: '期次与启动' },
+    { to: '/admin/path', icon: 'route', label: '路径模板' },
+    { to: '/admin/rules', icon: 'repeat', label: '周期任务规则' },
+    { to: '/admin/calendar', icon: 'cal', label: '工作日日历' },
+    { to: '/admin/rotation', icon: 'swap', label: '轮岗排期' },
+    { to: '/admin/review', icon: 'shield', label: '审核' },
+    { to: '/admin/ai', icon: 'spark', label: 'AI 与接入' },
+    { to: '/admin/later', icon: 'gear', label: '以后', later: true },
+  ] });
+  return g;
 }
 
 function Sidebar() {
-  const { role, me } = useSession();
+  const { actor } = useSession();
   const { pathname } = useLocation();
-  const say = useToast();
-  const c = useCounts();
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); say('全局搜索在二期上线'); } };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [say]);
-
-  const main: Item[] = [
-    { to: '/', icon: 'home', label: '首页', domain: 'acc' },
-    { to: growthHome(role), icon: 'grow', label: '成长', domain: 'grow', match: '/growth' },
-    { to: '/knowledge', icon: 'book', label: '知识', dim: true, extra: <span className="tag">二期</span> },
-    { to: '/ai', icon: 'spark', label: 'AI', domain: 'ai', match: '/ai', extra: <span className="tag new">新 2</span> },
-    { to: '/team', icon: 'team', label: '团队', domain: 'team', match: '/team' },
-    { to: '/incentive', icon: 'award', label: '激励', dim: true, extra: <span className="tag">三期</span> },
-  ];
-  const cnt = (n: number, hot?: boolean) => (n ? <span className={hot ? 'cnt hot' : 'cnt'}>{n}</span> : null);
-  const groups: Record<Role, Group[]> = {
-    trainee: [{ title: '我的', items: [
-      { to: `/team/${me.id}`, icon: 'user', label: '我的档案' },
-      { to: '/growth/me', icon: 'inbox', label: '我的提交', extra: cnt(c.submitted) },
-      { to: '/ai/assets?fav=1', icon: 'star', label: '收藏', extra: cnt(c.fav) },
-    ] }],
-    mentor: [{ title: '带教', items: [
-      { to: '/growth/board', icon: 'team', label: '我带的人' },
-      { to: '/growth/board#review', icon: 'pen', label: '待点评', extra: cnt(c.toReview, true) },
-      { to: `/team/${me.id}`, icon: 'spark', label: '我贡献的资产' },
-    ] }],
-    admin: [
-      { title: '待处理', sub: true, items: [
-        { to: '/admin/review', icon: 'shield', label: '审核队列', extra: cnt(c.pendingAssets, true) },
-      ] },
-      { title: '期次与排期', sub: true, items: [
-        { to: '/admin/members', icon: 'user', label: '成员与角色' },
-        { to: '/admin/cohort', icon: 'flag', label: '期次与启动' },
-        { to: '/admin/rotation', icon: 'swap', label: '轮岗排期' },
-        { to: '/admin/calendar', icon: 'cal', label: '工作日日历' },
-      ] },
-      { title: '路径', sub: true, items: [
-        { to: '/admin/path', icon: 'route', label: '路径模板' },
-        { to: '/admin/rules', icon: 'repeat', label: '周期任务规则' },
-      ] },
-      { title: '内容与系统', sub: true, items: [
-        { to: '/admin/ai', icon: 'spark', label: 'AI 与接入' },
-        { to: '/admin/soon', icon: 'gear', label: '公告与系统设置', dim: true, extra: <span className="tag">二期</span> },
-      ] },
-    ],
-    colleague: [{ title: '我的', items: [
-      { to: `/team/${me.id}`, icon: 'user', label: '我的档案' },
-      { to: '/ai/assets?fav=1', icon: 'star', label: '收藏', extra: cnt(c.fav) },
-    ] }],
-  };
-  const isOn = (n: Item) => (n.to === '/' ? pathname === '/' : n.match ? pathname.startsWith(n.match) : pathname === base(n.to));
+  const todo = useTodoCount();
+  if (!actor) return null;
+  const isOn = (n: Item) => (n.to === '/' ? pathname === '/' : n.match ? pathname.startsWith(n.match) : pathname === n.to);
   const link = (n: Item) => (
-    <NavLink key={n.label} to={n.to} end className={() => [isOn(n) ? 'on' : '', n.dim ? 'dim' : ''].join(' ').trim()} aria-current={isOn(n) ? 'page' : undefined}>
-      <span className={`t ${n.domain ? `d-${n.domain}` : 'd-week'}`}><Icon name={n.icon} /></span>{n.label}{n.extra}
+    <NavLink key={n.to} to={n.to} end className={() => [isOn(n) ? 'on' : '', n.later ? 'dim' : ''].join(' ').trim()} aria-current={isOn(n) ? 'page' : undefined}>
+      <span className={`t ${n.domain && !n.later ? `d-${n.domain}` : 'd-week'}`}><Icon name={n.icon} /></span>{n.label}{n.extra}
     </NavLink>
   );
-  const mentor = me.mentorId ? userById(me.mentorId) : null;
+  const roleLabel = actor.role === 'trainee' ? '管培生' : actor.isAdmin ? '带教 · 管理' : '带教';
+  const home = actor.role === 'trainee' ? `/growth/people/${actor.id}` : '/growth/mentees';
   return (
     <aside className="side" aria-label="主导航">
       <Link to="/" className="brand"><Mark /><div><b>管培生工作台</b><small>TRAINEE HUB</small></div></Link>
-      <div className="cohort"><span className="dot" aria-hidden="true" />2026 秋季班<span>{trainees().length} 人</span></div>
-      <button className="srch" type="button" onClick={() => say('全局搜索在二期上线')}><Icon name="search" />搜索<kbd>⌘K</kbd></button>
       <div className="side-scroll">
-        <nav className="nav" aria-label="一级导航">{main.map(link)}</nav>
-        {role === 'admin' && <div className="grp">管理后台</div>}
-        {groups[role].map(g => (
+        {groupsFor(actor.role, actor.isAdmin, actor.id, todo).map(g => (
           <div key={g.title}>
-            <div className={g.sub ? 'grp sm' : 'grp'}>{g.title}</div>
-            <nav className={g.sub ? 'nav sub' : 'nav'} style={{ marginTop: 0 }} aria-label={g.title}>{g.items.map(link)}</nav>
+            <div className="grp">{g.title}</div>
+            <nav className="nav" style={{ marginTop: 0 }} aria-label={g.title}>{g.items.map(link)}</nav>
           </div>
         ))}
       </div>
-      <Link className="me" to={`/team/${me.id}`}>
-        <Avatar name={me.name} color={me.color} />
-        <span><b>{me.name}</b><small>{ROLE_LABEL[me.role]}{mentor ? ` · 带教 ${mentor.name}` : me.line ? ` · ${me.line}` : ''}</small></span>
+      <Link className="me" to={home} aria-label={`${actor.name}，${actor.role === 'trainee' ? '进入我的成长档案' : '进入我带的人'}`}>
+        <Avatar name={actor.name} />
+        <span><b>{actor.name}</b><small>{roleLabel}</small></span>
       </Link>
     </aside>
   );
@@ -139,30 +128,75 @@ export function PageFrame({ children }: { children: ReactNode }) {
   return <PageBoundary key={pathname}><Suspense fallback={<main className="main" aria-busy="true" />}>{children}</Suspense></PageBoundary>;
 }
 
+/** 登录后的外壳：没登录（或非演示模式）转去登录页；连不上后端时说明怎么启动 */
 export function AppLayout() {
+  const { status } = useSession();
+  if (status === 'loading') return <div className="app" aria-busy="true" />;
+  if (status === 'anon' || status === 'closed') return <Navigate to="/login" replace />;
+  if (status === 'offline') {
+    return (
+      <div className="app" style={{ gridTemplateColumns: '1fr' }}>
+        <main className="main">
+          <div className="card" style={{ marginTop: 56 }}>
+            <Empty size="lg" icon="alert" title="连不上后端服务">
+              工作台的数据都来自本机后端。请在项目目录运行 <code>TRAINEE_HUB_DEMO=1 npm run dev:all</code>，再刷新这一页。
+            </Empty>
+          </div>
+        </main>
+      </div>
+    );
+  }
   return <div className="app"><Sidebar /><PageFrame><Outlet /></PageFrame><HealthStatus /></div>;
 }
 
-/** 各角色的默认主按钮 */
-function DefaultAction({ role }: { role: Role }) {
-  const a: Record<Role, { to: string; icon: IconName; label: string }> = {
-    trainee: { to: '/growth/me', icon: 'upload', label: '提交产出' },
-    mentor: { to: '/growth/board#review', icon: 'pen', label: '去点评' },
-    admin: { to: '/admin/review', icon: 'shield', label: '处理审核' },
-    colleague: { to: '/ai/submit', icon: 'spark', label: '提交资产' },
+/** 演示身份切换（页面清单 G3）：只在演示模式出现，在示例管培生和示例带教之间切换。
+    用自绘的弹出列表而不是原生 select：样式能跟 V3 一致，也能用真实点击检查（全局坑 G-11）。 */
+function IdentitySwitch() {
+  const { demo, actor, identities, switchTo } = useSession();
+  const say = useToast();
+  const [open, setOpen] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const away = (e: MouseEvent) => { if (!box.current?.contains(e.target as Node)) setOpen(false); };
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('mousedown', away);
+    document.addEventListener('keydown', esc);
+    return () => { document.removeEventListener('mousedown', away); document.removeEventListener('keydown', esc); };
+  }, [open]);
+  if (!demo || !actor) return null;
+  const label = (i: { role: string; isAdmin: boolean }) => (i.role === 'trainee' ? '管培生' : i.isAdmin ? '带教 · 管理' : '带教');
+  const pick = (id: string) => {
+    setOpen(false);
+    if (id === actor.id) return;
+    switchTo(id).then(() => say(`已切换为${identities.find(i => i.id === id)?.name ?? ''}`), (err: Error) => say(err.message));
   };
-  const x = a[role];
-  return <Link className="btn pri" to={x.to}><Icon name={x.icon} />{x.label}</Link>;
+  return (
+    <div className="idsw" ref={box}>
+      <button type="button" className="idsw-btn" aria-haspopup="menu" aria-expanded={open} aria-label={`演示身份：${actor.name}（${label(actor)}），点击切换`} onClick={() => setOpen(o => !o)}>
+        <span className="idsw-k">演示身份</span><Avatar name={actor.name} size="sm" /><b>{actor.name}</b><small>{label(actor)}</small><Icon name="down" />
+      </button>
+      {open && (
+        <div className="idsw-menu" role="menu" aria-label="切换示例身份">
+          {identities.map(i => (
+            <button key={i.id} type="button" role="menuitemradio" aria-checked={i.id === actor.id} className={i.id === actor.id ? 'on' : undefined} onClick={() => pick(i.id)}>
+              <Avatar name={i.name} size="sm" /><span className="idsw-t"><b>{i.name}</b><small>{label(i)}</small></span>{i.id === actor.id && <Icon name="check" />}
+            </button>
+          ))}
+          <div className="idsw-foot">演示模式 · 只用虚构的示例数据</div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export type Crumb = { label: string; to?: string };
-/** 主区：顶栏（面包屑、演示视角、日程、待办、通知、主按钮）+ 可选二级标签 + 内容。
- *  action 不传时用角色默认主按钮；传 null 不显示主按钮。 */
+/** 主区：顶栏（面包屑、演示身份、日程、待办、搜索与通知占位、主按钮）+ 可选二级标签 + 内容。action 传 null 或不传都不显示主按钮。 */
 export function Sheet({ crumbs, tabs, action, children }: { crumbs: Crumb[]; tabs?: { to: string; label: string; tag?: string }[]; action?: ReactNode; children: ReactNode }) {
-  const { role, setRole } = useSession();
   const say = useToast();
   const { pathname } = useLocation();
-  const c = useCounts();
+  const todo = useTodoCount();
+  const schedule = useScheduleCount();
   const trail: Crumb[] = crumbs[0]?.label === '工作台' ? crumbs : [{ label: '工作台', to: '/' }, ...crumbs];
   return (
     <main className="main">
@@ -175,20 +209,16 @@ export function Sheet({ crumbs, tabs, action, children }: { crumbs: Crumb[]; tab
             </span>
           ))}
         </nav>
-        <Segmented<Role>
-          label="演示视角"
-          value={role}
-          onChange={setRole}
-          options={(['trainee', 'mentor', 'admin', 'colleague'] as Role[]).map(r => ({ value: r, label: ROLE_LABEL[r] }))}
-        />
-        <Link to="/schedule" className={pathname.startsWith('/schedule') ? 'tbtn on' : 'tbtn'} aria-label={`日程，今天 ${c.schedule} 项`}>
-          <Icon name="cal" />日程{c.schedule > 0 && <span className="n">{c.schedule}</span>}
+        <IdentitySwitch />
+        <button className="ibtn" type="button" aria-label="搜索（以后）" title="全局搜索：以后做" onClick={() => say('全局搜索以后做')}><Icon name="search" /></button>
+        <Link to="/schedule" className={pathname.startsWith('/schedule') ? 'tbtn on' : 'tbtn'} aria-label={`日程，今天 ${schedule} 项`}>
+          <Icon name="cal" />日程{schedule > 0 && <span className="n">{schedule}</span>}
         </Link>
-        <Link to="/todo" className={pathname.startsWith('/todo') ? 'tbtn on' : 'tbtn'} aria-label={`待办，${c.todo} 项`}>
-          <Icon name="todo" />待办<span className={c.todo ? 'n hot' : 'n'}>{c.todo}</span>
+        <Link to="/todo" className={pathname.startsWith('/todo') ? 'tbtn on' : 'tbtn'} aria-label={`待办，${todo} 项`}>
+          <Icon name="todo" />待办<span className={todo ? 'n hot' : 'n'}>{todo}</span>
         </Link>
-        <button className="ibtn" type="button" aria-label="通知（有未读）" onClick={() => say('通知中心在二期上线')}><Icon name="bell" /><span className="badge" aria-hidden="true" /></button>
-        {action === undefined ? <DefaultAction role={role} /> : action}
+        <button className="ibtn" type="button" aria-label="通知（以后）" title="通知中心：以后做" onClick={() => say('通知中心以后做')}><Icon name="bell" /></button>
+        {action ?? null}
       </header>
       {tabs && (
         <nav className="tabs" aria-label="二级导航">

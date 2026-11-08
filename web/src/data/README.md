@@ -11,6 +11,7 @@
 5. **身份**：原型没有登录，用 `demoUserFor(role)` 取演示身份：管培生 = 林夏、带教 = 周颖、管理员 = 常浩、同事 = 何安。每个读函数凡是需要按权限裁剪的都要传 `viewer: User`。
 6. **可见性**（PRD 4.4）：多人视图里看不到的条目由数据层**直接不返回**，不是置灰；页面不要自己再判断一遍角色，按返回结果画即可。需要按钮显隐时用 `canReview`、`canSeePrivate` 等。
 7. **日程项、待办、指标都是查询**：页面不存、不缓存，直接调函数。
+8. **A 级数据走后端**（PRD v2.0）：`api.ts` 转出 `server.ts`——`view('todo')` 等查询（`GET /api/views/…`）、`command('C02', {...})` 等命令（`POST /api/commands/:id`）、演示登录 `fetchMe` / `fetchIdentities` / `demoLogin` / `demoLogout`。失败抛 `ServerError`（`message` 是后端给的中文原因，`status` 区分 401 / 403 / 404）。登录身份从 `useSession()` 的 `actor` 取，不再用第 5 条的 `demoUserFor`（只留给 B 级旧页面）。
 
 ## 示例数据要点（mock.ts，全部是示例）
 
