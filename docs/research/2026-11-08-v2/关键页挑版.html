@@ -1,0 +1,440 @@
+<title>关键页挑版</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* 挑版页外框：跟随查看者的深浅色；里面的产品稿固定用 V3 柔光（产品只有浅色，不跟随主题） */
+:root {
+  --bg: #E6E9F0; --panel: #FFFFFF; --ink: #151926; --ink2: #3A4052; --mute: #5E6578;
+  --line: rgba(21,25,38,.10); --acc: #4A4ED8; --acc-soft: #E7E8FC; --acc-ink: #3438B8;
+  --chrome-font: "Geist", "PingFang SC", "Noto Sans SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12141C; --panel: #1C1F2B; --ink: #ECEEF4; --ink2: #C6CAD6; --mute: #9298A8;
+  --line: rgba(236,238,244,.12); --acc: #8A8DF5; --acc-soft: #2A2C55; --acc-ink: #C9CAFF; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #12141C; --panel: #1C1F2B; --ink: #ECEEF4; --ink2: #C6CAD6; --mute: #9298A8;
+  --line: rgba(236,238,244,.12); --acc: #8A8DF5; --acc-soft: #2A2C55; --acc-ink: #C9CAFF; color-scheme: dark; }
+body { background: var(--bg); color: var(--ink); font-family: var(--chrome-font); font-size: 14px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 40px; }
+.top { max-width: 1440px; margin: 0 auto; display: grid; gap: 14px; }
+.head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+.head h1 { font-size: 22px; font-weight: 600; letter-spacing: -.01em; margin: 0; }
+.head p { margin: 0; color: var(--mute); font-size: 13px; }
+.ctl { display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+.ctl > span { font-size: 12px; color: var(--mute); letter-spacing: .04em; white-space: nowrap; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.seg button { font: inherit; font-size: 13px; color: var(--ink2); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+.seg button:hover { border-color: var(--acc); }
+.seg button[aria-pressed="true"] { background: var(--acc); border-color: var(--acc); color: #fff; }
+.seg button:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.seg button b { font-weight: 600; margin-right: 4px; }
+.note { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
+.note div { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; min-width: 0; }
+.note h2 { font-size: 12px; font-weight: 600; color: var(--mute); letter-spacing: .04em; margin: 0 0 4px; }
+.note p { margin: 0; color: var(--ink2); font-size: 13.5px; }
+.note .rec { border-color: var(--acc); background: var(--acc-soft); }
+.note .rec p, .note .rec h2 { color: var(--acc-ink); }
+.stage { max-width: 1440px; margin: 14px auto 0; overflow: hidden; border-radius: 18px; border: 1px solid var(--line); }
+.fit { transform-origin: 0 0; width: 1360px; }
+@media (max-width: 720px) { .ctl { grid-template-columns: 1fr; } }
+
+/* ========== 产品稿：V3 柔光（固定浅色，取值同 web/src/styles/app.css） ========== */
+.mk {
+  --m-bg: #ECEFF4; --m-glass: rgba(255,255,255,.72); --m-glass-hi: rgba(255,255,255,.9); --m-well: rgba(255,255,255,.75); --m-sunk: rgba(21,25,38,.045);
+  --m-dark: #1A1D2C; --m-ink: #151926; --m-ink2: #363C4E; --m-mute: #5A6175; --m-faint: #8A90A0; --m-line: rgba(21,25,38,.07); --m-line2: rgba(21,25,38,.11);
+  --m-acc: #4A4ED8; --m-acc-ink: #3438B8; --m-acc-soft: #E7E8FC;
+  --m-grow: #2E9E68; --m-grow-soft: #DBF2E5; --m-grow-ink: #155C39; --m-ment: #3C8BDB; --m-ment-soft: #DCEAF9; --m-ment-ink: #1A4C86;
+  --m-ai: #E0A436; --m-ai-soft: #FAEED3; --m-ai-ink: #714A04; --m-week: #7A869C; --m-week-soft: #E6E9F0; --m-week-ink: #3A4457;
+  --m-warn: #D08A12; --m-warn-soft: #FBEED4; --m-warn-ink: #7A4A00; --m-due: #E5484D; --m-due-soft: #FCE3E3; --m-due-ink: #A3262B;
+  --m-sh: 0 0 0 1px rgba(28,36,64,.05), 0 1px 2px rgba(28,36,64,.04), 0 10px 30px -10px rgba(28,36,64,.10), 0 24px 60px -24px rgba(28,36,64,.10);
+  --m-sans: "Geist", "PingFang SC", "Noto Sans SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  --m-num: "Manrope", "Geist", "PingFang SC", system-ui, sans-serif; --m-mono: "Geist Mono", ui-monospace, Menlo, monospace;
+  color-scheme: light; background: var(--m-bg); color: var(--m-ink); font-family: var(--m-sans); font-size: 13px; line-height: 1.5;
+  display: grid; grid-template-columns: 216px minmax(0, 1fr); gap: 12px; padding: 12px; align-items: stretch; font-variant-numeric: tabular-nums;
+}
+.mk * { box-sizing: border-box; }
+.mk h1, .mk h2, .mk h3, .mk p { margin: 0; }
+.mk .num { font-family: var(--m-num); }
+.mk .mono { font-family: var(--m-mono); }
+.mk .mute { color: var(--m-mute); } .mk .faint { color: var(--m-faint); }
+/* 侧栏 */
+.mk .side { position: sticky; top: 12px; background: var(--m-glass); border-radius: 24px; box-shadow: var(--m-sh), inset 0 1px 0 rgba(255,255,255,.9); padding: 14px 12px; display: grid; gap: 4px; min-height: 680px; align-content: start; align-self: stretch; }
+.mk .brand { display: flex; gap: 10px; align-items: center; padding: 2px 4px 12px; }
+.mk .logo { width: 34px; height: 34px; border-radius: 10px; background: var(--m-dark); display: grid; place-items: center; color: #fff; }
+.mk .brand b { display: block; font-size: 14px; } .mk .brand small { font-family: var(--m-mono); font-size: 9.5px; letter-spacing: .12em; color: var(--m-faint); }
+.mk .who { display: flex; align-items: center; gap: 8px; background: var(--m-glass-hi); border-radius: 14px; padding: 8px 10px; margin-bottom: 8px; box-shadow: 0 0 0 1px var(--m-line); }
+.mk .who small { color: var(--m-mute); }
+.mk .grp { font-size: 11px; color: var(--m-faint); padding: 10px 8px 4px; letter-spacing: .04em; }
+.mk .nav { display: flex; align-items: center; gap: 9px; padding: 7px 8px; border-radius: 12px; color: var(--m-ink2); }
+.mk .nav i { width: 24px; height: 24px; border-radius: 8px; display: grid; place-items: center; background: var(--m-sunk); font-style: normal; font-size: 12px; }
+.mk .nav.on { background: var(--m-glass-hi); box-shadow: 0 0 0 1px var(--m-line), 0 4px 12px -4px rgba(28,36,64,.12); color: var(--m-ink); font-weight: 600; }
+.mk .nav.on i { background: var(--m-acc-soft); color: var(--m-acc-ink); }
+.mk .nav.later { color: var(--m-faint); } .mk .nav .badge { margin-left: auto; }
+/* 主区 */
+.mk .main { display: grid; gap: 12px; min-width: 0; align-content: start; padding-bottom: 8px; }
+.mk .bar { display: flex; align-items: center; gap: 10px; padding: 4px 4px 0; }
+.mk .crumb { color: var(--m-mute); font-size: 12.5px; } .mk .crumb b { color: var(--m-ink); font-weight: 600; }
+.mk .bar .sp { flex: 1; }
+.mk .chip { display: inline-flex; align-items: center; gap: 6px; background: var(--m-glass-hi); box-shadow: 0 0 0 1px var(--m-line); border-radius: 999px; padding: 5px 11px; font-size: 12px; color: var(--m-ink2); white-space: nowrap; }
+.mk .chip .n { background: var(--m-acc); color: #fff; border-radius: 999px; padding: 0 6px; font-family: var(--m-num); font-weight: 700; font-size: 11px; }
+.mk .title { display: flex; align-items: flex-end; gap: 14px; padding: 6px 4px 2px; }
+.mk .title small { display: block; color: var(--m-mute); font-size: 12px; margin-bottom: 2px; }
+.mk .title h1 { font-size: 30px; font-weight: 300; letter-spacing: -.02em; line-height: 1.2; }
+.mk .title h1 em { font-style: normal; color: var(--m-acc); font-weight: 600; }
+.mk .title .sp { flex: 1; }
+/* 面与块 */
+.mk .c { background: var(--m-glass); border-radius: 22px; box-shadow: var(--m-sh), inset 0 1px 0 rgba(255,255,255,.9); padding: 16px 18px; min-width: 0; display: grid; gap: 12px; align-content: start; }
+.mk .c.dark { background: var(--m-dark); color: #fff; box-shadow: 0 20px 50px -20px rgba(26,29,44,.55); }
+.mk .c.dark .mute { color: rgba(255,255,255,.62); } .mk .c.dark .faint { color: rgba(255,255,255,.45); }
+.mk .ch { display: flex; align-items: center; gap: 8px; }
+.mk .ch h3 { font-size: 14.5px; font-weight: 600; } .mk .ch .sp { flex: 1; } .mk .ch small { color: var(--m-mute); font-size: 12px; }
+.mk .well { background: var(--m-well); border-radius: 14px; padding: 10px 12px; box-shadow: 0 0 0 1px var(--m-line); min-width: 0; }
+.mk .c.dark .well { background: rgba(255,255,255,.07); box-shadow: 0 0 0 1px rgba(255,255,255,.08); }
+.mk .rows { display: grid; }
+.mk .row { display: flex; align-items: center; gap: 10px; padding: 9px 2px; border-top: 1px solid var(--m-line); min-width: 0; }
+.mk .row:first-child { border-top: 0; }
+.mk .row .grow { flex: 1; min-width: 0; }
+.mk .row b { font-weight: 600; }
+.mk .pill { display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; padding: 2px 9px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+.mk .p-ok { background: var(--m-grow-soft); color: var(--m-grow-ink); } .mk .p-warn { background: var(--m-warn-soft); color: var(--m-warn-ink); }
+.mk .p-due { background: var(--m-due-soft); color: var(--m-due-ink); } .mk .p-info { background: var(--m-ment-soft); color: var(--m-ment-ink); }
+.mk .p-week { background: var(--m-week-soft); color: var(--m-week-ink); } .mk .p-acc { background: var(--m-acc-soft); color: var(--m-acc-ink); }
+.mk .p-block { background: #fff; color: var(--m-due-ink); box-shadow: inset 0 0 0 1.5px var(--m-due); }
+.mk .tag { font-size: 11px; color: var(--m-mute); background: var(--m-sunk); border-radius: 6px; padding: 1px 7px; white-space: nowrap; }
+.mk .c.dark .tag { background: rgba(255,255,255,.1); color: rgba(255,255,255,.8); }
+/* 深色强调块里的白底小块：文字恢复浅色面的配色 */
+.mk .c.dark .on-light { background: rgba(255,255,255,.96); color: var(--m-ink); box-shadow: none; }
+.mk .c.dark .on-light .mute { color: var(--m-mute); } .mk .c.dark .on-light .faint { color: var(--m-faint); }
+.mk .c.dark .on-light .tag { background: var(--m-acc-soft); color: var(--m-acc-ink); }
+.mk .c.dark .on-light .row { border-color: var(--m-line); }
+.mk .btn { display: inline-flex; align-items: center; gap: 6px; border-radius: 11px; padding: 7px 13px; font-weight: 600; font-size: 12.5px; background: var(--m-glass-hi); box-shadow: 0 0 0 1px var(--m-line2); color: var(--m-ink); white-space: nowrap; }
+.mk .btn.pri { background: var(--m-acc); color: #fff; box-shadow: 0 6px 16px -6px rgba(74,78,216,.6), inset 0 1px 0 rgba(255,255,255,.18); }
+.mk .btn.light { background: #fff; color: var(--m-dark); box-shadow: none; }
+.mk .av { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 600; flex: none; background: var(--m-ment-soft); color: var(--m-ment-ink); }
+.mk .av.g { background: var(--m-grow-soft); color: var(--m-grow-ink); } .mk .av.a { background: var(--m-acc-soft); color: var(--m-acc-ink); }
+.mk .grid { display: grid; gap: 12px; min-width: 0; }
+.mk .kv { display: grid; grid-template-columns: 64px 1fr; gap: 4px 10px; font-size: 12.5px; } .mk .kv dt { color: var(--m-mute); } .mk .kv dd { margin: 0; min-width: 0; }
+.mk .big { font-family: var(--m-num); font-size: 30px; font-weight: 700; letter-spacing: -.02em; line-height: 1; }
+.mk .empty { display: grid; place-items: center; text-align: center; gap: 6px; padding: 18px 10px; color: var(--m-mute); background: var(--m-sunk); border-radius: 14px; }
+.mk .empty b { color: var(--m-ink2); }
+.mk .q { border-left: 2px solid var(--m-line2); padding-left: 10px; color: var(--m-ink2); }
+.mk .c.dark .q { border-color: rgba(255,255,255,.25); color: rgba(255,255,255,.88); }
+/* 节点路线 */
+.mk .track { display: flex; gap: 0; align-items: stretch; }
+.mk .stop { flex: 1; position: relative; padding: 0 8px 0 0; min-width: 0; }
+.mk .stop .dot { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 700; background: #fff; box-shadow: inset 0 0 0 1.5px var(--m-line2); color: var(--m-mute); position: relative; z-index: 1; }
+.mk .stop::before { content: ""; position: absolute; left: 22px; right: 0; top: 10px; height: 2px; background: var(--m-line2); }
+.mk .stop:last-child::before { display: none; }
+.mk .stop.done .dot { background: var(--m-grow); color: #fff; box-shadow: none; }
+.mk .stop.now .dot { background: var(--m-acc); color: #fff; box-shadow: 0 0 0 4px var(--m-acc-soft); }
+.mk .stop.bad .dot { background: var(--m-due); color: #fff; box-shadow: 0 0 0 4px var(--m-due-soft); }
+.mk .stop .lbl { margin-top: 8px; display: grid; gap: 3px; }
+/* 时间线 */
+.mk .tl { display: grid; gap: 0; }
+.mk .ev { display: grid; grid-template-columns: 70px 18px 1fr; gap: 10px; align-items: start; }
+.mk .ev .t { text-align: right; color: var(--m-mute); font-size: 12px; padding-top: 1px; font-family: var(--m-num); }
+.mk .ev .rail { position: relative; height: 100%; min-height: 44px; }
+.mk .ev .rail::before { content: ""; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: var(--m-line2); }
+.mk .ev:last-child .rail::before { bottom: auto; height: 10px; }
+.mk .ev .rail i { position: absolute; left: 3px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 2px var(--m-faint); }
+.mk .ev .rail i.g { box-shadow: inset 0 0 0 2px var(--m-grow); } .mk .ev .rail i.r { box-shadow: inset 0 0 0 2px var(--m-due); } .mk .ev .rail i.a { background: var(--m-acc); box-shadow: 0 0 0 4px var(--m-acc-soft); } .mk .ev .rail i.w { box-shadow: inset 0 0 0 2px var(--m-warn); }
+.mk .ev .body { padding-bottom: 14px; min-width: 0; display: grid; gap: 4px; }
+/* 能力条 */
+.mk .lv { display: flex; gap: 3px; } .mk .lv span { width: 22px; height: 6px; border-radius: 3px; background: var(--m-sunk); } .mk .lv span.on { background: var(--m-grow); }
+.mk .ring { --p: 0; width: 64px; height: 64px; border-radius: 50%; background: conic-gradient(var(--m-grow) calc(var(--p) * 1%), var(--m-sunk) 0); display: grid; place-items: center; }
+.mk .ring::after { content: attr(data-t); width: 48px; height: 48px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-family: var(--m-num); font-weight: 700; font-size: 14px; }
+.mk .kpi { display: grid; gap: 2px; }
+.mk .kpi small { color: var(--m-mute); font-size: 11.5px; }
+.mk .cols3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.mk .lane { background: var(--m-sunk); border-radius: 16px; padding: 10px; display: grid; gap: 8px; align-content: start; min-height: 120px; }
+.mk .lane h4 { margin: 0 0 2px; font-size: 12.5px; display: flex; gap: 6px; align-items: center; }
+.mk .card { background: #fff; border-radius: 12px; padding: 10px 11px; box-shadow: 0 0 0 1px var(--m-line), 0 4px 12px -6px rgba(28,36,64,.12); display: grid; gap: 5px; }
+.mk table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.mk th { text-align: left; color: var(--m-mute); font-weight: 500; font-size: 11.5px; padding: 6px 8px; border-bottom: 1px solid var(--m-line2); white-space: nowrap; }
+.mk td { padding: 10px 8px; border-bottom: 1px solid var(--m-line); vertical-align: top; }
+.mk tr.sel td { background: var(--m-acc-soft); }
+.mk .proto { font-size: 10.5px; color: var(--m-ai-ink); background: var(--m-ai-soft); border-radius: 6px; padding: 1px 6px; }
+</style>
+
+<div class="top">
+  <div class="head">
+    <h1>关键页挑版</h1>
+    <p>施工第 3 步 #44：工作台首页、项目详情、成长档案各三版。比的是信息怎么组织，视觉一律沿用 V3 柔光。数据是示例。</p>
+  </div>
+  <div class="ctl" role="group" aria-label="切换">
+    <span>页面</span><div class="seg" id="pages"></div>
+    <span>版本</span><div class="seg" id="vers"></div>
+    <span>示例状态</span><div class="seg" id="states"></div>
+  </div>
+  <div class="note" id="note"></div>
+</div>
+<div class="stage" id="stage"><div class="fit" id="fit"><div class="mk" id="mk"></div></div></div>
+
+<script>
+// ---------- 示例数据（与后端初始化脚本一致：林夏、许诺是管培生；周颖带两人、有管理权限；吴桐带许诺的销售站和 pj-2） ----------
+const STATES = { revise: '需修改', pending: '待评审', blocked: '受阻', empty: '空数据', ended: '已结项' };
+const PILL = { 未开始: 'p-week', 进行中: 'p-info', 待评审: 'p-warn', 需修改: 'p-due', 已通过: 'p-ok', 已取消: 'p-week', 草拟: 'p-week', 推进中: 'p-info', 已结束: 'p-ok',
+  优秀: 'p-ok', 达标: 'p-ok', 需改进: 'p-due', 未完成: 'p-acc', 已完成: 'p-ok', 不再需要: 'p-week', 未响应: 'p-due', 已响应: 'p-warn', 已解除: 'p-ok', 达成: 'p-ok', 未验证: 'p-week', 已验证: 'p-ok' };
+const pill = t => `<span class="pill ${PILL[t] || 'p-week'}">${t}</span>`;
+const blockPill = '<span class="pill p-block">受阻</span>';
+const JUDGE = { 尚未观察到充分证据: 1, 有指导下完成: 2, 可独立完成: 3 };
+
+function data(st) {
+  const e = st === 'empty';
+  const v1 = { v: 1, by: '林夏', at: '11.07 17:40', text: '近两周来电 4,210 通，按 12 类归并，前三类：账单疑问、改约、物流查询',
+    review: { grade: '需改进', by: '周颖', at: '11.08 10:15', key: '只覆盖两周，验收要求四周；「咨询其他」占 23%，口径太粗', judge: '方向对，但现在的前三类结论站不住',
+      actions: [{ kind: '修改再交', text: '补齐近四周数据，把「咨询其他」拆到二级类', owner: '林夏', status: st === 'revise' ? '未完成' : '已完成', done: st === 'revise' ? '' : '依据 V2' },
+        { kind: '建议', text: '口径先和客服主管对一次再定稿', owner: '', status: '' }], credits: [] } };
+  const v2 = { v: 2, by: '林夏', at: '11.10 16:20', change: '补到四周 8,630 通；「咨询其他」拆成 4 个二级类，占比降到 6%',
+    review: ['blocked', 'ended'].includes(st) ? { grade: '达标', by: '周颖', at: '11.11 11:02', key: '四周样本齐了，前三类占 58%，每类有样本和出处', judge: '可以进入方案验证',
+      actions: [{ kind: '推进后续节点', text: '进入分流方案验证，先定试点班组', owner: '林夏', status: st === 'ended' ? '已完成' : '未完成', done: st === 'ended' ? '11.16 已定客服二组' : '' }],
+      credits: ['林夏 · 来电问题分类与归因', '许诺 · 来电问题分类与归因'] } : null };
+  const ms1 = { name: '问题定义', goal: '把近四周来电按问题分类，找出量最大的三类', accept: '分类口径经带教确认；三类问题各有样本和占比', due: '11.13 18:00',
+    status: { revise: '需修改', pending: '待评审', blocked: '已通过', ended: '已通过' }[st], versions: st === 'revise' ? [v1] : [v1, v2], blocker: null,
+    tasks: [{ owner: '林夏', name: '来电问题分类与归因', credited: ['blocked', 'ended'].includes(st) }, { owner: '许诺', name: '来电问题分类与归因', credited: ['blocked', 'ended'].includes(st) }] };
+  const ms2 = { name: '分流方案验证', goal: '在一个班组试用分流方案一周', accept: '有试用前后的对比数据和客服主管反馈', due: '12.04 18:00',
+    status: { revise: '未开始', pending: '未开始', blocked: '进行中', ended: '已通过' }[st], tasks: [], blocker: null, versions: [] };
+  if (st === 'blocked') ms2.blocker = { reason: '试点要客服二组调排班，主管还没批', decider: '客服主管', handler: '周颖', status: '已响应', by: '林夏', at: '11.12 09:30',
+    responses: [{ by: '周颖', at: '11.12 14:05', text: '我周四和主管确认排班，先按二组准备话术' }] };
+  if (st === 'ended') ms2.versions = [{ v: 1, by: '林夏', at: '12.03 18:00', text: '二组试用 5 个工作日：转人工率 31% → 24%；主管反馈话术还要再简化',
+    review: { grade: '优秀', by: '周颖', at: '12.04 10:30', key: '有前后对比，也写清了试用范围和限制', judge: '同类验证可以独立推进', actions: [], credits: [] } }];
+
+  const pj1 = { name: '来电归因优化', status: st === 'ended' ? '已结束' : '推进中', goal: '找出来电量最高的三类问题的根因，提出可落地的分流方案',
+    accept: '问题分类覆盖近四周 90% 以上来电；方案经客服主管试用一周并给出反馈', acceptor: '客服主管（示例）', lead: '林夏', members: [['林夏', '主责'], ['许诺', '参与']],
+    mentor: '周颖', mentorWhy: '林夏没有项目范围带教，按她的默认带教推出', confirmed: '周颖 · 10.20', stations: '林夏 · 客服岗（第 3 站）', milestones: [ms1, ms2],
+    conclusion: st === 'ended' ? { delivery: '达成', evidence: '问题定义 V2、分流方案验证 V1', verify: '未验证', lessons: '先和业务方对齐口径再取数，省掉一轮返工', next: '下期把分流规则接进 IVR 菜单', by: '林夏 · 12.07', closed: '周颖 · 12.08 确认结项（完成）' } : null };
+  const pj2 = { name: '渠道转化复盘', status: '草拟', goal: '梳理三个获客渠道的转化漏斗，找到流失最大的环节', accept: '漏斗数据核对无误；给出一条可验证的改进假设',
+    acceptor: '销售主管（示例）', lead: '许诺', members: [['许诺', '主责']], mentor: '吴桐', mentorWhy: '许诺在这个项目有项目范围带教', confirmed: '', stations: '许诺 · 销售岗（第 3 站）',
+    milestones: [{ name: '现状梳理', goal: '画出三个渠道的转化漏斗', accept: '每个渠道的各环节数据有出处', due: '11.20 18:00', status: '未开始', versions: [], tasks: [{ owner: '许诺', name: '渠道转化现状分析', credited: false }], blocker: null }], conclusion: null };
+
+  const project = e ? pj2 : pj1;
+  const today = { revise: '11 月 9 日 周一', pending: '11 月 10 日 周二', blocked: '11 月 12 日 周四', empty: '11 月 9 日 周一', ended: '12 月 10 日 周四' }[st];
+  const station = { revise: ['轮岗', 3, '客服岗', '10.15 – 11.11', 26, 28], pending: ['轮岗', 3, '客服岗', '10.15 – 11.11', 27, 28], blocked: ['轮岗', 4, '销售岗', '11.12 – 12.09', 1, 28],
+    empty: ['轮岗', 3, '客服岗', '10.15 – 11.11', 26, 28], ended: ['定岗', 5, '定岗', '12.10 – 03.19', 1, 100] }[st];
+
+  const actions = { revise: [{ kind: '修改再交', text: '补齐近四周数据，把「咨询其他」拆到二级类', from: '问题定义 V1 · 周颖 11.08 需改进', due: '节点截止 11.13 18:00' }],
+    blocked: [{ kind: '推进后续节点', text: '进入分流方案验证，先定试点班组', from: '问题定义 V2 · 周颖 11.11 达标', due: '节点截止 12.04 18:00' }] }[st] || [];
+  const coord = { pending: [{ kind: '待评审', text: '问题定义 V2', meta: '11.10 提交 · 评审负责人 周颖' }, { kind: '待评审', text: '客服岗小结', meta: '11.10 提交 · 评审负责人 周颖' }],
+    blocked: [{ kind: '受阻', text: '分流方案验证', meta: '试点要客服二组调排班 · 周颖已响应，还没解除' }] }[st] || [];
+  const feedback = { revise: [['需改进', '问题定义 V1', '周颖', '11.08', '只覆盖两周，验收要求四周；「咨询其他」占 23%，口径太粗']],
+    pending: [['需改进', '问题定义 V1', '周颖', '11.08', '只覆盖两周，验收要求四周；「咨询其他」占 23%，口径太粗']],
+    blocked: [['达标', '问题定义 V2', '周颖', '11.11', '四周样本齐了，前三类占 58%，每类有样本和出处'], ['达标', '客服岗小结', '周颖', '11.11', '把一周来电的观察写清楚了']],
+    ended: [['优秀', '分流方案验证 V1', '周颖', '12.04', '有前后对比，也写清了试用范围和限制'], ['达标', '销售岗小结', '吴桐', '12.08', '渠道话术的对比有意思，可以再补一组数据']] }[st] || [];
+  const coverage = { revise: 1, pending: 1, blocked: 2, empty: 0, ended: 3 }[st];
+
+  // 带教（周颖）
+  const toReview = { revise: [['许诺', '销售岗小结', '任务 · 销售岗', '11.09 21:10']], pending: [['林夏', '问题定义 V2', '节点 · 来电归因优化', '11.10 16:20'], ['林夏', '客服岗小结', '任务 · 客服岗', '11.10 17:05'], ['许诺', '销售岗小结', '任务 · 销售岗', '11.09 21:10']] }[st] || [];
+  const toConfirm = ['revise', 'pending'].includes(st) ? [['渠道转化复盘', '许诺', '11.06 创建']] : [];
+  const blockers = st === 'blocked' ? [['许诺', '渠道转化复盘 · 现状梳理', '销售部的渠道数据要走审批', '11.12 10:40']] : [];
+  const mentees = e ? [['林夏', '客服岗 · 第 3 站', '还没有项目', '', '—', []], ['许诺', '销售岗 · 第 3 站', '还没有项目', '', '—', []]] : [
+    ['林夏', st === 'ended' ? '定岗 · 第 5 站' : st === 'blocked' ? '销售岗 · 第 4 站' : '客服岗 · 第 3 站', st === 'ended' ? '来电归因优化（已结束）' : '来电归因优化',
+      { revise: '问题定义 · 需修改', pending: '问题定义 · 待评审', blocked: '分流方案验证 · 进行中', ended: '' }[st],
+      { revise: '需改进 · 11.08', pending: '需改进 · 11.08', blocked: '达标 · 11.11', ended: '优秀 · 12.04' }[st], st === 'blocked' ? ['受阻'] : []],
+    ['许诺', st === 'ended' ? '定岗 · 第 5 站' : st === 'blocked' ? '客服岗 · 第 4 站' : '销售岗 · 第 3 站', st === 'blocked' || st === 'ended' ? '渠道转化复盘' : '渠道转化复盘（草拟）',
+      { revise: '待确认立项', pending: '待确认立项', blocked: '现状梳理 · 进行中', ended: '现状梳理 · 进行中' }[st],
+      { revise: '—', pending: '—', blocked: '—', ended: '达标 · 12.08' }[st], st === 'blocked' ? ['受阻'] : []]];
+  const pendingBy = [['周颖', toReview.length], ['吴桐', st === 'pending' ? 0 : 0]];
+
+  // 成长档案（林夏）
+  const passed = [];
+  if (['blocked', 'ended'].includes(st)) passed.push(['成果', '问题定义 V2', '达标', '11.11', '来电归因优化'], ['认定', '来电问题分类与归因', '经 问题定义 V2', '11.11', '来电归因优化'], ['成果', '客服岗小结', '达标', '11.11', '任务 · 客服岗']);
+  if (st === 'ended') passed.unshift(['成果', '分流方案验证 V1', '优秀', '12.04', '来电归因优化'], ['成果', '销售岗小结', '达标', '12.08', '任务 · 销售岗']);
+  const ev = [];
+  if (!e) ev.push({ no: 2, judge: '有指导下完成', text: '能讲清一通来电从接起到结单要经过哪几个环节', src: '带教观察 · 周颖', at: '11.05' });
+  if (['blocked', 'ended'].includes(st)) ev.push({ no: 3, judge: '有指导下完成', text: '补齐四周样本后重新归类，前三类结论有样本和出处', src: '问题定义 V2 的评审', at: '11.11' });
+  if (st === 'ended') ev.push({ no: 3, judge: '可独立完成', text: '自己定试点范围、对比口径，按期交出前后数据', src: '分流方案验证 V1', at: '12.04' },
+    { no: 5, judge: '可独立完成', text: '用 Claude 批量归类 8,630 条来电摘要，再人工抽检 200 条核对', src: '问题定义 V2', at: '12.04' });
+  const items = ['公司、行业与导师侧认知', '用户与服务链路认知', '实际项目推进与交付', '营销线', 'AI 使用与人机协同'];
+  const timeline = [];
+  if (!e) timeline.push(['10.20', '确认立项', '来电归因优化', '周颖', 'g'], ['10.21', '新建关键节点', '问题定义、分流方案验证', '林夏', ''], ['11.05', '提炼能力证据', '用户与服务链路认知', '周颖', 'g'], ['11.07', '提交成果', '问题定义 V1', '林夏', 'w'], ['11.08', '评审 · 需改进', '问题定义 V1', '周颖', 'r']);
+  if (['pending', 'blocked', 'ended'].includes(st)) timeline.push(['11.10', '修改再交', '问题定义 V2（修改再交行动自动完成）', '林夏', 'w']);
+  if (['blocked', 'ended'].includes(st)) timeline.push(['11.11', '评审 · 达标', '问题定义 V2，认定林夏、许诺各一条任务', '周颖', 'g'], ['11.12', '标记受阻', '分流方案验证', '林夏', 'r'], ['11.12', '响应受阻', '分流方案验证（仍受阻）', '周颖', '']);
+  if (st === 'ended') timeline.push(['11.16', '解除受阻', '分流方案验证', '林夏', 'g'], ['12.04', '评审 · 优秀', '分流方案验证 V1', '周颖', 'g'], ['12.08', '确认结项', '来电归因优化 · 交付达成、业务未验证', '周颖', 'g']);
+  timeline.reverse();
+  const path = [['入职', '入职', '09.10 – 09.16', [['公司与业务认知笔记', '已通过']]], ['通识', '通识', '09.17 – 10.14', [['服务链路梳理', '已通过']]],
+    ['轮岗', '客服岗', '10.15 – 11.11', [['来电问题分类与归因', ['blocked', 'ended'].includes(st) ? '已通过' : e ? '进行中' : '进行中', '在项目中完成'], ['客服岗小结', ['blocked', 'ended'].includes(st) ? '已通过' : st === 'pending' ? '待评审' : '进行中']]],
+    ['轮岗', '销售岗', '11.12 – 12.09', [['渠道转化现状分析', st === 'ended' ? '已通过' : '未开始'], ['销售岗小结', st === 'ended' ? '已通过' : '未开始']]], ['定岗', '定岗', '12.10 – 03.19', [['定岗答辩材料', st === 'ended' ? '进行中' : '未开始']]]];
+  const curStation = { revise: 2, pending: 2, blocked: 3, empty: 2, ended: 4 }[st];
+  return { st, e, today, station, project, pj1, actions, coord, feedback, coverage, toReview, toConfirm, blockers, mentees, pendingBy, passed, ev, items, timeline, path, curStation };
+}
+
+// ---------- 外壳 ----------
+function shell(role, active, crumb, body, todo) {
+  const who = role === 'mentor' ? ['周', '周颖', '带教 · 管理'] : ['林', '林夏', '管培生 · 2026 秋季班'];
+  const nav = [['工作台', [['⌂', '首页', 'home'], ['✓', '待办', 'todo', todo ? String(todo) : ''], ['▦', '日程', 'sch']]],
+    ['项目实践', [['◆', '项目', 'proj']]], ['培养成长', [['↗', '我的路径', 'path'], ['◎', '成长档案', 'prof'], ...(role === 'mentor' ? [['☺', '我带的人', 'men']] : [])]],
+    ['知识与工具', [['▤', '知识与工具', 'kb']]], ...(role === 'mentor' ? [['管理', [['☰', '成员与带教', 'm1'], ['◇', '能力项', 'm2']]]] : [])];
+  return `<aside class="side"><div class="brand"><div class="logo">✦</div><div><b>管培生工作台</b><small>TRAINEE HUB</small></div></div>
+    <div class="who"><div class="av ${role === 'mentor' ? '' : 'g'}">${who[0]}</div><div><b>${who[1]}</b><br><small>${who[2]}</small></div></div>
+    ${nav.map(([g, items]) => `<div class="grp">${g}</div>` + items.map(([i, t, k, n]) => `<div class="nav ${k === active ? 'on' : ''}"><i>${i}</i>${t}${n ? `<span class="badge pill p-acc">${n}</span>` : ''}</div>`).join('')).join('')}
+    </aside><section class="main"><div class="bar"><span class="crumb">${crumb}</span><span class="sp"></span><span class="chip">演示身份：${who[1]}</span><span class="chip">日程</span><span class="chip">待办${todo ? ` <span class="n">${todo}</span>` : ''}</span></div>${body}</section>`;
+}
+const empty = (t, s) => `<div class="empty"><b>${t}</b><span>${s}</span></div>`;
+const statusOf = m => m.status + (m.blocker && m.blocker.status !== '已解除' ? ' ' + blockPill : '');
+function nodeLine(m) { return `<div class="row"><div class="grow"><b>${m.name}</b> <span class="faint">截止 ${m.due}</span></div>${pill(m.status)}${m.blocker ? blockPill : ''}</div>`; }
+
+// ---------- 工作台首页 · 管培生 ----------
+function focusOf(d) { const p = d.project; if (d.e || p.status === '已结束') return null; const m = p.milestones.find(x => !['已通过', '已取消'].includes(x.status)); return { p, m }; }
+function hello(d) { const n = d.actions.length; const waiting = d.coord.some(c => c.kind === '待评审');
+  return `<div class="title"><div><small>${d.today}</small><h1>林夏，${n ? `有 <em>${n} 件事</em>等你推进` : waiting ? '成果在等<em>带教评审</em>' : '今天没有等你处理的事'}</h1></div><span class="sp"></span><span class="chip">${d.station[0]} · ${d.station[2]}（第 ${d.station[1]} 站）· 第 ${d.station[4]} / ${d.station[5]} 天</span></div>`; }
+function actionCards(d, dark) {
+  if (!d.actions.length) return empty('没有未完成的下一步行动', d.coord.length ? '成果在等带教评审，评审后这里会出现下一步' : '带教评审后给你的行动会出现在这里');
+  return d.actions.map(a => `<div class="${dark ? 'well' : 'well'}" style="display:grid;gap:6px"><div class="ch"><span class="tag">${a.kind}</span><span class="sp"></span><span class="${dark ? 'faint' : 'faint'}">${a.due}</span></div><b style="font-size:15px">${a.text}</b><span class="${dark ? 'mute' : 'mute'}">来自 ${a.from}</span></div>`).join('');
+}
+function coordList(d) { return d.coord.length ? `<div class="rows">${d.coord.map(c => `<div class="row">${c.kind === '受阻' ? blockPill : pill(c.kind)}<div class="grow"><b>${c.text}</b><br><span class="mute">${c.meta}</span></div></div>`).join('')}</div>` : empty('没有需要协调的事', '受阻的节点和等评审的成果会出现在这里'); }
+function feedbackList(d, n = 2) { return d.feedback.length ? `<div class="rows">${d.feedback.slice(0, n).map(f => `<div class="row" style="align-items:flex-start"><div class="av">${f[2][0]}</div><div class="grow"><div class="ch"><b>${f[1]}</b><span class="sp"></span>${pill(f[0])}</div><p class="q" style="margin-top:4px">${f[4]}</p><span class="faint">${f[2]} · ${f[3]}</span></div></div>`).join('')}</div>` : empty('还没有评审', '第一次提交成果后，带教的反馈会出现在这里'); }
+function coverageCard(d) { return `<div class="c"><div class="ch"><h3>能力证据覆盖</h3><span class="sp"></span><small>计数</small></div><div style="display:flex;gap:14px;align-items:center"><div class="ring" style="--p:${d.coverage * 20}" data-t="${d.coverage}/5"></div><div class="kpi"><small>5 个能力项里，有证据的</small><b class="num" style="font-size:19px">${d.coverage} 项</b><small>共 ${d.ev.length} 条证据</small></div></div></div>`; }
+function nodeTrack(p, opts = {}) {
+  return `<div class="track">${p.milestones.map((m, i) => { const cls = m.status === '已通过' ? 'done' : m.blocker ? 'bad' : ['需修改', '待评审', '进行中'].includes(m.status) ? 'now' : '';
+    return `<div class="stop ${cls}"><div class="dot">${m.status === '已通过' ? '✓' : i + 1}</div><div class="lbl"><b>${m.name}</b><span>${pill(m.status)} ${m.blocker ? blockPill : ''}</span><span class="faint">截止 ${m.due}</span></div></div>`; }).join('')}</div>`;
+}
+const homeT = {
+  1: d => { const f = focusOf(d);
+    const hero = f ? `<div class="c dark" style="grid-column:span 2;gap:14px"><div class="ch"><span class="tag">主推项目 · 主责</span><span class="sp"></span><span class="faint">项目带教 ${f.p.mentor}</span></div>
+      <div><h2 style="font-size:24px;font-weight:600;letter-spacing:-.01em">${f.p.name}</h2><p class="mute" style="margin-top:4px">${f.p.goal}</p></div>
+      <div class="well" style="display:grid;gap:8px"><div class="ch"><span class="faint">当前节点</span><b>${f.m.name}</b>${pill(f.m.status)}${f.m.blocker ? blockPill : ''}<span class="sp"></span><span class="faint">截止 ${f.m.due}</span></div><span class="mute">验收标准：${f.m.accept}</span></div>
+      ${d.actions.map(a => `<div class="well on-light" style="display:flex;gap:10px;align-items:center"><span class="tag">${a.kind}</span><b class="grow" style="flex:1">${a.text}</b><span class="btn pri">去处理</span></div>`).join('')}
+      ${f.m.blocker ? `<div class="well" style="display:flex;gap:10px;align-items:center">${blockPill}<span style="flex:1">${f.m.blocker.reason}</span><span class="faint">${f.m.blocker.handler}已响应</span></div>` : ''}</div>`
+      : `<div class="c" style="grid-column:span 2">${d.e ? empty('还没有在推进的项目', '和带教商量好题目后，在「项目」里新建，带教确认后就会出现在这里') : `<div class="ch"><h3>来电归因优化</h3>${pill('已结束')}<span class="sp"></span><span class="faint">12.08 结项</span></div><p class="mute">交付结论 达成 · 业务验证 未验证。业务效果出来后，可以在项目里补记验证。</p>${empty('现在没有推进中的项目', '定岗阶段的项目确认立项后会出现在这里')}`}</div>`;
+    return hello(d) + `<div class="grid" style="grid-template-columns:1.25fr 1fr 1fr">${hero}<div class="grid">${f ? `<div class="c"><div class="ch"><h3>节点进度</h3><span class="sp"></span><small>${f.p.milestones.filter(m => m.status === '已通过').length} / ${f.p.milestones.length} 通过</small></div>${nodeTrack(f.p)}</div>` : ''}${coverageCard(d)}</div>
+      <div class="c"><div class="ch"><h3>需要协调的事</h3></div>${coordList(d)}</div><div class="c" style="grid-column:span 2"><div class="ch"><h3>最新带教反馈</h3><span class="sp"></span><small>全部 ›</small></div>${feedbackList(d)}</div></div>`; },
+  2: d => { const f = focusOf(d);
+    return hello(d) + `<div class="grid" style="grid-template-columns:1.4fr 1fr">
+      <div class="c dark" style="gap:14px"><div class="ch"><h3>最重要的下一步</h3><span class="sp"></span><span class="faint">${d.actions.length} 条未完成</span></div>
+        ${d.actions.length ? d.actions.map(a => `<div style="display:grid;gap:8px"><div class="ch"><span class="tag">${a.kind}</span><span class="faint">${a.due}</span></div><b style="font-size:22px;font-weight:600;line-height:1.35">${a.text}</b><span class="mute">来自 ${a.from}</span><div><span class="btn light">${a.kind === '修改再交' ? '修改再交' : '去节点里处理'}</span></div></div>`).join('')
+        : `<div style="display:grid;gap:6px;padding:8px 0"><b style="font-size:19px;font-weight:600">${d.coord.length ? '成果在等带教评审' : '现在没有要你做的下一步'}</b><span class="mute">${d.coord.length ? '评审结果出来后，带教给你的行动会出现在这里。' : d.e ? '先和带教商量项目题目，在「项目」里新建。' : '有新的评审后，这里会提醒你。'}</span></div>`}</div>
+      <div class="c"><div class="ch"><h3>需要协调的事</h3></div>${coordList(d)}</div></div>
+      <div class="grid" style="grid-template-columns:1fr 1fr 1fr"><div class="c"><div class="ch"><h3>在推进</h3></div>${f ? `<div class="rows"><div class="row"><div class="grow"><b>${f.p.name}</b><br><span class="mute">主责 · 项目带教 ${f.p.mentor}</span></div></div>${f.p.milestones.map(nodeLine).join('')}</div>` : empty(d.e ? '还没有项目' : '没有推进中的项目', d.e ? '在「项目」里新建' : '来电归因优化已于 12.08 结项')}</div>
+      <div class="c"><div class="ch"><h3>最新带教反馈</h3></div>${feedbackList(d, 1)}</div>${coverageCard(d)}</div>`; },
+  3: d => { const f = focusOf(d); const p = d.project;
+    const loop = ['提交', '评审', '行动', '再交'];
+    const at = { revise: 2, pending: 1, blocked: 2, empty: -1, ended: -1 }[d.st];
+    // 每一步：[标签, 标题, 谁, 时间, 说明, 圆点样式]
+    const steps = d.e ? [] : p.milestones.flatMap(m => m.versions.flatMap(v => [['提交', `${m.name} V${v.v}`, v.by, v.at, v.change || v.text, 'w'], ...(v.review ? [[`评审 · ${v.review.grade}`, `${m.name} V${v.v}`, v.review.by, v.review.at, v.review.key, v.review.grade === '需改进' ? 'r' : 'g'], ...v.review.actions.filter(a => a.kind !== '建议').map(a => [`行动 · ${a.kind}`, a.text, `负责人 ${a.owner}`, v.review.at, a.status === '未完成' ? '还没完成' : `已完成 · ${a.done}`, a.status === '未完成' ? 'a' : 'g'])] : [])])).reverse();
+    return hello(d) + `<div class="grid" style="grid-template-columns:300px 1fr">
+      <div class="grid"><div class="c dark"><div class="ch"><h3>和带教的来回</h3></div>${f ? `<b style="font-size:17px">${f.p.name} · ${f.m.name}</b><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">${loop.map((s, i) => `<div style="text-align:center;padding:8px 0;border-radius:10px;${i === at ? 'background:#4A4ED8;color:#fff;font-weight:600' : 'background:rgba(255,255,255,.07);color:rgba(255,255,255,.6)'}">${s}</div>`).join('')}</div><span class="mute">${{ revise: '轮到你：按评审的行动修改再交', pending: '轮到带教：V2 在等周颖评审', blocked: '轮到你：问题定义已通过，推进分流方案验证；节点受阻，等主管批排班' }[d.st]}</span>` : `<span class="mute">${d.e ? '还没有项目，来回从第一次提交开始。' : '项目已结项，没有进行中的来回。'}</span>`}</div>
+        <div class="c"><div class="ch"><h3>需要协调的事</h3></div>${coordList(d)}</div>${coverageCard(d)}</div>
+      <div class="c"><div class="ch"><h3>回路时间线</h3><span class="sp"></span><small>最新在上</small></div>${steps.length ? `<div class="tl">${steps.slice(0, 7).map(s => `<div class="ev"><span class="t">${s[3]}</span><span class="rail"><i class="${s[5]}"></i></span><div class="body"><div class="ch"><span class="tag">${s[0]}</span><b>${s[1]}</b></div><span class="mute">${s[4]}</span><span class="faint">${s[2]}</span></div></div>`).join('')}</div>` : empty('还没有来回', '提交第一版成果后，评审、行动、再交会按顺序排在这里')}</div></div>`; },
+};
+
+// ---------- 工作台首页 · 带教 ----------
+function helloM(d) { const n = d.toReview.length + d.toConfirm.length + d.blockers.length; return `<div class="title"><div><small>${d.today}</small><h1>周颖，${n ? `有 <em>${n} 件事</em>等你判断` : '没有等你判断的事'}</h1></div></div>`; }
+const reviewRow = r => `<div class="row"><div class="av ${r[0] === '林夏' ? 'g' : ''}">${r[0][0]}</div><div class="grow"><b>${r[1]}</b><br><span class="mute">${r[0]} · ${r[2]}</span></div><span class="faint">${r[3]}</span><span class="btn pri">评审</span></div>`;
+const confirmRow = r => `<div class="row"><div class="grow"><b>${r[0]}</b><br><span class="mute">主责 ${r[1]} · ${r[2]}</span></div><span class="btn">确认立项</span></div>`;
+const blockerRow = r => `<div class="row">${blockPill}<div class="grow"><b>${r[1]}</b><br><span class="mute">${r[0]} · ${r[2]}</span></div><span class="faint">${r[3]}</span><span class="btn">响应</span></div>`;
+function dashboard(d) { return `<div class="c"><div class="ch"><h3>决策看板</h3><span class="tag">管理</span><span class="sp"></span><small>基础计数，口径见规则池 R7</small></div><div class="grid" style="grid-template-columns:1fr 1fr"><div class="well kpi"><small>同一节点连续两次需改进</small><b class="big">0</b><small>没有项目卡在同一节点</small></div><div class="well kpi"><small>每位带教当前待评审</small><div style="display:flex;gap:16px">${d.pendingBy.map(p => `<span><b class="big">${p[1]}</b> <span class="mute">${p[0]}</span></span>`).join('')}</div></div></div></div>`; }
+function menteeRow(m) { return `<div class="row"><div class="av ${m[0] === '林夏' ? 'g' : ''}">${m[0][0]}</div><div style="width:120px"><b>${m[0]}</b><br><span class="mute">${m[1]}</span></div><div class="grow"><b>${m[2]}</b><br><span class="mute">${m[3] || '—'}</span></div><div style="width:100px"><span class="faint">最近反馈</span><br>${m[4]}</div><div style="width:60px">${m[5].map(() => blockPill).join('') || '<span class="faint">无风险</span>'}</div></div>`; }
+const homeM = {
+  1: d => { const lanes = [['草拟 · 待确认立项', d.toConfirm.map(r => [r[0], `主责 ${r[1]}`, '确认立项'])], ['推进中', d.e ? [] : [['来电归因优化', '林夏主责 · 许诺参与', { revise: '问题定义 需修改', pending: '问题定义 待评审', blocked: '分流方案验证 进行中', ended: '' }[d.st]]].filter(x => d.st !== 'ended').concat(d.st === 'blocked' || d.st === 'ended' ? [['渠道转化复盘', '许诺主责', '现状梳理 进行中']] : [])],
+      ['等我评审', d.toReview.map(r => [r[1], `${r[0]} · ${r[2]}`, '评审'])], ['受阻', d.blockers.map(r => [r[1], `${r[0]} · ${r[2]}`, '响应']).concat(d.st === 'blocked' ? [['来电归因优化 · 分流方案验证', '林夏 · 已响应，仍受阻', '']] : [])]];
+    return helloM(d) + `<div class="c"><div class="ch"><h3>我带的人的项目</h3><span class="sp"></span><small>按项目状态分列</small></div><div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px">${lanes.map(([t, cards]) => `<div class="lane"><h4>${t}<span class="faint">${cards.length}</span></h4>${cards.length ? cards.map(c => `<div class="card"><b>${c[0]}</b><span class="mute">${c[1]}</span>${c[2] ? `<span>${['确认立项', '评审', '响应'].includes(c[2]) ? `<span class="btn ${c[2] === '评审' ? 'pri' : ''}">${c[2]}</span>` : pill(c[2].split(' ').pop()) + ' <span class="faint">' + c[2].split(' ')[0] + '</span>'}</span>` : ''}</div>`).join('') : '<span class="faint" style="padding:6px 2px">无</span>'}</div>`).join('')}</div></div>
+      <div class="grid" style="grid-template-columns:1.3fr 1fr"><div class="c"><div class="ch"><h3>我带的人</h3></div><div class="rows">${d.mentees.map(menteeRow).join('')}</div></div>${dashboard(d)}</div>`; },
+  2: d => helloM(d) + `<div class="c dark"><div class="ch"><h3>待我判断</h3><span class="sp"></span><span class="faint">与待办一致</span></div><div class="cols3">
+      ${[['待我评审', d.toReview, reviewRow, '没有等你评审的成果'], ['待确认立项', d.toConfirm, confirmRow, '没有草拟的项目'], ['受阻待响应', d.blockers, blockerRow, '没有未响应的受阻']].map(([t, list, fn, none]) => `<div class="well on-light" style="display:grid;gap:4px;align-content:start"><div class="ch"><b>${t}</b><span class="sp"></span><span class="num" style="font-weight:700;font-size:19px">${list.length}</span></div>${list.length ? `<div class="rows">${list.map(fn).join('')}</div>` : `<span class="mute" style="padding:8px 0">${none}</span>`}</div>`).join('')}</div></div>
+      <div class="grid" style="grid-template-columns:1.3fr 1fr"><div class="c"><div class="ch"><h3>我带的人</h3><span class="sp"></span><small>每人一行</small></div><div class="rows">${d.mentees.map(menteeRow).join('')}</div></div>${dashboard(d)}</div>`,
+  3: d => helloM(d) + `<div class="grid" style="grid-template-columns:1fr 1fr">${d.mentees.map((m, i) => { const mine = [...d.toReview.filter(r => r[0] === m[0]).map(reviewRow), ...d.toConfirm.filter(r => r[1] === m[0]).map(confirmRow), ...d.blockers.filter(r => r[0] === m[0]).map(blockerRow)];
+      return `<div class="c ${i === 0 && mine.length ? 'dark' : ''}"><div class="ch"><div class="av ${m[0] === '林夏' ? 'g' : ''}">${m[0][0]}</div><div><h3>${m[0]}</h3><small class="${i === 0 && mine.length ? 'faint' : ''}">${m[1]}</small></div><span class="sp"></span>${m[5].map(() => blockPill).join('')}</div>
+        <div class="well"><span class="faint">当前项目</span><br><b>${m[2]}</b> <span class="mute">${m[3] || ''}</span><br><span class="faint">最近反馈 ${m[4]}</span></div>
+        <div><b style="font-size:12.5px">等你处理（${mine.length}）</b>${mine.length ? `<div class="rows ${i === 0 ? 'on-light' : ''}" style="${i === 0 ? 'border-radius:12px;padding:2px 10px;margin-top:6px' : ''}">${mine.join('')}</div>` : `<p class="mute" style="margin-top:4px">没有等你处理的事</p>`}</div></div>`; }).join('')}</div>${dashboard(d)}`,
+};
+
+// ---------- 项目详情 ----------
+function projHead(d) { const p = d.project; return `<div class="title"><div><small>项目实践 · ${p.status === '草拟' ? '草拟中，等带教确认立项' : p.confirmed ? '立项确认 ' + p.confirmed : ''}</small><h1>${p.name}</h1></div>${pill(p.status)}<span class="sp"></span>${p.status === '草拟' ? '<span class="btn pri">确认立项</span>' : p.status === '推进中' ? '<span class="btn">新建节点</span><span class="btn">填写结论</span>' : '<span class="btn">补记业务验证</span>'}</div>`; }
+function infoCard(p) { return `<div class="c"><div class="ch"><h3>项目</h3></div><p>${p.goal}</p><dl class="kv"><dt>验收条件</dt><dd>${p.accept}</dd><dt>业务验收</dt><dd>${p.acceptor}</dd><dt>成员</dt><dd>${p.members.map(m => `${m[0]}（${m[1]}）`).join('、')}</dd><dt>项目带教</dt><dd>${p.mentor} <span class="faint">${p.mentorWhy}</span></dd><dt>关联站</dt><dd>${p.stations}</dd></dl></div>`; }
+function conclCard(p) { const c = p.conclusion; return `<div class="c"><div class="ch"><h3>项目结论</h3><span class="sp"></span>${c ? pill('已结束') : ''}</div>${c ? `<div class="grid" style="grid-template-columns:1fr 1fr"><div class="well kpi"><small>交付结论</small>${pill(c.delivery)}<small>${c.evidence}</small></div><div class="well kpi"><small>业务验证</small>${pill(c.verify)}<small>结项后可补记</small></div></div><dl class="kv"><dt>经验</dt><dd>${c.lessons}</dd><dt>后续建议</dt><dd>${c.next}</dd><dt>结项</dt><dd>${c.closed}</dd></dl>` : empty('还没有结论', p.status === '推进中' ? '节点都通过后，由主责填写交付结论和业务验证' : '确认立项、推进节点后再填')}</div>`; }
+function versionBlock(v, m) {
+  const r = v.review;
+  return `<div class="well" style="display:grid;gap:8px"><div class="ch"><b>V${v.v}</b><span class="mute">${v.by} · ${v.at}</span><span class="sp"></span>${r ? pill(r.grade) : pill('待评审')}</div><span>${v.change ? '修改说明：' + v.change : v.text}</span>
+    ${r ? `<div class="q"><b>关键问题</b>　${r.key}<br><b>带教判断</b>　${r.judge}</div>${r.actions.length ? r.actions.map(a => `<div class="ch"><span class="tag">${a.kind}</span><span style="flex:1">${a.text}</span>${a.status ? pill(a.status) : ''}<span class="faint">${a.owner ? '负责人 ' + a.owner : ''} ${a.done || ''}</span></div>`).join('') : ''}${r.credits.length ? `<div class="ch"><span class="tag">认定</span><span>${r.credits.join('；')}</span></div>` : ''}<span class="faint">评审 ${r.by} · ${r.at}</span>` : `<span class="faint">评审负责人 周颖（提交时按带教关系推出）</span>`}</div>`;
+}
+function blockerBlock(b) { return `<div class="well" style="display:grid;gap:6px;box-shadow:inset 0 0 0 1.5px #E5484D">${'<div class="ch">' + blockPill + pill(b.status) + `<b>${b.reason}</b></div>`}<span class="mute">需要 ${b.decider} 决定 · 处理人 ${b.handler} · ${b.by} ${b.at} 标记</span>${b.responses.map(r => `<div class="q">${r.by} ${r.at}：${r.text}</div>`).join('')}<div><span class="btn">解除受阻</span></div></div>`; }
+function nodeDetail(m) { return `<div class="grid"><div class="ch"><h3 style="font-size:19px">${m.name}</h3>${pill(m.status)}${m.blocker ? blockPill : ''}<span class="sp"></span><span class="faint">截止 ${m.due}</span></div><dl class="kv"><dt>节点目标</dt><dd>${m.goal}</dd><dt>验收标准</dt><dd>${m.accept}</dd><dt>关联任务</dt><dd>${m.tasks.length ? m.tasks.map(t => `${t.owner} · ${t.name} ${t.credited ? pill('已认定') : ''}`).join('<br>') : '无'}</dd></dl>${m.blocker ? blockerBlock(m.blocker) : ''}${m.versions.length ? m.versions.slice().reverse().map(v => versionBlock(v, m)).join('') : empty('还没有成果版本', m.status === '未开始' ? '开始节点后，主责在这里提交飞书文档链接' : '做完后，主责在这里提交飞书文档链接')}</div>`; }
+const proj = {
+  1: d => { const p = d.project; const sel = p.milestones.find(m => !['已通过'].includes(m.status)) || p.milestones[p.milestones.length - 1];
+    return projHead(d) + `<div class="c"><div class="ch"><h3>节点路线</h3><span class="sp"></span><small>点节点在下方展开</small></div>${nodeTrack(p)}</div>
+      <div class="grid" style="grid-template-columns:1fr 320px"><div class="c">${nodeDetail(sel)}</div><div class="grid">${infoCard(p)}${conclCard(p)}</div></div>`; },
+  2: d => { const p = d.project; const fb = d.e ? [] : p.milestones.flatMap(m => m.versions.filter(v => v.review).map(v => [m.name, v])).reverse();
+    const open = d.e ? [] : p.milestones.flatMap(m => m.versions.flatMap(v => v.review ? v.review.actions.filter(a => a.status === '未完成').map(a => [m.name, a]) : []));
+    return projHead(d) + `<div class="grid" style="grid-template-columns:280px 1fr 280px">${infoCard(p)}
+      <div class="grid"><div class="c"><div class="ch"><h3>关键节点</h3><span class="sp"></span><small>${p.milestones.filter(m => m.status === '已通过').length} / ${p.milestones.length} 通过</small></div><table><thead><tr><th>节点</th><th>状态</th><th>截止</th><th>版本</th><th>任务</th></tr></thead><tbody>${p.milestones.map((m, i) => `<tr class="${i === 0 ? 'sel' : ''}"><td><b>${m.name}</b><br><span class="faint">${m.goal}</span></td><td style="white-space:nowrap">${pill(m.status)}${m.blocker ? ' ' + blockPill : ''}</td><td class="num" style="white-space:nowrap">${m.due}</td><td>${m.versions.length ? 'V' + m.versions[m.versions.length - 1].v : '—'}</td><td>${m.tasks.length}</td></tr>`).join('')}</tbody></table>
+        <span class="faint">点一行，右侧抽屉打开节点详情：版本时间线、评审、受阻</span></div>${conclCard(p)}</div>
+      <div class="grid"><div class="c"><div class="ch"><h3>未完成的下一步行动</h3></div>${open.length ? `<div class="rows">${open.map(([n, a]) => `<div class="row"><span class="tag">${a.kind}</span><div class="grow">${a.text}<br><span class="faint">${n} · ${a.owner}</span></div></div>`).join('')}</div>` : empty('没有未完成的行动', '')}</div>
+        <div class="c"><div class="ch"><h3>最近反馈</h3></div>${fb.length ? `<div class="rows">${fb.slice(0, 3).map(([n, v]) => `<div class="row" style="align-items:flex-start"><div class="grow"><div class="ch"><b>${n} V${v.v}</b><span class="sp"></span>${pill(v.review.grade)}</div><span class="mute">${v.review.key}</span></div></div>`).join('')}</div>` : empty('还没有评审', '')}</div></div></div>`; },
+  3: d => { const p = d.project; const log = [];
+    if (!d.e) { log.push(['10.19', '创建项目', '林夏', '', ''], ['10.20', '确认立项', '周颖', '', 'g']);
+      p.milestones.forEach(m => { log.push(['10.21', `新建节点 · ${m.name}`, '林夏', m.goal, '']); m.versions.forEach(v => { log.push([v.at.split(' ')[0], `提交 · ${m.name} V${v.v}`, v.by, v.change || v.text, 'w']); if (v.review) log.push([v.review.at.split(' ')[0], `评审 · ${m.name} V${v.v} · ${v.review.grade}`, v.review.by, v.review.key + (v.review.credits.length ? '；认定 ' + v.review.credits.join('、') : ''), v.review.grade === '需改进' ? 'r' : 'g']); });
+        if (m.blocker) { log.push([m.blocker.at.split(' ')[0], `标记受阻 · ${m.name}`, m.blocker.by, m.blocker.reason, 'r']); m.blocker.responses.forEach(r => log.push([r.at.split(' ')[0], `响应受阻 · ${m.name}`, r.by, r.text + '（仍受阻）', ''])); } });
+      if (p.conclusion) log.push(['12.07', '填写项目结论', '林夏', '交付达成、业务未验证', ''], ['12.08', '确认结项', '周颖', '完成', 'g']);
+      log.sort((a, b) => a[0] < b[0] ? 1 : -1); }
+    const cur = p.milestones.find(m => !['已通过'].includes(m.status));
+    return projHead(d) + `<div class="c" style="grid-template-columns:repeat(5,minmax(0,1fr));display:grid"><div class="kpi"><small>节点</small><b class="big">${p.milestones.filter(m => m.status === '已通过').length}<span class="mute" style="font-size:15px"> / ${p.milestones.length} 通过</span></b></div><div class="kpi"><small>当前节点</small><b style="font-size:15px">${cur ? cur.name : '—'}</b>${cur ? '<span>' + pill(cur.status) + (cur.blocker ? ' ' + blockPill : '') + '</span>' : ''}</div><div class="kpi"><small>项目带教</small><b style="font-size:15px">${p.mentor}</b><small>${p.members.map(m => m[0]).join('、')}</small></div><div class="kpi"><small>交付 / 验证</small><b style="font-size:15px">${p.conclusion ? p.conclusion.delivery + ' / ' + p.conclusion.verify : '未结项'}</b></div><div class="kpi"><small>验收条件</small><span class="mute">${p.accept}</span></div></div>
+      <div class="grid" style="grid-template-columns:1fr 320px"><div class="c"><div class="ch"><h3>项目日志</h3><span class="sp"></span><small>最新在上 · 每条都能点回节点或版本</small></div>${log.length ? `<div class="tl">${log.map(l => `<div class="ev"><span class="t">${l[0]}</span><span class="rail"><i class="${l[4]}"></i></span><div class="body"><div class="ch"><b>${l[1]}</b><span class="faint">${l[2]}</span></div>${l[3] ? `<span class="mute">${l[3]}</span>` : ''}</div></div>`).join('')}</div>` : empty('项目还在草拟', '许诺 11.06 创建，等带教确认立项后开始记录')}</div><div class="grid">${cur && cur.blocker ? `<div class="c">${blockerBlock(cur.blocker)}</div>` : ''}${infoCard(p)}${conclCard(p)}</div></div>`; },
+};
+
+// ---------- 成长档案 ----------
+function profHead(d) { return `<div class="title"><div class="av g" style="width:52px;height:52px;font-size:20px">林</div><div><small>成长档案 · 2026 秋季班</small><h1>林夏</h1></div><span class="sp"></span><span class="chip">${d.station[0]} · ${d.station[2]}（第 ${d.station[1]} 站）</span><span class="chip">默认带教 周颖</span></div>`; }
+function evItem(e, withItem) { const lv = `<div class="lv">${[1, 2, 3].map(i => `<span class="${i <= JUDGE[e.judge] ? 'on' : ''}"></span>`).join('')}</div><b style="font-size:12px;white-space:nowrap">${e.judge}</b>`;
+  return `<div class="well" style="display:grid;gap:5px">${withItem ? `<div class="ch"><span class="tag">${['', '公司、行业与导师侧认知', '用户与服务链路认知', '实际项目推进与交付', '营销线', 'AI 使用与人机协同'][e.no]}</span><span class="sp"></span><span class="faint">${e.at}</span></div><div class="ch">${lv}</div>` : `<div class="ch">${lv}<span class="sp"></span><span class="faint">${e.at}</span></div>`}<span>${e.text}</span><span class="faint">来源：${e.src} ›</span></div>`; }
+function passedList(d, n = 9) { return d.passed.length ? `<div class="rows">${d.passed.slice(0, n).map(p => `<div class="row"><span class="tag">${p[0]}</span><div class="grow"><b>${p[1]}</b><br><span class="faint">${p[0] === '认定' ? p[2] + ' · ' : ''}${p[4]}</span></div>${p[0] === '成果' ? pill(p[2]) : '<span class="pill p-ok">已认定</span>'}<span class="faint">${p[3]}</span></div>`).join('')}</div>` : empty('还没有通过的成果', '本人提交且通过的版本、项目里对本人任务的认定，都会列在这里'); }
+function projExp(d, rich) { const p = d.pj1; if (d.e) return empty('还没有项目经历', '参与的项目确认立项后出现在这里');
+  return `<div class="well" style="display:grid;gap:8px"><div class="ch"><b style="font-size:15px">${p.name}</b><span class="tag">主责</span><span class="sp"></span>${pill(p.status)}</div>${p.conclusion ? `<div class="ch"><span class="faint">交付</span>${pill(p.conclusion.delivery)}<span class="faint">业务验证</span>${pill(p.conclusion.verify)}</div>` : ''}<span class="mute">${p.goal}</span>${rich ? `<div class="rows">${p.milestones.map(nodeLine).join('')}</div>` : ''}</div>`; }
+const prof = {
+  1: d => profHead(d) + `<div class="grid" style="grid-template-columns:1fr 340px"><div class="c"><div class="ch"><h3>项目经历</h3><span class="sp"></span><small>主线：每个项目下挂它带来的成果和证据</small></div>
+      ${d.e ? projExp(d) : `${projExp(d, true)}<div class="grid" style="grid-template-columns:1fr 1fr"><div><b style="font-size:12.5px">这个项目里通过的成果</b>${passedList({ ...d, passed: d.passed.filter(x => x[4] === '来电归因优化') })}</div><div style="display:grid;gap:8px;align-content:start"><b style="font-size:12.5px">这个项目提炼的能力证据</b>${d.ev.filter(e => e.no !== 2).length ? d.ev.filter(e => e.no !== 2).map(e => evItem(e, true)).join('') : empty('还没有', '评审通过后带教可以提炼')}</div></div>`}</div>
+      <div class="grid"><div class="c"><div class="ch"><h3>项目之外</h3></div>${passedList({ ...d, passed: d.passed.filter(x => x[4] !== '来电归因优化') })}${d.ev.filter(e => e.no === 2).map(e => evItem(e, true)).join('')}</div>${coverageCard(d)}<div class="c"><div class="ch"><h3>阶段复盘、交接卡</h3><span class="proto">原型</span></div><span class="mute">B 级区块，第二轮建表</span></div></div></div>`,
+  2: d => profHead(d) + `<div class="grid" style="grid-template-columns:1fr 340px"><div class="c"><div class="ch"><h3>能力证据</h3><span class="sp"></span><small>主线：按「4+1 主线」逐项看证据，判断分三级</small></div>
+      <div class="rows">${d.items.map((name, i) => { const list = d.ev.filter(e => e.no === i + 1); const best = Math.max(0, ...list.map(e => JUDGE[e.judge]));
+        return `<div class="row" style="align-items:flex-start;padding:12px 2px"><div style="width:190px"><b>${name}</b><br><div class="lv" style="margin-top:6px">${[1, 2, 3].map(k => `<span class="${k <= best ? 'on' : ''}"></span>`).join('')}</div><span class="faint">${list.length ? list.length + ' 条证据' : '还没有证据'}</span></div><div class="grow" style="display:grid;gap:6px">${list.length ? list.map(e => evItem(e)).join('') : '<span class="faint" style="padding-top:2px">—</span>'}</div></div>`; }).join('')}</div></div>
+      <div class="grid"><div class="c"><div class="ch"><h3>项目经历</h3></div>${projExp(d)}</div><div class="c"><div class="ch"><h3>通过的成果</h3><span class="sp"></span><small>${d.passed.length} 项</small></div>${passedList(d, 4)}</div><div class="c"><div class="ch"><h3>阶段复盘、交接卡</h3><span class="proto">原型</span></div><span class="mute">B 级区块</span></div></div></div>`,
+  3: d => profHead(d) + `<div class="c"><div class="ch"><h3>培养路径</h3><span class="sp"></span><small>主线：按站排，每站下面是这段时间的项目、成果、证据和事件</small></div>
+      <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px">${d.path.map((s, i) => `<div class="lane" style="${i === d.curStation ? 'background:#E7E8FC;box-shadow:inset 0 0 0 1.5px #4A4ED8' : ''}"><h4>${s[1]}${s[0] !== s[1] ? `<span class="faint">${s[0]}</span>` : ''}</h4><span class="faint">${s[2]}${i === d.curStation ? ' · 当前' : ''}</span>${s[3].map(t => `<div class="card"><b>${t[0]}</b><span>${pill(t[1])}${t[2] ? ' <span class="faint">' + t[2] + '</span>' : ''}</span></div>`).join('')}${i === 2 && !d.e ? `<div class="card" style="box-shadow:inset 0 0 0 1px #4A4ED8"><span class="tag">项目</span><b>来电归因优化</b><span class="faint">主责 · ${d.pj1.status}</span></div>` : ''}</div>`).join('')}</div></div>
+      <div class="grid" style="grid-template-columns:1fr 1fr"><div class="c"><div class="ch"><h3>成长时间线</h3><span class="sp"></span><small>本人的事件 + 参与项目的事件</small></div>${d.timeline.length ? `<div class="tl">${d.timeline.slice(0, 8).map(t => `<div class="ev"><span class="t">${t[0]}</span><span class="rail"><i class="${t[4]}"></i></span><div class="body"><div class="ch"><b>${t[1]}</b><span class="faint">${t[3]}</span></div><span class="mute">${t[2]}</span></div></div>`).join('')}</div>` : empty('还没有事件', '')}</div>
+      <div class="grid"><div class="c"><div class="ch"><h3>能力证据</h3><span class="sp"></span><small>${d.ev.length} 条</small></div>${d.ev.length ? d.ev.map(e => evItem(e, true)).join('') : empty('还没有能力证据', '')}</div><div class="c"><div class="ch"><h3>通过的成果</h3></div>${passedList(d, 4)}</div></div></div>`,
+};
+
+// ---------- 页面与版本说明 ----------
+const PAGES = {
+  homeT: { name: '首页 · 管培生', role: 'trainee', active: 'home', crumb: '工作台 › <b>首页</b>', render: homeT, vers: [
+    ['目标为中心', '先看在推进什么：主推项目的目标、当前节点和验收标准占最大块，下一步行动和受阻挂在节点下面。', '项目是主线的人最顺手；但同时推进两个项目时，第二个项目被挤到次要位置。', '强调块 = 主推项目卡（项目、节点、行动合在一块）'],
+    ['行动为中心', '先看现在该做什么：最重要的下一步单独占强调块，其次是需要协调的事；项目和节点退到第二排。', '一眼知道今天干什么；项目全貌要点进项目详情才看得全。', '强调块 = 最重要的下一步'],
+    ['反馈回路为中心', '先看和带教来回到了哪一步：把「提交 → 评审 → 行动 → 再交」做成回路，标出现在轮到谁；右边是回路时间线。', '最能说明「带教反馈形成闭环」；但新人没有来回时整页偏空，多个项目时要切换。', '强调块 = 回路当前环节']] },
+  homeM: { name: '首页 · 带教', role: 'mentor', active: 'home', crumb: '工作台 › <b>首页</b>', render: homeM, vers: [
+    ['按项目', '我带的人的项目做成四列看板：待确认立项、推进中、等我评审、受阻。', '项目多时一眼看全局；但「我该先做哪件」要自己在四列里找。', '无强调块，看板本身是焦点'],
+    ['按事', '「待我判断」三类（评审、立项、受阻）放强调块，与待办一致；下面每人一行看风险；管理者附决策看板。', '先清待办再看人，最贴合 PRD 10.2 的写法；人数多时「我带的人」要往下翻。', '强调块 = 待我判断'],
+    ['按人', '每位管培生一张卡：在哪站、当前项目与节点、最近反馈、风险，以及等我处理的事。', '带的人少（现在两人）时最直观；人多了卡片会很长，事情分散在各卡里。', '强调块 = 第一位有待办的人']] },
+  proj: { name: '项目详情', role: 'mentor', active: 'proj', crumb: '项目实践 › 项目 › <b>项目详情</b>', render: proj, vers: [
+    ['节点路线', '顶部是节点路线图，下方展开当前节点：目标、验收标准、受阻、每一版成果与评审。项目信息和结论在右栏。', '最像「推进一个项目」的心智；节点多于五六个时路线图要横向滚动。', '不放强调块'],
+    ['总览分栏', '三栏：左栏项目信息与成员，中间节点表和结论，右栏未完成行动与最近反馈；节点详情用右侧抽屉打开。', '信息最全、最像管理工具；第一眼不突出「现在卡在哪」。', '不放强调块'],
+    ['项目日志', '顶部一条摘要（节点进度、当前节点、带教、交付与验证），主体是按时间倒序的项目日志，每条点回节点或版本。', '最适合回看「这个项目怎么走过来的」；但要执行操作得先找到对应节点。', '不放强调块']] },
+  prof: { name: '成长档案', role: 'trainee', active: 'prof', crumb: '培养成长 › <b>成长档案</b>', render: prof, vers: [
+    ['项目经历主线', '按项目组织：每个项目下面挂它带来的通过成果和能力证据；项目之外的成果单列。', '最能回答「做过什么、做成了没有」；能力项的覆盖情况要看右栏计数。', '不放强调块'],
+    ['能力证据主线', '按「4+1 主线」五个能力项逐行列出证据和判断等级，每条点回来源；项目经历和成果在右栏。', '最贴合季度答辩和阶段复盘；项目的来龙去脉被拆散到各能力项里。', '不放强调块'],
+    ['培养路径主线', '按站排时间：每站下是这段时间的任务和项目；下面是成长时间线、能力证据和通过的成果。', '最能看出「在哪一站做了什么」；跨站的项目只能挂在开始的那一站。', '不放强调块']] },
+};
+const REC = '建议把附录 A 的「全屏唯一强调块」从「这一步可以用」（推荐 AI 资产）改为：管培生首页放「最重要的下一步」，带教首页放「待我判断」；「这一步可以用」降为普通卡（B 级）。项目详情、成长档案不放强调块。三版里标了各自把强调块放在哪。';
+
+// ---------- 交互 ----------
+let cur = { page: 'homeT', ver: 2, state: 'revise' };
+try { const s = JSON.parse(localStorage.getItem('pick') || 'null'); if (s && PAGES[s.page]) cur = s; } catch (e) {}
+const $ = id => document.getElementById(id);
+function btns(el, list, key) { el.innerHTML = list.map(([k, label]) => `<button type="button" id="${el.id}-${k}" aria-pressed="${String(cur[key]) === String(k)}" data-k="${k}">${label}</button>`).join('');
+  el.onclick = ev => { const b = ev.target.closest('button'); if (!b) return; cur[key] = key === 'ver' ? Number(b.dataset.k) : b.dataset.k; render(); }; }
+function render() {
+  const P = PAGES[cur.page];
+  btns($('pages'), Object.entries(PAGES).map(([k, p]) => [k, p.name]), 'page');
+  btns($('vers'), P.vers.map((v, i) => [i + 1, `<b>版 ${i + 1}</b>${v[0]}`]), 'ver');
+  btns($('states'), Object.entries(STATES), 'state');
+  const v = P.vers[cur.ver - 1];
+  $('note').innerHTML = `<div><h2>版 ${cur.ver} · ${v[0]}的思路</h2><p>${v[1]}</p></div><div><h2>取舍</h2><p>${v[2]}</p></div><div><h2>强调块放在</h2><p>${v[3]}</p></div><div class="rec"><h2>附录 A 改法（建议）</h2><p>${REC}</p></div>`;
+  const d = data(cur.state);
+  const todo = P.role === 'mentor' ? d.toReview.length + d.toConfirm.length + d.blockers.length : d.actions.length;
+  $('mk').innerHTML = shell(P.role, P.active, P.crumb, P.render[cur.ver](d), todo);
+  try { localStorage.setItem('pick', JSON.stringify(cur)); } catch (e) {}
+  fit();
+}
+function fit() { const w = $('stage').clientWidth; const s = Math.min(1, w / 1360); $('fit').style.transform = `scale(${s})`; $('stage').style.height = $('mk').offsetHeight * s + 'px'; }
+addEventListener('resize', fit);
+render();
+</script>
