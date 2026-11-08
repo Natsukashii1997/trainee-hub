@@ -1,4 +1,4 @@
-// 项目结论与结项命令的测试（issue #40）：C14、C15、C19；骨架验收第 1 项（全程，走 HTTP 接口）、第 5 项；PRD 4.5 前置条件的反例。
+// 项目结论与结项命令的测试（issue #40）：C14、C15、C19；骨架验收第 1 项（全程到能力证据，走 HTTP 接口）、第 5 项；PRD 4.5 前置条件的反例。
 // 连真测试库，和其他后端测试用同一把测试锁；每个 test 前用初始化脚本重置示例数据。
 import assert from 'node:assert/strict';
 import type { AddressInfo } from 'node:net';
@@ -56,7 +56,7 @@ const projectStatus = async (id: string) => one<{ status: string; end_type: stri
 const conclude = (actor: Actor, projectId: string, extra: Record<string, unknown> = {}) => run(actor, 'C14', { projectId, delivery: 'met', lessons: '先对齐口径再取数', ...extra });
 const verified = { verificationStatus: 'verified', verificationResult: 'met', verificationSource: '业务负责人反馈', verificationConfirmer: '销售主管（示例）', verificationConfirmedAt: '2026-12-01T10:00:00+08:00' };
 
-describe('骨架验收第 1 项：立项 → 节点 → 提交 → 需修改 → 再交 → 通过 → 结论 → 结项（走 HTTP 接口）', () => {
+describe('骨架验收第 1 项：立项 → 节点 → 提交 → 需修改 → 再交 → 通过 → 结论 → 结项 → 能力证据（走 HTTP 接口）', () => {
   test('每一步的状态与 PRD 4.3 一致', async () => {
     const server = createApp(pool, { demo: true });
     await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -96,8 +96,11 @@ describe('骨架验收第 1 项：立项 → 节点 → 提交 → 需修改 →
       assert.deepEqual(await projectStatus(projectId), { status: 'ended', end_type: 'done', abort_reason: null });
       assert.deepEqual(await one('select delivery, delivery_evidence, verification_status from project_conclusion where project_id = $1', [projectId]),
         { delivery: 'met', delivery_evidence: [v2.submissionId], verification_status: 'unverified' });
+      // 从通过的版本为林夏提炼一条能力证据，能点回来源节点和版本
+      const { evidenceId } = await post<{ evidenceId: string }>('C16', 'u-zhou', { traineeId: 'u-lin', itemId: 'ci-3', sourceType: 'submission', sourceId: v2.submissionId, summary: '补齐四周基线后再定方案', judgment: 'guided' });
+      assert.deepEqual(await one('select s.milestone_id, s.version from competency_evidence e join submission s on s.id = e.source_id where e.id = $1', [evidenceId]), { milestone_id: milestoneId, version: 2 });
       const types = (await pool.query("select type from event_log where source = 'web' order by occurred_at, id")).rows.map(x => x.type);
-      assert.deepEqual(types, ['C01', 'C02', 'C03', 'C04', 'C06', 'C08', 'C07', 'C08', 'C14', 'C15']);
+      assert.deepEqual(types, ['C01', 'C02', 'C03', 'C04', 'C06', 'C08', 'C07', 'C08', 'C14', 'C15', 'C16']);
     } finally {
       server.close();
     }
