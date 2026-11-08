@@ -1,6 +1,8 @@
 // HTTP 入口：横切的保护在这里统一做（全局坑 G-07），各接口只管自己的业务。
 import http from 'node:http';
 import type pg from 'pg';
+import { type Actor, authorize } from './authorize.ts';
+import { DEMO_COOKIE } from './demo.ts';
 import { currentMigration } from './migrate.ts';
 
 export interface Health {
@@ -47,7 +49,53 @@ function send(res: http.ServerResponse, status: number, body: unknown) {
   res.end(JSON.stringify(body));
 }
 
-export function createApp(pool: pg.Pool): http.Server {
+/** 读 JSON 请求体，最多 64 KB；不是合法 JSON 对象返回 null */
+async function readJson(req: http.IncomingMessage): Promise<Record<string, unknown> | null> {
+  const chunks: Buffer[] = [];
+  let size = 0;
+  for await (const chunk of req) {
+    size += (chunk as Buffer).length;
+    if (size > 64 * 1024) return null;
+    chunks.push(chunk as Buffer);
+  }
+  try {
+    const v: unknown = JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}');
+    return v && typeof v === 'object' && !Array.isArray(v) ? (v as Record<string, unknown>) : null;
+  } catch {
+    return null;
+  }
+}
+
+function cookieOf(req: http.IncomingMessage, name: string): string | undefined {
+  for (const part of (req.headers.cookie ?? '').split(';')) {
+    const i = part.indexOf('=');
+    if (i > 0 && part.slice(0, i).trim() === name) return decodeURIComponent(part.slice(i + 1).trim());
+  }
+  return undefined;
+}
+
+async function findActor(pool: pg.Pool, id: string | undefined): Promise<Actor | null> {
+  if (!id) return null;
+  const { rows } = await pool.query<{ id: string; name: string; role: Actor['role']; is_admin: boolean }>(
+    'select id, name, role, is_admin from app_user where id = $1 and stopped_at is null', [id]);
+  return rows[0] ? { id: rows[0].id, name: rows[0].name, role: rows[0].role, isAdmin: rows[0].is_admin } : null;
+}
+
+/** 当前登录的人：演示模式下认演示身份 cookie；非演示模式在飞书登录做好之前（PRD 下篇 R1）一律当作未登录 */
+async function currentActor(pool: pg.Pool, req: http.IncomingMessage, demo: boolean): Promise<Actor | null> {
+  return demo ? findActor(pool, cookieOf(req, DEMO_COOKIE)) : null;
+}
+
+const demoCookie = (value: string, maxAge?: number) =>
+  `${DEMO_COOKIE}=${encodeURIComponent(value)}; Path=/; HttpOnly; SameSite=Strict${maxAge === undefined ? '' : `; Max-Age=${maxAge}`}`;
+
+export interface AppOptions {
+  /** 演示模式（demo.ts 的 resolveDemo 决定）；默认关 */
+  demo?: boolean;
+}
+
+export function createApp(pool: pg.Pool, options: AppOptions = {}): http.Server {
+  const demo = options.demo === true;
   return http.createServer(async (req, res) => {
     try {
       const refused = checkSource(req);
@@ -58,6 +106,33 @@ export function createApp(pool: pg.Pool): http.Server {
         const health = await readHealth(pool);
         return send(res, health.db === 'up' ? 200 : 503, health);
       }
+
+      // 演示登录：只在演示模式下存在
+      if (pathname.startsWith('/api/demo/')) {
+        if (!demo) return send(res, 404, { error: '没有这个接口' });
+        if (pathname === '/api/demo/identities' && req.method === 'GET') {
+          const { rows } = await pool.query('select id, name, role, is_admin as "isAdmin" from app_user where stopped_at is null order by role desc, id');
+          return send(res, 200, { identities: rows });
+        }
+        if (pathname === '/api/demo/login' && req.method === 'POST') {
+          const body = await readJson(req);
+          const actor = await findActor(pool, typeof body?.userId === 'string' ? body.userId : undefined);
+          if (!actor) return send(res, 400, { error: '没有这个示例身份' });
+          res.setHeader('set-cookie', demoCookie(actor.id));
+          return send(res, 200, { me: actor, demo });
+        }
+        if (pathname === '/api/demo/logout' && req.method === 'POST') {
+          res.setHeader('set-cookie', demoCookie('', 0));
+          return send(res, 200, { ok: true });
+        }
+        return send(res, 404, { error: '没有这个接口' });
+      }
+
+      // 其余 /api/* 都是业务接口：先过统一授权入口（authorize.ts），没登录一律 401
+      const actor = await currentActor(pool, req, demo);
+      const gate = authorize(actor, { kind: 'read' });
+      if (!gate.ok) return send(res, gate.status, { error: demo ? gate.reason : `${gate.reason}：非演示模式在飞书登录做好之前不开放业务接口` });
+      if (pathname === '/api/me' && req.method === 'GET') return send(res, 200, { me: actor, demo });
       return send(res, 404, { error: '没有这个接口' });
     } catch (e) {
       console.error(e);
