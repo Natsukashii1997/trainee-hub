@@ -5,20 +5,29 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:all": "node scripts/dev.mjs",
+    "dev:server": "node scripts/db.mjs exec -- node --watch server/src/index.ts",
+    "db:up": "node scripts/db.mjs up",
+    "db:stop": "node scripts/db.mjs stop",
+    "db:migrate": "node scripts/db.mjs exec -- node server/src/migrate.ts",
     "build": "tsc --noEmit && vite build",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run && node --test tests/*.test.mjs && node scripts/check-rules.mjs"
+    "typecheck": "tsc --noEmit && tsc --noEmit -p server",
+    "test:server": "node scripts/db.mjs up && node scripts/db.mjs exec -- node --test \"server/src/**/*.test.ts\"",
+    "test": "vitest run && npm run test:server && node --test tests/*.test.mjs && node scripts/check-rules.mjs"
   },
   "dependencies": {
     "@fontsource/geist-mono": "^5.3.0",
     "@fontsource/geist-sans": "^5.3.0",
     "@fontsource/manrope": "^5.3.0",
+    "pg": "^8.23.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-router-dom": "^7.18.5"
   },
   "devDependencies": {
     "@testing-library/react": "^16.3.3",
+    "@types/node": "^24.19.2",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.2.1",

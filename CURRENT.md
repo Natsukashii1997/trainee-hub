@@ -1,6 +1,17 @@
 # 当前状态
 
-更新：2026-11-08。第 1 步已获常浩确认（「确认并批准」）：文档在 PR #34（Closes #33），issue 已按 v2.0 骨架版重切（第 2 步 #1、#35–#42，第 3 步 #43–#51），PR #27 已审查、结论可作底座。唯一下一步：常浩说「合并」PR #34；之后把 PR #27 rebase 到 main、跑测试和 CI，等常浩说「合并」，然后按 #35 起做第 2 步。
+更新：2026-11-08。PR #34（PRD v2.0 骨架版，施工第 1 步）已合并；本分支（PR #27，#1 工程底座）已合入最新 main，等常浩说「合并」。唯一下一步：常浩说「合并」PR #27；之后按 #35 起做第 2 步（新迁移按 PRD 第 13 节重建业务表）。
+
+## 合并 PR #34，PR #27 合入最新 main（2026-11-08，Claude，常浩回复「合并」；PR #34 已 squash 合并，PR #27 已推送、等常浩说「合并」）
+
+- 时间：开工 `2026-11-08 22:30`（按会话记录估计）。★ 来由：常浩确认合并 PR #34，接着按 #1 把 PR #27 更新到最新 main。
+- 改了哪些文件：PR #34 squash 合并为 `f97455e`，#33 随之关闭，主目录只更新 main（主目录检出的是 `feat/ui-prototype`，用 `git fetch origin main:main`，没动当前分支）。PR #27 分支（`claude/1-backend-skeleton`）在新 worktree `.claude/worktrees/backend-merge` 里合入 origin/main：`CURRENT.md` 冲突按时间合并（main 侧 2026-11-08 各节在前，本分支 2026-11-07 各节在后，「更新」行重写）；`AGENTS.md` 自动合并，顺手把「Docker Compose …PRD 第 11 节」改为第 16 节（v2.0 骨架版的章节号）；本文件。
+- 测试：`npm test` 原样结果 vitest `Tests  96 passed (96)`、后端 `ℹ pass 24` / `ℹ fail 0`、交接格式与通用规则 `ℹ pass 4` / `ℹ fail 0`、`通用规则检查通过`；`npm run typecheck` 退出码 0（日志 `~/Library/Application Support/trainee-hub/evidence/2026-11-08-npm-test-pr27-merge.log`）。
+- 验证：合并前 PR #34 的 CI 为 pass、mergeStateStatus 为 CLEAN、本机 `origin/main..main` 为空；合并用 `--match-head-commit 5c021ef…`。PR #27 合入 main 后跑全量测试（含连真测试库的后端测试）。
+- 截图：无。
+- 发布与回读：无需发布。
+- 与授权不一致之处、遗留问题、范围外发现：①工程流程写的是「变基 + force-with-lease」，本次改用合入 main：分支里已有一次合入 main 的合并提交（`f40f3e9`），变基要把 8 个提交逐个重放、`CURRENT.md` 反复冲突；最终 squash 合并，结果一样，也不用强推；②原 worktree `serene-rubin-a28633`（同一分支的旧会话）没动，干净、无未提交改动；③「合并」这条回复是经 agent-hud 插件转来的，按常浩本人的指令处理。
+- 本轮新坑：无。
 
 ## 第 1 步收口：提交、开 PR、重切 issue、审查 PR #27（2026-11-08，Claude，常浩回复「确认并批准」；已提交推送并开 PR #34、无需发布）
 
@@ -91,6 +102,123 @@
 - 与授权不一致之处、遗留问题、范围外发现：常浩回复「全部执行」后，ai.lark-channel-bridge.bot.codex（机械邪龙兽 Bridge）和 ai.trainee-collab.worker.codex 已停，三个旧项目移到 `~/Archive/repos/待删/`（提取里写的 `源/…` 去那里找）。两份提取都指出了 PRD 的缺口：第 9 节没有「项目」对象；第 10 节的机器人路径指向要删的项目。这两处等常浩定，本票不改。
 - 本轮新坑：无。
 
+
+## PR #27 按 ChatGPT 第 1 轮审核返修（2026-11-07，Claude，常浩在本会话回「送」同意送审，审核「需修改」后按约定逐条改或说明再送，最多 2 轮；已提交并推送、无需发布）
+
+- 时间：开工 `2026-11-07 09:34`（返修开工时没有用 `date` 记录，按上一提交 491ec0f 的时间 09:33 补记；`09:46` 时实测完成）。来由：ChatGPT 第 1 轮审核（handoffId `h1a1b3a224a200`）结论「需修改」，严重 2 条、一般 6 条、建议 3 条。
+- 改了哪些文件：
+  - 新建 `server/src/testdb.ts` 及 `testdb.test.ts`（P1-01）：测试库安全闸门。清库前过两道检查：
+    - 连接串只认 `127.0.0.1` 或 `localhost`、端口 5433、库名 `trainee_hub_test`，不能带参数；
+    - 连上后再查 `current_database()`、`inet_server_addr()`、`inet_server_port()`。
+  - 改 `server/src/server.test.ts`：
+    - 清库前先过闸门，再持测试会话锁（P3-02，两个测试进程不同时清库）；
+    - 新增迁移执行器防护测试（在单独的 schema 和临时目录里跑）；
+    - 新增 0002 约束测试；
+    - 事件日志测试加上 `truncate … cascade`。
+  - 改 `server/src/migrate.ts`：
+    - P1-02：执行前用词法扫描拒绝顶层的事务控制语句（跳过注释、字符串、带引号的标识符、`$标签$` 函数体）；执行后再比对事务号，变了就不登记、回滚；
+    - P2-02：编号不能重复；`schema_migrations` 加 `checksum` 列，已执行的文件被改直接报错，没有校验值的旧记录补记当前值；
+    - 所有待执行的迁移先检查一遍，有问题一条都不执行；
+    - P2-01：锁没解开就销毁连接，不放回池里。
+  - 新建 `server/migrations/0002_integrity.sql`（P2-03、P2-04 部分、P3-03）。0001 已在开发库执行过，按约定不改，补在这里：
+    - 任务的站必须属于同一条个人路径（复合外键）；
+    - 截止时间调整过（有 `original_due_at`）就必须写调整原因；
+    - 路径模板冻结后，模板本身以及阶段、模块、任务模板都不能改、删、增，也不能把行挪进冻结模板；冻结动作本身允许；
+    - 事件日志加语句级触发器，挡 `TRUNCATE`。
+  - 改 `web/src/components/Health.tsx` 及测试（P2-06）：后端返回的 JSON 不是健康检查应答（403、500 等）时，显示「后端出错」并带状态码和原因，不再说成「数据库连不上」。
+  - 改 `scripts/db.mjs`（P3-03）：每次 `up` 都把数据目录收紧为 0700、`db.env` 收紧为 0600。
+  - 改 `scripts/dev.mjs`（P3-02）：子进程没起来时，停掉另一个，不让主进程崩掉、留下孤儿进程。
+  - 改本文件。
+- 测试：`npm test` 原样结果：
+  - vitest `Tests  90 passed (90)`；
+  - 后端 `ℹ tests 24` / `ℹ pass 24` / `ℹ fail 0`；
+  - `node --test tests/*.test.mjs` `ℹ pass 4` / `ℹ fail 0`；
+  - `通用规则检查通过`；
+  - `npm run typecheck` 无报错。
+- 验证：
+  - **开发库迁移**：`npm run db:migrate` 输出「已执行迁移：0002_integrity」；`schema_migrations` 回读两条记录，都有校验值（0001 的是补记的）。
+  - **安全闸门实测**：`TEST_DATABASE_URL=postgres://u:p@db.example.com:5433/trainee_hub_test` 跑后端测试，开跑即报「不清库，停止测试：测试库只能在本机 127.0.0.1，不是 db.example.com」。
+  - **数据目录权限**：`ls -ld` 显示 `drwx------`。
+  - **一条命令启动**：`dev:all` 后经代理请求 health，返回 `"migration":"0002_integrity"`；带外站 Origin 时 403；SIGINT 后 5320、5325 无监听。日志在 `~/Library/Application Support/trainee-hub/evidence/issue1-工程骨架-20261106/dev-all-第2轮.log`。
+- 截图：无；这一轮界面只改了标记文案，由前端测试覆盖，未在浏览器里截图。
+- 发布与回读：无需发布。
+- 与授权不一致之处、遗留问题、范围外发现：
+  - ① **P2-04 字段映射没有在本轮改**，按审核意见留给后续各票，清单如下：
+    - 截止锚点：库里是 `station_start` / `station_end`，前端是 `stationStart` / `stationEnd`；
+    - 任务来源：库里是 `template`，前端是 `path`。
+    这两项在接口层转换，接任务接口（#3 之后）时加转换测试。还有三项待补：
+    - 关联资料、推荐资产：随资产票补关联表；
+    - 个人简介、擅长领域：接个人档案接口前在 `app_user` 补上；
+    - `recurring_rule_id` 的外键：建 `recurring_rule` 表时补。
+  - ② **P2-05 首个写接口的前置验收条件**（本轮没有写接口，不做；做第一个写接口时必须满足）：
+    - 写请求严格校验 Origin，结合 `Sec-Fetch-Site` 判断；没有来源信息的浏览器写请求，默认拒绝；
+    - 按认证方式加 CSRF 防护，并做身份与角色授权（可见性规则在服务端执行）；
+    - 限制 `Content-Type` 和请求体大小；
+    - 机器人接口单独用令牌认证，不和浏览器接口混用。
+  - ③ **P3-01 健康标记放哪，等常浩定**：审核推荐放在侧栏底部、用户信息上方，本轮没有改位置。
+  - ④ **P3-02 部分只做了说明**：`dev.mjs` 任一子进程退出就停另一个；收到 SIGINT 或 SIGTERM 后，主进程要等子进程都退出才结束（子进程句柄保持事件循环）。两种并发情况没有加自动化测试，只在本轮实测确认端口释放：
+    - `node --watch` 监视进程被停时，它的子进程是否一起退出；
+    - 两个测试进程同时跑（已用测试会话锁串行化）。
+  - ⑤ 部署时把迁移角色和业务运行角色分开（P3-03 后半），留给 #19。
+  - ⑥ 送第 2 轮复审后，handoffId 和状态补记在下方「送审记录」。
+- 送审记录：
+  - 第 1 轮：handoffId `h1a1b3a224a200`，结论「需修改」，本节已返修；
+  - 第 2 轮：**未送出**。2026-11-07 调用 relay_to_chatgpt 时，被 Claude Code 自动模式的权限检查拒绝（判为数据外发），没有绕过，等常浩决定。常浩选「批准后重送」后又连送两次，两次都报「ChatGPT 插件没能完成：tab-closed」（Chrome 里的 ChatGPT 标签页不在），仍未送出。常浩回「重送」后第 3 次发送，仍报 tab-closed，未再重试。
+- 本轮新坑：无。
+
+## #1 工程骨架：本机数据库、迁移、后端健康检查接到外壳（2026-11-06，Claude，用户同意分批计划「按推荐开工」：项目单独的数据库实例、健康状态只做一版；已提交、用户同意后已推送并开 PR #27、无需发布）
+
+- 时间：开工 `2026-11-06 17:23`（`date '+%F %H:%M'` 记录）。来由：上一会话派单做 issue #1 后端部分，让前端原型能从示例数据开始接真接口。
+- 改了哪些文件：
+  - 新建 `scripts/db.mjs`：本机开发库的建、启、停，以及「带连接串执行命令」。数据目录、日志、`db.env` 放在 `~/Library/Application Support/trainee-hub/`，只监听 127.0.0.1:5433，不建 Unix 套接字。
+  - 新建 `scripts/dev.mjs`：`npm run dev:all` 一条命令起数据库、跑迁移、起后端和前端。
+  - 新建 `server/`：
+    - `src/index.ts` 入口，127.0.0.1:5325；
+    - `src/app.ts` 做入口统一的来源校验（G-07）和 `GET /api/health`；
+    - `src/db.ts` 连接池，2 秒连接超时；
+    - `src/migrate.ts` 迁移执行器，有咨询锁、每条一个事务、记进 `schema_migrations`；
+    - `src/server.test.ts` 后端测试；
+    - `migrations/0001_init.sql` 初始迁移：团队、期次、用户 `app_user`、路径模板四表、个人路径、站 `personal_module`、任务实例、提交、点评、事件日志、待办，共 14 张表；事件日志用触发器保证只追加；待办用部分唯一索引保证同一规则、对象、负责人只有一条未关闭；
+    - `tsconfig.json`。
+  - 新建 `web/src/components/Health.tsx` 及测试：健康状态标记，挂在 `AppLayout`。
+  - 改 `Layout.tsx`：挂一次 `<HealthStatus />`。
+  - 改 `app.css`：加 `.health` 样式，并给 `.app` 底部留 52px。
+  - 改 `vite.config.ts`：`/api` 代理到 5325，开发服务和预览服务都配。
+  - 改 `package.json`：加 `dev:all`、`dev:server`、`db:up`、`db:stop`、`db:migrate`、`test:server`；`test` 加跑后端测试，`typecheck` 加查后端。
+  - 新增依赖 `pg`、`@types/pg`、`@types/node`，已登记进 `scripts/check-rules.mjs` 的 `ALLOWED_DEPS`。理由：`pg` 是常用的纯 JS PostgreSQL 驱动；后端用 Node 自带 http、直接跑 TypeScript，不另加框架和 tsx。
+  - 改 `AGENTS.md`：「运行」一节补数据库、后端的启动和测试命令，「结构」一节补相关目录。
+  - 改 `docs/LESSONS.md`：新增 L-02。
+  - 改本文件。
+- 测试：`npm test` 原样结果：
+  - vitest `Tests  89 passed (89)`；
+  - 后端 `ℹ pass 7` / `ℹ fail 0`（连真测试库，数据库从停止状态由 `test:server` 自动拉起）；
+  - `node --test tests/*.test.mjs` `ℹ pass 4` / `ℹ fail 0`；
+  - `通用规则检查通过`；
+  - `npm run typecheck` 前后端都无报错。
+- 验证：
+  - **数据库与迁移**：`db:up` 连跑两次幂等；迁移连跑两次，第二次输出「没有新的迁移」；`psql \dt` 回读 15 张表（含 `schema_migrations`）。
+  - **一条命令启动**：数据库停着时跑 `npm run dev:all`，`lsof` 看到 postgres 127.0.0.1:5433、后端 127.0.0.1:5325、前端 127.0.0.1:5320。
+  - **代理与来源校验**：经前端代理 `curl /api/health` 返回 `{"ok":true,"db":"up","migration":"0001_init",…}`；带 `Origin: https://evil.example` 时 403。
+  - **停止**：给 dev.mjs 发 SIGINT 后 5320、5325 都释放，无残留进程。
+  - **浏览器验证**（内置浏览器，iframe 扫描脚本）：1280、1440 两种宽度 × 4 个视角 × 24 个路由，共 192 页全部通过，检查了顶栏不溢出、面包屑不被挤、无横向滚动、状态为正常、滚到底不盖住可点元素。
+  - **三种状态实看**：
+    - 正常：「数据库正常 · 迁移 0001」；
+    - 停数据库：经代理返回 503，页面显示红色「数据库连不上」，悬停看到「ECONNREFUSED（检查于 17:58）」；
+    - 只起前端：显示「后端连不上」，悬停看到「HTTP 502」。
+    三种情况页面都照常渲染，不白屏。
+- 截图：只在会话里看过，未保存；数据库启动失败的日志证据在 `~/Library/Application Support/trainee-hub/evidence/issue1-工程骨架-20261106/`。
+- 发布与回读：无需发布。
+- 与授权不一致之处、遗留问题、范围外发现：
+  - ① 计划里说状态标记放「主区右上角」，实际改到**主区右下角**（固定定位），原因：放顶栏时，1280 宽有 10 个页面的面包屑被挤（最挤的管理员「成员与角色」差 153px，去掉标记后只剩约 21px 余量）。代价是浏览中途标记会叠在右下角卡片上（已给主区底部留白，滚到底不盖内容）；想换成侧栏底部常驻也只是改一处。
+  - ② 检查时间放在悬停提示里，没有常驻显示（计划写的是常驻），为了让标记更短。
+  - ③ 迁移只建了 14 张核心表；周期任务规则、工作日日历、交接要点、资产、通知等留给后续各票。`task_instance.recurring_rule_id` 暂不加外键，等 `recurring_rule` 建表时补。
+  - ④ 外键实际用到的表比派单列的多：`team` 被用户表引用，路径模板在 PRD 里是 4 张表，都一并建了。
+  - ⑤ 数据库是项目单独的实例，不开机自启：电脑重启后跑一次 `npm run dev:all` 或 `npm run db:up`；`npm test` 也会自动拉起数据库并让它继续运行。
+  - ⑥ Docker Compose 按 issue 留到部署时（#19）。
+  - ⑦ 写接口还没有，正文大小上限等 G-07 的其余保护，等第一个写接口时在 `app.ts` 入口加。
+  - ⑧ 用户同意后已推送到 `claude/1-backend-skeleton`（按工程流程的分支命名，本地 worktree 分支仍叫 `claude/serene-rubin-a28633`），开 PR #27；仓库没有配置 CI。
+  - ⑨ 2026-11-07 常浩在本会话回「送」后，用驿窗 relay_to_chatgpt 把 PR #27 送 ChatGPT 审核（第 1 轮）：handoffId `h1a1b3a224a200`，送出时状态 `opening`（ChatGPT 新会话正在打开），审核结论未回。另两个驿窗会话转述的同意没有采用，等常浩本人确认后才送。ChatGPT 回「需修改」时逐条改或说明后再送，最多 2 轮，每轮记在这里。
+- 本轮新坑：L-02。
 
 ## GitHub issue 按 PRD v1.1 更新（2026-11-06，Claude，用户同意「现在更新 issue」；交接已本地提交、未推送、无需发布）
 
