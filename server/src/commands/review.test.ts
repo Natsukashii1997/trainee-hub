@@ -185,9 +185,10 @@ describe('骨架验收第 3 项：评审负责人推导与快照', () => {
     const ms = await pj2Milestone('快照');
     const v1 = await submit(xu, { milestoneId: ms });
     assert.equal(v1.reviewerId, 'u-wu');
-    // 换带教：吴桐的项目带教关系今天结束，周颖今天开始（同一天两条都生效）
-    await pool.query(`update mentorship set end_date = ${TODAY} where id = 'mt-4'`);
-    await pool.query(`insert into mentorship (mentor_id, trainee_id, scope, project_id, start_date) values ('u-zhou', 'u-xu', 'project', 'pj-2', ${TODAY})`);
+    // 用 C17 换带教：周颖今天开始带许诺的 pj-2，吴桐的项目带教关系今天结束（同一天两条都生效）
+    const changed = await run<{ endedIds: string[] }>(zhou, 'C17', { mentorId: 'u-zhou', traineeId: 'u-xu', scope: 'project', projectId: 'pj-2' });
+    assert.deepEqual(changed.endedIds, ['mt-4']);
+    assert.equal((await one<{ same: boolean }>(`select end_date = ${TODAY} as same from mentorship where id = 'mt-4'`)).same, true);
     assert.equal((await one<{ reviewer_id: string }>('select reviewer_id from submission where id = $1', [v1.submissionId])).reviewer_id, 'u-wu');
     // 骨架期任一带教都能评审；评审记录记实际评审人，快照不变
     const r = await run<Rev>(zhou, 'C08', { submissionId: v1.submissionId, grade: '需改进', actions: [revise] });
