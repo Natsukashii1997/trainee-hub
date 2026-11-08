@@ -4,7 +4,7 @@ import type pg from 'pg';
 import type { CommandId } from '../authorize.ts';
 import { CommandError, type Handler, ids, text, time } from './kit.ts';
 
-const STATUS_CN: Record<string, string> = {
+export const STATUS_CN: Record<string, string> = {
   draft: '草拟', active: '推进中', ended: '已结束',
   todo: '未开始', doing: '进行中', submitted: '待评审', revise: '需修改', passed: '已通过', cancelled: '已取消',
 };
@@ -18,7 +18,7 @@ async function lockProject(tx: pg.PoolClient, projectId: string) {
 }
 
 /** 锁住节点，连带取出所属项目的成员 */
-async function lockMilestone(tx: pg.PoolClient, milestoneId: string) {
+export async function lockMilestone(tx: pg.PoolClient, milestoneId: string) {
   const r = await tx.query<{ id: string; project_id: string; status: string; due_at: Date }>(
     'select id, project_id, status, due_at from milestone where id = $1 for update', [milestoneId]);
   if (!r.rows[0]) throw new CommandError(404, '没有这个关键节点');
