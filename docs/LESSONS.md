@@ -44,3 +44,11 @@
 - 正确做法：脚本启动 `pg_ctl` / `postgres` 时显式传 `LC_ALL`（`scripts/db.mjs` 的 `PG_ENV`，环境里没有就用 `en_US.UTF-8`）。以后装成 launchd 常驻时，plist 的 `EnvironmentVariables` 里也要写 `LC_ALL`。
 - 证据：`~/Library/Application Support/trainee-hub/evidence/issue1-工程骨架-20261106/postgres-启动失败.log`；修后 `npm run db:up` 正常启动。
 - 升级：未升级（换个项目也成立，可提议提升为全局坑）。
+
+## L-03 做反例测试时临时改了未入库的文件，用 `git checkout` 恢复失败，坏改动差点留下（2026-11-08）
+
+- 现象：为了确认测试能抓到错误，临时把 `server/src/seed.ts` 的演示模式判断改成 `if (false)`，跑完用 `git checkout -- server/src/seed.ts || true` 恢复。命令没报错，但文件仍是坏版本；接着看 `git status` 才发现。
+- 根因：新文件还没入库，`git checkout` 找不到可恢复的版本，直接失败；`|| true` 又把失败吞掉了。迁移文件那次先 `cp` 了备份，所以恢复成功。
+- 正确做法：改任何文件做反例前，先 `cp` 到 scratchpad 备份，用备份恢复，不靠 `git checkout`，不对恢复命令加 `|| true`；恢复后 `grep` 一次关键行，确认已经改回。
+- 证据：本会话命令输出：恢复后 `grep -n "if (false)" server/src/seed.ts` 仍命中第 13 行，手动改回后再跑全量测试通过。
+- 升级：未升级（换个项目也成立，可提议提升为全局坑）。

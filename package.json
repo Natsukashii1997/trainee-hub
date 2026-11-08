@@ -10,6 +10,7 @@
     "db:up": "node scripts/db.mjs up",
     "db:stop": "node scripts/db.mjs stop",
     "db:migrate": "node scripts/db.mjs exec -- node server/src/migrate.ts",
+    "db:seed": "node scripts/db.mjs exec -- node server/src/seed.ts",
     "build": "tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit && tsc --noEmit -p server",
     "test:server": "node scripts/db.mjs up && node scripts/db.mjs exec -- node --test \"server/src/**/*.test.ts\"",

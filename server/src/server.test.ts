@@ -65,14 +65,7 @@ describe('迁移', () => {
     await assert.rejects(pool.query('truncate event_log cascade'), /只追加/); // 不带 cascade 先被外键挡住，带了才会真清
   });
 
-  test('待办：同一规则 + 对象 + 负责人只能有一条未关闭', async () => {
-    await pool.query("insert into app_user (id, name, role) values ('u-admin', '管理员', 'admin')");
-    const add = () => pool.query("insert into todo (rule, subject_type, subject_id, owner_id, title) values ('R01', 'user', 'u-new', 'u-admin', '新成员待分配')");
-    await add();
-    await assert.rejects(add(), /todo_one_open/);
-    await pool.query("update todo set status = 'done', closed_at = now() where rule = 'R01'");
-    await add(); // 关掉之后可以再开一条
-  });
+  // v1.1 的待办表在 0003 去掉了（骨架期待办是事实查询，PRD 第 11 节）；骨架表的约束测试见 skeleton.test.ts
 });
 
 describe('数据关系约束（0002）', () => {

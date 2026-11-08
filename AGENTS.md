@@ -31,6 +31,7 @@ npm run dev:all                  # 一条命令：数据库（没建就建、没
 npm run dev                      # 只起前端（127.0.0.1:5320，/api 代理到后端；后端没起时顶栏显示「后端连不上」）
 npm run dev:server               # 只起后端（改代码自动重启）
 npm run db:up                    # 建库并启动开发库（幂等）；db:stop 停止；db:migrate 执行迁移（幂等）
+TRAINEE_HUB_DEMO=1 npm run db:seed  # 清空本机开发库、从头迁移、写入虚构示例数据（只在演示模式下运行，PRD 4.1）
 npm test                         # vitest + 后端测试（连真测试库，会先 db:up）+ 交接格式 + 通用规则，提交前跑
 npm run typecheck                # 前端与后端（server/tsconfig.json）的 tsc --noEmit
 node --test tests/*.test.mjs     # 交接格式 + 通用规则（含自测）
