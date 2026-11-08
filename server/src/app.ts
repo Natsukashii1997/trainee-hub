@@ -2,6 +2,7 @@
 import http from 'node:http';
 import type pg from 'pg';
 import { type Actor, authorize } from './authorize.ts';
+import { CommandError, isCommandId, runCommand } from './commands/index.ts';
 import { DEMO_COOKIE } from './demo.ts';
 import { currentMigration } from './migrate.ts';
 
@@ -133,6 +134,24 @@ export function createApp(pool: pg.Pool, options: AppOptions = {}): http.Server 
       const gate = authorize(actor, { kind: 'read' });
       if (!gate.ok) return send(res, gate.status, { error: demo ? gate.reason : `${gate.reason}：非演示模式在飞书登录做好之前不开放业务接口` });
       if (pathname === '/api/me' && req.method === 'GET') return send(res, 200, { me: actor, demo });
+
+      // 业务命令：POST /api/commands/C01 …（PRD 4.2），都经执行器 runCommand（commands/index.ts）
+      const cmd = /^\/api\/commands\/([A-Z]\d{2})$/.exec(pathname);
+      if (cmd) {
+        if (req.method !== 'POST') return send(res, 405, { error: '只支持 POST' });
+        if (!isCommandId(cmd[1])) return send(res, 404, { error: '没有这个命令' });
+        const body = await readJson(req);
+        if (!body) return send(res, 400, { error: '请求体应为 JSON 对象' });
+        try {
+          return send(res, 200, { result: await runCommand(pool, actor, cmd[1], body) });
+        } catch (e) {
+          if (e instanceof CommandError) return send(res, e.status, { error: e.message });
+          const code = (e as { code?: string }).code;
+          // 数据库约束兜底（23xxx）：命令里的校验没拦住的情况，不暴露内部细节
+          if (code?.startsWith('23')) return send(res, 409, { error: '数据不符合约束，没有写入' });
+          throw e;
+        }
+      }
       return send(res, 404, { error: '没有这个接口' });
     } catch (e) {
       console.error(e);
