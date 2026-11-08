@@ -186,7 +186,7 @@ describe('HTTP：POST /api/commands/:id', () => {
   test('前置条件不满足 409；没有这个命令 404；还没实现的命令 404；坏请求体 400', async () => {
     assert.equal((await post('/api/commands/C02', { projectId: 'pj-1' }, 'u-zhou')).status, 409);
     assert.equal((await post('/api/commands/C99', {}, 'u-zhou')).status, 404);
-    assert.match(String((await post('/api/commands/C14', {}, 'u-zhou')).body.error), /还没有实现/);
+    assert.match(String((await post('/api/commands/C16', {}, 'u-zhou')).body.error), /还没有实现/);
     assert.equal((await post('/api/commands/C02', ['pj-2'], 'u-zhou')).status, 400);
   });
 });

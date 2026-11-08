@@ -9,12 +9,13 @@ import type pg from 'pg';
 import { type Actor, authorize, type CommandId, COMMANDS } from '../authorize.ts';
 import { CommandError, type Handler } from './kit.ts';
 import { blockerHandlers } from './blocker.ts';
+import { conclusionHandlers } from './conclusion.ts';
 import { projectHandlers } from './project.ts';
 import { reviewHandlers } from './review.ts';
 
 export { CommandError } from './kit.ts';
 
-const HANDLERS: Partial<Record<CommandId, Handler>> = { ...projectHandlers, ...reviewHandlers, ...blockerHandlers };
+const HANDLERS: Partial<Record<CommandId, Handler>> = { ...projectHandlers, ...reviewHandlers, ...blockerHandlers, ...conclusionHandlers };
 
 export const isCommandId = (id: string): id is CommandId => Object.hasOwn(COMMANDS, id);
 

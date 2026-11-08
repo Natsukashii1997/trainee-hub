@@ -66,7 +66,7 @@ async function pj2Milestone(name: string) {
   return (await run<{ milestoneId: string }>(zhou, 'C03', { projectId: 'pj-2', name, acceptanceCriteria: '标准', dueAt: '2026-12-31T18:00:00+08:00' })).milestoneId;
 }
 
-describe('骨架验收第 1、2 项：项目与成果闭环、成果复用（走 HTTP 接口）', () => {
+describe('骨架验收第 2 项：成果复用（走 HTTP 接口；第 1 项全程见 conclusion.test.ts）', () => {
   test('提交 V1 → 需改进（含修改再交）→ V2（行动自动完成）→ 通过并逐条认定 → 处理推进行动', async () => {
     // 节点 ms-1-1 关联林夏、许诺各自的任务；再关联一条林夏的任务 k-lin-4，用来验证「没被勾选的任务不变」
     await pool.query("update task_instance set in_project = true, project_id = 'pj-1' where id = 'k-lin-4'");
