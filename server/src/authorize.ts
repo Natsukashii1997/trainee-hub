@@ -26,8 +26,8 @@ const TRAINEE_COMMANDS = new Set<CommandId>(['C01', 'C03', 'C04', 'C06', 'C07', 
 export type Access =
   /** 执行业务命令；traineeIds 是这个对象相关的管培生（如项目成员、任务所属人），新建时可不传 */
   | { kind: 'command'; command: CommandId; traineeIds?: string[] }
-  /** 读某位或某几位管培生的个人数据；不传 traineeIds 表示全员可见的内容 */
-  | { kind: 'read'; traineeIds?: string[] };
+  /** 读某位或某几位管培生的个人数据；不传 traineeIds 表示全员可见的内容；mentorOnly 表示只给带教看的内容（如决策看板） */
+  | { kind: 'read'; traineeIds?: string[]; mentorOnly?: boolean };
 
 export type Decision = { ok: true } | { ok: false; status: 401 | 403; reason: string };
 
@@ -44,6 +44,7 @@ export function authorize(actor: Actor | null, access: Access): Decision {
     if (!related) return deny(403, '只能操作与自己相关的对象');
     return { ok: true };
   }
+  if (access.mentorOnly) return deny(403, '只有带教能查看');
   if (!related) return deny(403, '只能查看自己的数据');
   return { ok: true };
 }
