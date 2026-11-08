@@ -213,8 +213,8 @@ describe('健康检查 GET /api/health', () => {
     assert.equal((await request(pool, '/api/health', { headers: { origin: 'http://127.0.0.1:5320' } })).status, 200);
   });
 
-  test('非 GET 405，未知接口 404', async () => {
+  test('非 GET 405；非演示模式下其他接口未登录一律 401（#36，见 auth.test.ts）', async () => {
     assert.equal((await request(pool, '/api/health', { method: 'POST' })).status, 405);
-    assert.equal((await request(pool, '/api/nope')).status, 404);
+    assert.equal((await request(pool, '/api/nope')).status, 401);
   });
 });

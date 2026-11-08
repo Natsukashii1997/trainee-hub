@@ -30,6 +30,7 @@ npm install                      # 首次装依赖
 npm run dev:all                  # 一条命令：数据库（没建就建、没起就起）→ 迁移 → 后端 127.0.0.1:5325 + 前端 127.0.0.1:5320；Ctrl-C 停后端和前端
 npm run dev                      # 只起前端（127.0.0.1:5320，/api 代理到后端；后端没起时顶栏显示「后端连不上」）
 npm run dev:server               # 只起后端（改代码自动重启）
+TRAINEE_HUB_DEMO=1 npm run dev:all  # 演示模式起开发环境：可经 /api/demo/login 切换示例身份；不设时业务接口一律 401（PRD 2.2）
 npm run db:up                    # 建库并启动开发库（幂等）；db:stop 停止；db:migrate 执行迁移（幂等）
 TRAINEE_HUB_DEMO=1 npm run db:seed  # 清空本机开发库、从头迁移、写入虚构示例数据（只在演示模式下运行，PRD 4.1）
 npm test                         # vitest + 后端测试（连真测试库，会先 db:up）+ 交接格式 + 通用规则，提交前跑
@@ -64,7 +65,7 @@ docs/
   OPERATIONS.md      操作手册：交接写法、报告与验收
   templates/handoff.md  交接一节的骨架
 server/              后端（Node + TypeScript，Node 直接跑 .ts，不编译）
-  src/               入口 index.ts、HTTP 与来源校验 app.ts、连接池 db.ts、迁移 migrate.ts、测试 *.test.ts
+  src/               入口 index.ts、HTTP 与来源校验 app.ts、统一授权入口 authorize.ts、演示模式 demo.ts、初始化脚本 seed.ts、连接池 db.ts、迁移 migrate.ts、测试 *.test.ts
   migrations/        数据库迁移（NNNN_名称.sql）
 scripts/
   check-rules.mjs    通用规则检查（只查机器能判定的）
