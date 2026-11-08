@@ -8,12 +8,13 @@
 import type pg from 'pg';
 import { type Actor, authorize, type CommandId, COMMANDS } from '../authorize.ts';
 import { CommandError, type Handler } from './kit.ts';
+import { blockerHandlers } from './blocker.ts';
 import { projectHandlers } from './project.ts';
 import { reviewHandlers } from './review.ts';
 
 export { CommandError } from './kit.ts';
 
-const HANDLERS: Partial<Record<CommandId, Handler>> = { ...projectHandlers, ...reviewHandlers };
+const HANDLERS: Partial<Record<CommandId, Handler>> = { ...projectHandlers, ...reviewHandlers, ...blockerHandlers };
 
 export const isCommandId = (id: string): id is CommandId => Object.hasOwn(COMMANDS, id);
 
