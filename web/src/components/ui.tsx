@@ -2,8 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useId, useMemo, useR
 import { Link } from 'react-router-dom';
 import type { Grade, Role, TaskInstance, User } from '../data/types';
 import { STATUS_LABEL } from '../data/types';
-import { demoUserFor, isOverdue, userById } from '../data/api';
-import { type Actor, demoLogin, demoLogout, fetchIdentities, fetchMe, type Identity, ServerError } from '../data/server';
+import { type Actor, demoLogin, demoLogout, demoUserFor, fetchIdentities, fetchMe, type Identity, isOverdue, ServerError, userById } from '../data/api';
 
 /* 通用组件：只收 props，不读 data 层（Face / StatusChip / GradeChip / Session 是对数据类型的薄包装，保留给旧页面）。
    用法见 ./README.md，样子见 /dev/kit。 */

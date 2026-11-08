@@ -1,19 +1,25 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Sheet } from '../components/Layout';
-import { CardHead, Icon, Mark, MetaPill, PageHead, Segmented, StatusPill, Tile, useSession, type Domain, type IconName } from '../components/ui';
+import { Sheet, type Crumb } from '../components/Layout';
+import { Avatar, CardHead, Empty, Icon, Mark, MetaPill, PageHead, StatusPill, Tile, useSession, type Domain, type IconName } from '../components/ui';
 import * as api from '../data/api';
-import type { Role } from '../data/types';
-import { ROLE_LABEL } from '../data/types';
 
-/* 杂项：飞书登录页（PRD 2：只用飞书登录）、二期 / 三期占位页（PRD 12 分期）。 */
+/* 杂项：演示登录页（页面清单 G4）、还没做的页面占位、二期 / 三期占位页。 */
 
 // =====================================================================
-// 登录
+// 演示登录（G4）：演示模式下选一个示例身份进入；非演示模式显示「未开放」（PRD 2.2）
 // =====================================================================
+const roleText = (i: { role: string; isAdmin: boolean }) => (i.role === 'trainee' ? '示例管培生' : i.isAdmin ? '示例带教 · 有管理权限' : '示例带教');
+
 export function Login() {
   const nav = useNavigate();
-  const { role, setRole } = useSession();
-  const enter = () => nav('/');
+  const { status, actor, identities, switchTo } = useSession();
+  const [busy, setBusy] = useState<string | null>(null);
+  const [err, setErr] = useState('');
+  const enter = (id: string) => {
+    setBusy(id); setErr('');
+    switchTo(id).then(() => nav('/'), (e: Error) => { setErr(e.message); setBusy(null); });
+  };
   return (
     <div className="login lg-wrap">
       <style>{CSS}</style>
@@ -21,30 +27,81 @@ export function Login() {
       <div className="lg-shell">
         <section className="lg-brand" aria-label="管培生工作台">
           <div className="lg-mark"><Mark /><div><b>管培生工作台</b><small>TRAINEE HUB</small></div></div>
-          <h2>培养路径、飞书资料和 AI 资产，<em>放在一处</em></h2>
+          <h2>在真实项目里做事，<em>每一步都有反馈</em></h2>
           <ul>
-            <li><Tile icon="grow" domain="grow" /><span><b>路径和进度</b>在哪站、这周交什么、下一站哪天开始</span></li>
-            <li><Tile icon="pen" domain="ment" /><span><b>带教不漏</b>待点评、换站接人、交接要点按时提醒</span></li>
-            <li><Tile icon="spark" domain="ai" /><span><b>AI 资产</b>同事验证过的 Skill 和 Prompt，复制就能用</span></li>
+            <li><Tile icon="flag" domain="acc" /><span><b>项目实践</b>关键节点、成果版本和评审，下一步行动不漏</span></li>
+            <li><Tile icon="grow" domain="grow" /><span><b>培养成长</b>我的路径、能力证据和成长档案，点回来源</span></li>
+            <li><Tile icon="spark" domain="ai" /><span><b>知识与工具</b>资料、案例和 AI 资产，按问题复用</span></li>
           </ul>
-          <div className="lg-foot"><Icon name="lock" size={13} />产出和点评只对本人、相关带教人和管理员可见</div>
+          <div className="lg-foot"><Icon name="lock" size={13} />演示模式只在本机运行，只用虚构的示例数据</div>
         </section>
         <section className="lg-card" aria-label="登录">
-          <span className="lg-fs"><Icon name="user" size={20} /></span>
-          <h1>用飞书账号登录</h1>
-          <p>在飞书里打开会自动登录，不需要账号密码。只有公司飞书成员能进入。</p>
-          <button className="btn pri lg-btn" type="button" onClick={enter}>使用飞书登录<Icon name="right" /></button>
-          <div className="lg-steps">
-            <div><i className="num">1</i><span>在本期<b>预置名单</b>里：首次登录直接进入管培生首页</span></div>
-            <div><i className="num">2</i><span>不在名单里：先以<b>同事</b>身份浏览公开内容，管理员会为你分配角色</span></div>
-          </div>
-          <div className="lg-demo">
-            <span>原型演示 · 选一个视角进入</span>
-            <Segmented full value={role} onChange={(r: Role) => setRole(r)} options={(['trainee', 'mentor', 'admin', 'colleague'] as Role[]).map(r => ({ value: r, label: ROLE_LABEL[r] }))} />
-          </div>
+          {status === 'loading' && <div className="lg-wait" aria-busy="true">正在连接后端…</div>}
+          {(status === 'anon' || status === 'in') && (
+            <>
+              <span className="lg-fs"><Icon name="user" size={20} /></span>
+              <h1>选一个示例身份进入</h1>
+              <p>现在是演示模式：飞书登录还没接入，用下面的示例身份体验。进入后可以在顶栏「演示身份」里随时切换。</p>
+              <div className="lg-ids" role="list">
+                {identities.map(i => (
+                  <button key={i.id} type="button" role="listitem" className={actor?.id === i.id ? 'lg-id on' : 'lg-id'} disabled={busy !== null} onClick={() => enter(i.id)}>
+                    <Avatar name={i.name} size="md" />
+                    <span className="lg-id-t"><b>{i.name}</b><small>{roleText(i)}</small></span>
+                    {actor?.id === i.id ? <StatusPill tone="plain">当前</StatusPill> : <Icon name="right" />}
+                  </button>
+                ))}
+              </div>
+              {err && <p className="lg-err" role="alert">{err}</p>}
+              <div className="lg-note"><Icon name="lock" size={13} />示例身份由后端初始化脚本生成；重置数据用 <code>TRAINEE_HUB_DEMO=1 npm run db:seed</code></div>
+            </>
+          )}
+          {status === 'closed' && (
+            <>
+              <span className="lg-fs"><Icon name="lock" size={20} /></span>
+              <h1>未开放</h1>
+              <p>飞书登录和服务端授权还没做好，非演示模式下工作台暂不开放。</p>
+              <div className="lg-note">本机体验请用演示模式启动：<code>TRAINEE_HUB_DEMO=1 npm run dev:all</code></div>
+            </>
+          )}
+          {status === 'offline' && (
+            <>
+              <span className="lg-fs"><Icon name="alert" size={20} /></span>
+              <h1>连不上后端服务</h1>
+              <p>工作台的数据都来自本机后端。请在项目目录启动后再刷新这一页。</p>
+              <div className="lg-note"><code>TRAINEE_HUB_DEMO=1 npm run dev:all</code></div>
+            </>
+          )}
         </section>
       </div>
     </div>
+  );
+}
+
+// =====================================================================
+// 还没做的页面：写明在第 3 步哪张 issue 实现（页面清单编号）
+// =====================================================================
+const PENDING: Record<string, { title: string; level: 'A' | 'B' | 'C'; issue: number; crumbs: Crumb[]; desc: string }> = {
+  P1: { title: '项目列表', level: 'A', issue: 45, crumbs: [{ label: '项目实践' }], desc: '项目名称、状态、主责、当前节点、受阻标记、项目带教；可创建项目。' },
+  P2: { title: '项目详情', level: 'A', issue: 45, crumbs: [{ label: '项目实践', to: '/projects' }], desc: '基本信息与验收条件、成员与项目带教、关键节点列表、关联的培养任务、最近反馈。' },
+  P3: { title: '节点详情', level: 'A', issue: 45, crumbs: [{ label: '项目实践', to: '/projects' }], desc: '节点目标与验收标准、成果版本时间线、评审面板、受阻记录与响应。' },
+  T5: { title: '阶段复盘', level: 'B', issue: 49, crumbs: [{ label: '培养成长' }], desc: '自评 5 问、带教结论；自动汇总项目、成果、反馈和证据覆盖。' },
+  K2: { title: '知识资料', level: 'B', issue: 49, crumbs: [{ label: '知识与工具', to: '/knowledge' }], desc: '资料卡片、四维标签筛选；模板与 SOP 筛选视图。' },
+  K3: { title: '业务案例', level: 'B', issue: 49, crumbs: [{ label: '知识与工具', to: '/knowledge' }], desc: '案例列表与详情：来源项目、方法、验证结果、已知限制。' },
+  K5: { title: 'FAQ', level: 'C', issue: 50, crumbs: [{ label: '知识与工具', to: '/knowledge' }], desc: '带教机器人审核入库的问答，随机器人接口一起做；骨架期只放占位。' },
+  M2: { title: '能力项', level: 'A', issue: 48, crumbs: [{ label: '管理', to: '/admin' }], desc: '能力项列表与版本；维护能力项（C18）。' },
+};
+
+export function Pending({ page }: { page: keyof typeof PENDING }) {
+  const p = PENDING[page];
+  return (
+    <Sheet crumbs={[...p.crumbs, { label: p.title }]}>
+      <PageHead kicker={<>{page}<i aria-hidden="true" />{p.level} 级</>} title={p.title} sub={p.desc} right={<MetaPill>第 3 步 #{p.issue}</MetaPill>} />
+      <div className="bento">
+        <section className="card s12" aria-label="还没做">
+          <Empty size="lg" icon="flag" title={`这一页在第 3 步 #${p.issue} 实现`}>导航已经按新结构排好，页面内容还没做。</Empty>
+        </section>
+      </div>
+    </Sheet>
   );
 }
 
@@ -156,13 +213,19 @@ const CSS = `
 .lg-fs{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--acc-soft);color:var(--acc-ink)}
 .lg-card h1{margin-top:22px;font-size:var(--fs-2xl);font-weight:300;letter-spacing:-.01em}
 .lg-card>p{margin-top:8px;font-size:13px;color:var(--mute);line-height:1.75}
-.lg-btn{width:100%;height:46px;margin-top:26px;font-size:14px;border-radius:14px}
-.lg-steps{margin-top:22px;display:grid;gap:8px}
-.lg-steps>div{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;line-height:1.65;color:var(--ink2)}
-.lg-steps i{width:20px;height:20px;border-radius:7px;flex:none;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:700;background:rgba(21,25,38,.06);color:var(--ink2);margin-top:1px}
-.lg-steps b{font-weight:600;color:var(--ink)}
-.lg-demo{margin-top:auto;padding-top:22px;display:grid;gap:8px;border-top:1px dashed var(--line2)}
-.lg-demo>span{font-size:11.5px;color:var(--mute);margin-top:16px}
+.lg-wait{margin:auto;font-size:13px;color:var(--mute)}
+.lg-ids{margin-top:24px;display:grid;gap:8px}
+.lg-id{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.62);box-shadow:var(--sh-sm);text-align:left;color:var(--ink2);transition:background var(--t),box-shadow var(--t)}
+.lg-id:hover:not(:disabled){background:#fff;box-shadow:0 0 0 1.5px rgba(74,78,216,.35),var(--sh-sm)}
+.lg-id:disabled{cursor:progress;opacity:.7}
+.lg-id-t{flex:1;min-width:0}
+.lg-id b{display:block;font-size:14px;font-weight:600;color:var(--ink)}
+.lg-id small{display:block;font-size:12px;color:var(--mute);margin-top:2px}
+.lg-id>.ico{width:15px;height:15px;color:var(--mute)}
+.lg-id.on{background:#fff;box-shadow:0 0 0 1.5px var(--acc),var(--sh-sm)}
+.lg-err{margin-top:12px;font-size:12.5px;color:var(--due-ink)}
+.lg-note{margin-top:auto;padding-top:22px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--mute);line-height:1.7}
+.lg-note code{font-family:var(--mono);font-size:11.5px;padding:1px 6px;border-radius:6px;background:rgba(21,25,38,.06);color:var(--ink2)}
 .sn-f{display:flex;flex-direction:column;gap:6px;min-height:200px;overflow:hidden}
 .sn-f .chip{margin-left:auto}
 .sn-f h3{margin-top:12px;font-size:15px;font-weight:600}

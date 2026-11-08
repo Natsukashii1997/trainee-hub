@@ -1,9 +1,8 @@
-import { Component, Suspense, useEffect, useState, type ReactNode } from 'react';
+import { Component, Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, Navigate, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Avatar, Empty, Icon, Mark, useSession, useToast, type Domain, type IconName } from './ui';
 import { HealthStatus } from './Health';
-import { myWeek } from '../data/api';
-import { todoCount, view, type TodoView } from '../data/server';
+import { myWeek, todoCount, view, type TodoView } from '../data/api';
 
 /* 应用外壳（V3「柔光」）：左侧玻璃侧栏 + 右侧主区。顶栏由各页面通过 <Sheet> 渲染。
    结构按页面清单「全局」G1–G4（PRD 10.1）：四个工作域（工作台、项目实践、培养成长、知识与工具）+ 管理区（只对管理者显示）；
@@ -71,7 +70,7 @@ function groupsFor(role: 'trainee' | 'mentor', isAdmin: boolean, meId: string, t
     { to: '/admin/rotation', icon: 'swap', label: '轮岗排期' },
     { to: '/admin/review', icon: 'shield', label: '审核' },
     { to: '/admin/ai', icon: 'spark', label: 'AI 与接入' },
-    { to: '/admin/later', icon: 'gear', label: '以后', later: true, extra: later },
+    { to: '/admin/later', icon: 'gear', label: '以后', later: true },
   ] });
   return g;
 }
@@ -150,23 +149,44 @@ export function AppLayout() {
   return <div className="app"><Sidebar /><PageFrame><Outlet /></PageFrame><HealthStatus /></div>;
 }
 
-/** 演示身份切换（页面清单 G3）：只在演示模式出现，在示例管培生和示例带教之间切换 */
+/** 演示身份切换（页面清单 G3）：只在演示模式出现，在示例管培生和示例带教之间切换。
+    用自绘的弹出列表而不是原生 select：样式能跟 V3 一致，也能用真实点击检查（全局坑 G-11）。 */
 function IdentitySwitch() {
   const { demo, actor, identities, switchTo } = useSession();
   const say = useToast();
+  const [open, setOpen] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const away = (e: MouseEvent) => { if (!box.current?.contains(e.target as Node)) setOpen(false); };
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('mousedown', away);
+    document.addEventListener('keydown', esc);
+    return () => { document.removeEventListener('mousedown', away); document.removeEventListener('keydown', esc); };
+  }, [open]);
   if (!demo || !actor) return null;
   const label = (i: { role: string; isAdmin: boolean }) => (i.role === 'trainee' ? '管培生' : i.isAdmin ? '带教 · 管理' : '带教');
+  const pick = (id: string) => {
+    setOpen(false);
+    if (id === actor.id) return;
+    switchTo(id).then(() => say(`已切换为${identities.find(i => i.id === id)?.name ?? ''}`), (err: Error) => say(err.message));
+  };
   return (
-    <label className="idsw" title="演示模式：切换示例身份">
-      <span>演示身份</span>
-      <select
-        id="demo-identity"
-        value={actor.id}
-        onChange={e => { const id = e.target.value; switchTo(id).then(() => say(`已切换为${identities.find(i => i.id === id)?.name ?? ''}`), err => say(err.message)); }}
-      >
-        {identities.map(i => <option key={i.id} value={i.id}>{i.name}（{label(i)}）</option>)}
-      </select>
-    </label>
+    <div className="idsw" ref={box}>
+      <button type="button" className="idsw-btn" aria-haspopup="menu" aria-expanded={open} aria-label={`演示身份：${actor.name}（${label(actor)}），点击切换`} onClick={() => setOpen(o => !o)}>
+        <span className="idsw-k">演示身份</span><Avatar name={actor.name} size="sm" /><b>{actor.name}</b><small>{label(actor)}</small><Icon name="down" />
+      </button>
+      {open && (
+        <div className="idsw-menu" role="menu" aria-label="切换示例身份">
+          {identities.map(i => (
+            <button key={i.id} type="button" role="menuitemradio" aria-checked={i.id === actor.id} className={i.id === actor.id ? 'on' : undefined} onClick={() => pick(i.id)}>
+              <Avatar name={i.name} size="sm" /><span className="idsw-t"><b>{i.name}</b><small>{label(i)}</small></span>{i.id === actor.id && <Icon name="check" />}
+            </button>
+          ))}
+          <div className="idsw-foot">演示模式 · 只用虚构的示例数据</div>
+        </div>
+      )}
+    </div>
   );
 }
 

@@ -23,6 +23,7 @@ export * from './schedule';
 export * from './metrics';
 export * from './actions';
 export * from './aiAccess';
+export * from './server'; // A 级：调后端的查询与命令、演示登录
 export { ADMIN_ID, COHORT_ID, DEMO_NOW } from './mock';
 
 // 初始化：把示例数据里已发生的事补成事件，再推算一次

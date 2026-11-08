@@ -52,3 +52,11 @@
 - 正确做法：改任何文件做反例前，先 `cp` 到 scratchpad 备份，用备份恢复，不靠 `git checkout`，不对恢复命令加 `|| true`；恢复后 `grep` 一次关键行，确认已经改回。
 - 证据：本会话命令输出：恢复后 `grep -n "if (false)" server/src/seed.ts` 仍命中第 13 行，手动改回后再跑全量测试通过。
 - 升级：未升级（换个项目也成立，可提议提升为全局坑）。
+
+## L-04 5320 被别的会话占着，换端口预览后登录被拒「不接受其他网站发来的请求」（2026-11-09）
+
+- 现象：#43 联调时，主目录有别的会话的 vite 占着 5320。改在别的端口起前端后：① `preview_start` 给进程注入的 `PORT` 被后端读走（`server/src/index.ts` 读 `PORT`），后端和前端抢同一个端口，起不来；② 前端起来后点示例身份登录，后端返回 403「不接受其他网站发来的请求」。
+- 根因：后端来源校验只认 5320 / 5321 两个前端来源（`server/src/app.ts` 的 `FRONTEND_ORIGINS`），这是有意的安全约束（全局坑 G-07）；`changeOrigin` 只改 Host，不改 Origin。
+- 正确做法：不改项目配置、不放宽来源校验。先 `lsof -nP -iTCP:5320 -sTCP:LISTEN` 看端口是谁的，别人的进程不要停；需要并行预览时，后端启动命令显式写 `PORT=5325`，前端用 scratchpad 里的临时 vite 配置（继承 `vite.config.ts`，换端口，代理里加 `headers: { origin: 'http://127.0.0.1:5320' }`），用完删掉 launch.json 里的临时配置。
+- 证据：本会话预览日志「后端启动失败：listen EADDRINUSE: address already in use 127.0.0.1:5333」；登录页截图上的「不接受其他网站发来的请求」；改用临时配置后登录与切换正常（`~/Library/Application Support/trainee-hub/evidence/2026-11-09-43/`）。
+- 升级：未升级。
