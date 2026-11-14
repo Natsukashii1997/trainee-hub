@@ -33,6 +33,6 @@ test('AI 产出必须留痕；接口密钥只给状态', () => {
   for (const f of AI_FEATURES.filter(x => x.aiOutput)) expect(f.trace).toMatch(/执行方.*接入方式.*模型.*时间.*审核人/);
   for (const o of AI_OPEN_APIS) {
     expect(Object.keys(o)).not.toContain('key');
-    expect(o.canWrite.some(w => w.includes('FAQ') && w.includes('留痕'))).toBe(true);
+    expect(o.canWrite.some(w => w.includes('答案') && w.includes('留痕'))).toBe(true);
   }
 });

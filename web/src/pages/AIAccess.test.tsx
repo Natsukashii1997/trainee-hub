@@ -23,7 +23,7 @@ test('AI 与接入：不调用 AI 时默认执行方没有切换按钮，四块�
 test('AI 与接入：点功能看链路，AI 产出那一段标在工作台外', () => {
   mount('admin');
   const flow = () => screen.getByRole('region', { name: '功能链路' });
-  expect(within(flow()).getByRole('heading', { name: 'FAQ 答案' })).toBeTruthy();
+  expect(within(flow()).getByRole('heading', { name: '答疑答案草稿' })).toBeTruthy();
   expect(within(flow()).getAllByText('工作台外（机器人）')).toHaveLength(2);
   fireEvent.click(screen.getByRole('button', { name: /这一步可以用 · 推荐 AI 资产/ }));
   expect(within(flow()).getByRole('heading', { name: '这一步可以用 · 推荐 AI 资产' })).toBeTruthy();
