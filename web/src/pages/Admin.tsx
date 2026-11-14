@@ -1067,7 +1067,7 @@ export function RulesAdmin() {
 // AI 与接入（PRD 第 15 节，全局规则 P-13）：四块——默认执行方、功能清单（按链路看）、对外开放、数据对象
 // 工作台自己不调用 AI：默认执行方只说明、不放切换按钮。配置在 data/aiAccess.ts。
 // =====================================================================
-const FEATURE_ICON: Record<api.AiFeature['id'], [IconName, Domain]> = { reco: ['spark', 'ai'], faq: ['doc', 'ment'], summary: ['book', 'week'], quiz: ['quiz', 'exam'] };
+const FEATURE_ICON: Record<api.AiFeature['id'], [IconName, Domain]> = { reco: ['spark', 'ai'], faq: ['doc', 'ment'], feedback: ['doc', 'ment'], summary: ['book', 'week'], quiz: ['quiz', 'exam'] };
 
 export function AIAccess() {
   const say = useToast();
