@@ -4,7 +4,7 @@ import { fmtDate, fmtDateTime, fmtDue, fmtTime, isoWeek } from '../../lib/time';
 import type { World } from './picksData';
 import {
   AssetCard, Av, BoardCard, CoordCard, CoverageCard, DarkFoot, FeedbackCard, GradePill, Kicker, MenteeTable, MsPill, PJ_TONE, ProgressCard, ProjectCard,
-  RISK_TONE, SwitchCard, WeekCard, area, curNode, judgeCount, judgeGroups, latestVersion, more, nextStep, nodeChain,
+  ProgressLean, ProjectLean, RISK_TONE, SwitchCard, WeekCard, area, curNode, judgeCount, judgeGroups, latestVersion, more, nextStep, nodeChain,
 } from './picksKit';
 
 /* 工作台首页挑版：管培生（W1）、带教（W2）各三版。骨架照现有 Home.tsx：页头 + Bento 网格（管培生四列 hm-t 节奏，带教 12 列 bento）。 */
@@ -23,8 +23,9 @@ function TraineeHead({ w }: { w: World }) {
   );
 }
 
-/** 管培生 · 版 B：行动为中心。强调块 = 最重要的下一步 */
-function TraineeB({ w }: { w: World }) {
+/** 管培生 · 版 B：行动为中心。强调块 = 最重要的下一步。
+    lean = B 优化：结构和位置不变；进度卡只留时间进度与五站，项目卡不重复深色块里的当前节点，去掉各卡底部说明，「这一步可以用」不放安装命令 */
+function TraineeB({ w, lean }: { w: World; lean?: boolean }) {
   const nx = nextStep(w);
   return (
     <>
@@ -38,12 +39,12 @@ function TraineeB({ w }: { w: World }) {
           <DarkFoot dueAt={nx.dueAt} now={w.now} label={nx.dueLabel} btn={nx.btn} />
         </section>
         <FeedbackCard w={w} a="rv" />
-        <CoordCard w={w} a="co" />
+        <CoordCard w={w} a="co" lean={lean} />
         <WeekCard w={w} a="week" />
-        <ProgressCard w={w} a="prog" />
-        <ProjectCard w={w} a="pj" title="本阶段目标 · 主推项目" />
-        <CoverageCard w={w} a="cov" />
-        <AssetCard a="ai" />
+        {lean ? <ProgressLean w={w} a="prog" /> : <ProgressCard w={w} a="prog" />}
+        {lean ? <ProjectLean w={w} a="pj" /> : <ProjectCard w={w} a="pj" title="本阶段目标 · 主推项目" />}
+        <CoverageCard w={w} a="cov" lean={lean} />
+        <AssetCard a="ai" lean={lean} />
       </div>
     </>
   );
@@ -154,7 +155,7 @@ function MentorHead({ w }: { w: World }) {
 }
 
 /** 带教 · 版 B：按事。强调块 = 待我判断 */
-function MentorB({ w }: { w: World }) {
+function MentorB({ w, lean }: { w: World; lean?: boolean }) {
   const gs = judgeGroups(w);
   return (
     <>
@@ -182,7 +183,7 @@ function MentorB({ w }: { w: World }) {
         </section>
         <BoardCard w={w} cls="s4 stretch" />
         <MenteeTable w={w} cls="s8 stretch" />
-        <SwitchCard w={w} cls="s4 stretch" />
+        <SwitchCard w={w} cls="s4 stretch" lean={lean} />
       </div>
     </>
   );
@@ -327,4 +328,6 @@ export const HOME_CSS = `
 .reco.s6 .r1 { font-size: 13px; }
 `;
 
-export const HOME_VERSIONS = { homeT: [TraineeA, TraineeB, TraineeC], homeM: [MentorA, MentorB, MentorC] };
+const TraineeBLean = ({ w }: { w: World }) => <TraineeB w={w} lean />;
+const MentorBLean = ({ w }: { w: World }) => <MentorB w={w} lean />;
+export const HOME_VERSIONS = { homeT: [TraineeA, TraineeB, TraineeC, TraineeBLean], homeM: [MentorA, MentorB, MentorC, MentorBLean] };

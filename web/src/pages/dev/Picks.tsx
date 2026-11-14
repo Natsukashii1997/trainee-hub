@@ -29,10 +29,14 @@ const PAGES: Record<PageKey, { label: string; role: Role; crumbs: Crumb[]; path:
       { name: '反馈回路为中心', strong: '回路当前环节（左上 2×2）。',
         idea: '把「提交成果 → 带教评审 → 下一步行动 → 修改再交」画成一圈，标出现在第几轮、轮到谁；右边是来回记录时间线，右侧保留「我的进度」；第三行是我的项目、能力证据、这一步可以用。',
         trade: '最能体现「带教反馈形成闭环」，管培生清楚球在谁手里；但刚开始、还没有来回时整块偏空，多个项目并行时要切换。' },
+      { name: '优化', strong: '最重要的下一步（同 B）。',
+        idea: '在定稿的 B 上做减法，结构、位置、外观都不变：「我的进度」只留时间进度、培养五站和当前站（能力证据第三行已有，「阶段」和五站重复）；「主推项目」不再重复深色块里的当前节点和截止，只留节点链和一行验收标准；「需要协调的事」「能力证据」去掉底部说明小字；「这一步可以用」不放安装命令，改成「去看看」。',
+        trade: '页面更清爽，每块只说一件事；去掉的说明和安装命令要点进去才看得到。' },
     ],
   },
   homeM: {
-    label: '首页 · 带教', role: 'mentor', crumbs: [{ label: '首页' }], path: '/', act: () => ({ icon: 'pen', label: '去评审' }),
+    // 带教首页的主角是周颖（带教、有管理权限）；#43 之后按身份切换，'mentor' 会切到吴桐
+    label: '首页 · 带教', role: 'admin', crumbs: [{ label: '首页' }], path: '/', act: () => ({ icon: 'pen', label: '去评审' }),
     notes: [
       { name: '按项目', strong: '不放强调块，项目看板本身是焦点。',
         idea: '第一行是项目看板：待确认立项、推进中、等我评审、受阻四列，确认立项、评审、响应都在卡上点；第二行是我带的人（每人一行），右侧是任务待评审和决策看板。',
@@ -43,6 +47,9 @@ const PAGES: Record<PageKey, { label: string; role: Role; crumbs: Crumb[]; path:
       { name: '按人', strong: '第一位有待办的人的卡片。',
         idea: '每位管培生一张卡：在哪站、当前项目与节点路线、最近反馈、风险，以及等我处理的事；第一位有待办的人用深色卡；下面是换站节点和决策看板。',
         trade: '带的人少（现在两人）时最直观；人一多卡片变长，同类事情散在各张卡里，没法一次批量处理。' },
+      { name: '优化', strong: '待我判断（同 B）。',
+        idea: '在定稿的 B 上做减法，结构、位置、外观都不变：「下一个换站节点」去掉底部说明小字。带教首页 B 本身信息不多，这一页改动很少。',
+        trade: '和 B 几乎一样；要更大的改动需要另定方向。' },
     ],
   },
   proj: {
@@ -76,7 +83,7 @@ const PAGES: Record<PageKey, { label: string; role: Role; crumbs: Crumb[]; path:
     ],
   },
 };
-const VER = ['A', 'B', 'C'];
+const VER = ['A', 'B', 'C', 'B′'];
 const REC = '建议把附录 A 的「全屏唯一强调块：深墨色『这一步可以用』（推荐 AI 资产）」改为：每页最多一个深墨色强调块，放这一页最该先处理的事——管培生首页放「最重要的下一步」，带教首页放「待我判断」，项目详情、成长档案不放；「这一步可以用」降为普通卡（浅色面 + AI 色图标块），放在首页第三行或项目详情右栏。三版各自标了强调块的位置，首页选 B 版时与这条完全一致。';
 
 /** 地址里的 ?p=proj&v=0&s=blocked 可直接打开某一版（截图自查、发给别人看） */
@@ -86,7 +93,10 @@ function initial() {
   const p = q.get('p') as PageKey | null;
   const v = Number(q.get('v'));
   const s = q.get('s') as St | null;
-  return { page: p && p in PAGES ? p : 'homeT', ver: v >= 0 && v <= 2 && q.has('v') ? v : 1, st: s && STATES.some(x => x.value === s) ? s : 'revise' };
+  const page: PageKey = p && p in PAGES ? p : 'homeT';
+  const n = PAGES[page].notes.length;
+  // 默认打开当前在确认的版本：首页看「B 优化」，其余页看定稿的 B
+  return { page, ver: q.has('v') && v >= 0 && v < n ? v : n > 3 ? 3 : 1, st: s && STATES.some(x => x.value === s) ? s : 'revise' };
 }
 
 export default function Picks({ standalone }: { standalone?: boolean }) {
@@ -97,18 +107,19 @@ export default function Picks({ standalone }: { standalone?: boolean }) {
   const [ver, setVer] = useState(init.ver);
   const [st, setSt] = useState<St>(init.st);
   // 首页的视角跟页面走；项目详情、成长档案保留当前视角（管培生 / 带教都能看）
-  const pick = (p: PageKey, cur: Role) => (p === 'homeT' || p === 'homeM' || (cur !== 'trainee' && cur !== 'mentor') ? PAGES[p].role : cur);
+  const pick = (p: PageKey, cur: Role) => (p === 'homeT' || p === 'homeM' || cur === 'colleague' ? PAGES[p].role : cur);
   useEffect(() => { setRole(pick(init.page, role)); }, [init]); // eslint-disable-line react-hooks/exhaustive-deps
   const [note, setNote] = useState(false);
   const w = useMemo(() => world(st), [st]);
 
   // 顶栏「演示视角」切到带教 / 管培生时，首页跟着换
   useEffect(() => {
-    if (page === 'homeT' && role === 'mentor') setPage('homeM');
+    if (page === 'homeT' && (role === 'mentor' || role === 'admin')) setPage('homeM');
     if (page === 'homeM' && role === 'trainee') setPage('homeT');
   }, [role, page]);
   const choose = (p: PageKey) => {
     setPage(p); setRole(pick(p, role));
+    if (ver >= PAGES[p].notes.length) setVer(1);
     if (standalone) nav(PAGES[p].path);
     window.scrollTo(0, 0);
   };

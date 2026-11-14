@@ -55,7 +55,7 @@ export function DarkFoot({ dueAt, now, label, btn, left }: { dueAt?: string; now
 }
 
 const COORD_LOOK = { 待评审: { icon: 'clock', d: 'ment', tone: 'info' }, 受阻: { icon: 'alert', d: 'exam', tone: 'due' }, 待确认立项: { icon: 'flag', d: 'week', tone: 'plain' } } as const;
-export function CoordCard({ w, a, title = '需要协调的事' }: { w: World; a?: string; title?: string }) {
+export function CoordCard({ w, a, title = '需要协调的事', lean }: { w: World; a?: string; title?: string; lean?: boolean }) {
   return (
     <section className="card vcol" style={area(a)} aria-label={title}>
       <CardHead title={title} sub={`${w.coord.length} 件`} />
@@ -70,7 +70,7 @@ export function CoordCard({ w, a, title = '需要协调的事' }: { w: World; a?
           ))}
         </div>
       ) : <Empty icon="check" title="没有要协调的事">受阻的节点和在等评审的成果会出现在这里。</Empty>}
-      <p className="muted row" style={{ marginTop: 'auto', paddingTop: 10, fontSize: 11.5, gap: 6 }}><Icon name="info" size={13} />评审 2 个工作日内；受阻找项目带教</p>
+      {!lean && <p className="muted row" style={{ marginTop: 'auto', paddingTop: 10, fontSize: 11.5, gap: 6 }}><Icon name="info" size={13} />评审 2 个工作日内；受阻找项目带教</p>}
     </section>
   );
 }
@@ -150,6 +150,59 @@ export function ProgressCard({ w, a }: { w: World; a?: string }) {
   );
 }
 
+/** 我的进度（优化版）：只留时间进度、培养五站和当前站。能力证据第三行单独有一张卡，「阶段」和五站重复，都不在这里放 */
+export function ProgressLean({ w, a }: { w: World; a?: string }) {
+  const pct = Math.round((w.trainDay / TRAIN_TOTAL) * 100);
+  const next = w.curStation < 4 ? STATIONS[w.curStation + 1] : undefined;
+  return (
+    <section className="card vcol pk2-spread" style={area(a)} aria-label="我的进度">
+      <CardHead title="我的进度" more={more('成长档案')} />
+      <div className="pk2-big">
+        <span className="v num">{pct}<small>%</small></span>
+        <span className="s">培养第 <b className="num">{w.trainDay}</b> / {TRAIN_TOTAL} 天<br />任务 {w.tasksDue[0]} / {w.tasksDue[1]} 已通过 · 按计划</span>
+      </div>
+      <ProgressBar value={pct} domain="acc" thin />
+      <div><div className="sec-l" style={{ marginTop: 0 }}><span>培养五站</span><span>{w.curStation} / 5 已结束</span></div>
+        <div style={{ marginTop: 4 }}><StationChain stations={stationChain(w)} /></div></div>
+      <div className="well">
+        <div className="row" style={{ justifyContent: 'space-between', fontSize: 12.5 }}><b style={{ fontWeight: 600 }}>{w.station.name} · 第 {w.station.no} 站</b><span className="num muted" style={{ fontSize: 11.5 }}>第 {w.station.day} / {w.station.days} 天</span></div>
+        <div style={{ marginTop: 8 }}><DayStrip total={Math.min(w.station.days, 28)} passed={Math.min(w.station.day - 1, 27)} /></div>
+        <div className="muted" style={{ marginTop: 6, fontSize: 11.5 }}>{next ? `${w.station.days - w.station.day + 1} 天后换到${next.name}` : '定岗到 03.19'}</div>
+      </div>
+    </section>
+  );
+}
+
+/** 主推项目（优化版）：节点链 + 一行当前位置。当前要做什么、什么时候截止已经在最上面的深色块里，这里不再展开 */
+export function ProjectLean({ w, a }: { w: World; a?: string }) {
+  const p = w.pj1;
+  const m = p.milestones.length ? curNode(p) : undefined;
+  return (
+    <section className="card vcol" style={area(a)} aria-label="主推项目">
+      <CardHead title="主推项目" sub="本阶段目标" more={more('项目详情')} />
+      <div className="row" style={{ marginTop: 14, gap: 10 }}>
+        <Tile icon="flag" domain="grow" />
+        <span className="grow1"><b style={{ display: 'block', fontWeight: 600, fontSize: 14.5 }}>{p.name}</b><small className="muted" style={{ fontSize: 11.5 }}>{p.goal}</small></span>
+        <StatusPill tone={PJ_TONE[p.status]}>{p.status}</StatusPill>
+      </div>
+      {m ? <>
+        <div style={{ padding: '18px 16% 0' }}><StationChain stations={nodeChain(p)} /></div>
+        <div className="pk2-line">
+          {p.status === '已结束'
+            ? <><b>项目结论</b><StatusPill tone="ok" icon="check">交付达成</StatusPill><span className="muted">业务验证：{p.conclusion!.verify}</span></>
+            : <><b>{m.name}</b><MsPill m={m} /><span className="muted">验收：{m.accept}</span></>}
+          <span className="muted pk2-r">项目带教 {p.mentor} · {p.members.filter(x => x.role === '参与').map(x => x.name).join('、') || '无'}参与</span>
+        </div>
+      </> : (
+        <div className="well" style={{ marginTop: 14 }}>
+          <div className="row" style={{ gap: 6, fontSize: 12.5 }}><b style={{ fontWeight: 600 }}>还没有关键节点</b><StatusPill tone="plain">等周颖确认立项</StatusPill></div>
+          <p className="muted" style={{ fontSize: 12, marginTop: 6, lineHeight: 1.7 }}>确认立项后，在项目详情里新建关键节点（目标、验收标准、截止）。</p>
+        </div>
+      )}
+    </section>
+  );
+}
+
 /** 我的项目（浅色）：节点链 + 当前节点 */
 export function ProjectCard({ w, a, title = '我的项目' }: { w: World; a?: string; title?: string }) {
   const p = w.pj1;
@@ -189,7 +242,7 @@ export function judgeOf(w: World, item: number) {
 export function Meter({ lv }: { lv: number }) {
   return <span className="pk-meter" aria-label={`判断 ${lv} / 3`}>{[1, 2, 3].map(i => <i key={i} className={i <= lv ? 'on' : ''} />)}</span>;
 }
-export function CoverageCard({ w, a }: { w: World; a?: string }) {
+export function CoverageCard({ w, a, lean }: { w: World; a?: string; lean?: boolean }) {
   return (
     <section className="card vcol" style={area(a)} aria-label="能力证据">
       <CardHead title="能力证据" sub={`${w.coverage} / 5 项有证据`} more={more('档案')} />
@@ -201,29 +254,36 @@ export function CoverageCard({ w, a }: { w: World; a?: string }) {
           </div>
         ); })}
       </div>
-      <p className="muted" style={{ fontSize: 11.5, marginTop: 'auto', paddingTop: 10 }}>格子 = 判断等级：有指导下 / 可独立</p>
+      {!lean && <p className="muted" style={{ fontSize: 11.5, marginTop: 'auto', paddingTop: 10 }}>格子 = 判断等级：有指导下 / 可独立</p>}
     </section>
   );
 }
 
 /** 「这一步可以用」：降为普通卡（建议的附录 A 改法） */
-export function AssetCard({ a, compact }: { a?: string; compact?: boolean }) {
+export function AssetCard({ a, compact, lean }: { a?: string; compact?: boolean; lean?: boolean }) {
   return (
     <section className="card vcol" style={area(a)} aria-label="这一步可以用">
-      <CardHead title="这一步可以用" sub="规则推荐" more={more('AI')} />
+      <CardHead title="这一步可以用" sub="规则推荐" more={lean ? undefined : more('AI')} />
       <div className="row" style={{ marginTop: 12, gap: 10, alignItems: 'flex-start' }}>
         <Tile icon="spark" domain="ai" />
         <span className="grow1"><b style={{ display: 'block', fontWeight: 600, fontSize: 13 }}>{ASSET.title}<span className="kbd" style={{ marginLeft: 6 }}>{ASSET.type}</span></b>
           {!compact && <small className="muted" style={{ display: 'block', fontSize: 12, lineHeight: 1.65, marginTop: 4 }}>{ASSET.summary}</small>}</span>
       </div>
-      <div style={{ marginTop: 'auto' }}><CopyBox text={ASSET.cmd} /></div>
-      <p className="muted" style={{ fontSize: 11.5, marginTop: 8 }}>作者 {ASSET.author} · {ASSET.uses} 人用过 · 适合「问题定义」这类归类节点</p>
+      {lean ? (
+        <div className="row" style={{ marginTop: 'auto', paddingTop: 12, fontSize: 11.5, color: 'var(--mute)', justifyContent: 'space-between' }}>
+          <span>{ASSET.author} 分享 · {ASSET.uses} 人用过</span>
+          <button type="button" className="btn sec xs">去看看<Icon name="right" /></button>
+        </div>
+      ) : <>
+        <div style={{ marginTop: 'auto' }}><CopyBox text={ASSET.cmd} /></div>
+        <p className="muted" style={{ fontSize: 11.5, marginTop: 8 }}>作者 {ASSET.author} · {ASSET.uses} 人用过 · 适合「问题定义」这类归类节点</p>
+      </>}
     </section>
   );
 }
 
 // ---------- 带教首页积木 ----------
-export function SwitchCard({ w, a, cls }: { w: World; a?: string; cls?: string }) {
+export function SwitchCard({ w, a, cls, lean }: { w: World; a?: string; cls?: string; lean?: boolean }) {
   return (
     <section className={`card vcol ${cls ?? ''}`} style={area(a)} aria-label="下一个换站节点">
       <div className="row"><Tile icon="swap" domain="acc" /><span className="muted" style={{ fontSize: 12 }}>{w.sw.today ? '今天换站' : '下一个换站节点'}</span><StatusPill>{fmtDate(w.sw.at)} {fmtWeekday(w.sw.at)}</StatusPill></div>
@@ -235,7 +295,7 @@ export function SwitchCard({ w, a, cls }: { w: World; a?: string; cls?: string }
           </div>
         ))}
       </div>
-      <p className="muted" style={{ fontSize: 11.5, marginTop: 'auto', paddingTop: 10 }}>两人的默认带教都是你；项目跨站不关闭</p>
+      {!lean && <p className="muted" style={{ fontSize: 11.5, marginTop: 'auto', paddingTop: 10 }}>两人的默认带教都是你；项目跨站不关闭</p>}
     </section>
   );
 }
@@ -288,6 +348,16 @@ export function judgeGroups(w: World) {
 export const judgeCount = (w: World) => w.toReview.length + w.toConfirm.length + w.blockers.length;
 
 export const PK_CSS = `
+.pk2-spread { justify-content: space-between; }
+.pk2-big { display: flex; align-items: flex-end; gap: 14px; margin: 14px 0 10px; }
+.pk2-big .v { font-size: 40px; font-weight: 700; letter-spacing: -.03em; line-height: .9; }
+.pk2-big .v small { font-size: 15px; font-weight: 600; color: var(--ink2); margin-left: 2px; }
+.pk2-big .s { font-size: 12px; line-height: 1.6; color: var(--mute); }
+.pk2-big .s b { color: var(--ink); font-weight: 600; }
+.pk2-line { margin-top: auto; padding-top: 14px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 12.5px; box-shadow: inset 0 1px 0 var(--line); }
+.pk2-line b { font-weight: 600; }
+.pk2-line .muted { font-size: 12px; }
+.pk2-r { margin-left: auto; }
 .pk-t { margin-top: 20px; display: grid; gap: var(--gap); grid-template-columns: 1fr 1fr 1.08fr 1.08fr; align-items: stretch; }
 .reco .r1 .tile.pk-acc { background: #A5A9FF; color: #1A1D2C; }
 .reco .r1 .tile.pk-ok { background: #7FD1A6; color: #0E3B24; }
