@@ -21,7 +21,7 @@ export const AI_EXECUTORS: AiExecutor[] = [
 export type AiFlowStep = { main: string; note: string; outside?: boolean };
 
 export type AiFeature = {
-  id: 'reco' | 'faq' | 'summary' | 'quiz';
+  id: 'reco' | 'faq' | 'feedback' | 'summary' | 'quiz';
   name: string;
   where: string;
   phase: '一期' | '二期';
@@ -49,15 +49,26 @@ export const AI_FEATURES: AiFeature[] = [
     access: '无', trace: '不需要（不是 AI 产出）', now: '可用（一期）', switchNote: '无可切换项',
   },
   {
-    id: 'faq', name: 'FAQ 答案', where: '知识 · FAQ', phase: '二期', aiOutput: true,
-    what: '带教机器人在飞书里回答提问，管理员审核后经接口写入工作台。AI 调用发生在机器人里。',
-    read: { main: '由机器人决定', note: '工作台不向它提供生成用的数据', outside: true },
-    exec: { main: '带教机器人里的 AI', note: '机器人待定：猛鬼兽 / Hermes', outside: true },
-    write: { main: 'faq 表', note: '每条带留痕' },
-    who: { main: '公开', note: '答案下显示「由某执行方生成 · 某人审核」' },
-    access: '对外开放：机器人凭接口密钥写入',
+    id: 'faq', name: '答疑答案草稿', where: '培养成长 · 带教答疑', phase: '一期', aiOutput: true,
+    what: '亚古兽从管培生日志取提问并起草答案，经接口写入；带教审核后，亚古兽挂回飞书原话。AI 调用发生在亚古兽里。',
+    read: { main: '亚古兽自己读飞书日志', note: '工作台只提供工作上下文', outside: true },
+    exec: { main: '亚古兽', note: '常浩的企业分身；底层模型在其 Hermes 配置里切换', outside: true },
+    write: { main: 'qa_record', note: '每版答案带留痕' },
+    who: { main: '提问人、带教', note: '已收录的进 Q&A 合集后全员可见，显示「由亚古兽生成 · 某人审核」' },
+    access: 'Hermes 派单：亚古兽凭接口密钥写入',
     trace: '执行方、接入方式、模型、生成时间、审核人；缺执行方的接口拒收',
-    now: '未上线（二期）；机器人未定，密钥未配置', switchNote: '在机器人项目里切换，本页不可切',
+    now: '未上线（PRD v2.1 D 阶段）；密钥未配置', switchNote: '在亚古兽的 Hermes 配置里切换，本页不可切',
+  },
+  {
+    id: 'feedback', name: '带教反馈草稿', where: '培养成长 · 评审', phase: '二期', aiOutput: true,
+    what: '常浩在飞书私聊亚古兽起草追问和反馈，经接口写入草稿，常浩审核后才进评审或下一步行动。',
+    read: { main: '亚古兽自己读飞书日志', note: '工作台只提供工作上下文', outside: true },
+    exec: { main: '亚古兽', note: '常浩的企业分身', outside: true },
+    write: { main: '草稿', note: '不直接生效' },
+    who: { main: '带教', note: '审核后才对管培生可见' },
+    access: 'Hermes 派单：亚古兽凭接口密钥写入',
+    trace: '执行方、接入方式、模型、生成时间、审核人；缺执行方的接口拒收',
+    now: '未上线（试点后再定）', switchNote: '在亚古兽的 Hermes 配置里切换，本页不可切',
   },
   {
     id: 'summary', name: '资料卡片摘要', where: '知识 · 资料库', phase: '二期', aiOutput: false,
@@ -87,10 +98,10 @@ export type AiOpenApi = {
 };
 export const AI_OPEN_APIS: AiOpenApi[] = [
   {
-    name: '带教机器人接口', to: '带教机器人（待定：猛鬼兽 / Hermes）', kind: 'HTTP 接口，不是 MCP',
+    name: '带教机器人接口', to: '亚古兽（常浩的企业分身）', kind: 'HTTP 接口，不是 MCP',
     keyConfigured: false, issuedAt: null, lastCalledAt: null,
     canRead: ['成员与角色', '个人路径与当前任务', '即将到期和已逾期的任务', '某人今天的日程', '某位带教的待点评', '待推送的提醒'],
-    canWrite: ['提交记录', '周报', '轻测成绩', '入库的 FAQ（须带留痕）', '催办送达回执'],
+    canWrite: ['答疑记录与答案草稿（须带留痕）', '送达回执', '以后：提交记录、周报、轻测成绩'],
     closeHow: '本页「吊销」，立即失效',
   },
 ];
