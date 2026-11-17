@@ -94,12 +94,13 @@ export function findTransactionControl(sql: string): string | null {
 const sha256 = (text: string) => createHash('sha256').update(text).digest('hex');
 
 /** 执行没跑过的迁移，返回这次新执行的版本号 */
-export async function migrate(pool: pg.Pool, dir = DIR): Promise<string[]> {
+// transaction 由初始化脚本提供，迁移加入该事务，提交与回滚均由调用者负责。
+export async function migrate(pool: pg.Pool, dir = DIR, transaction?: pg.PoolClient): Promise<string[]> {
   const files = migrationFiles(dir).map(m => ({ ...m, sql: fs.readFileSync(m.file, 'utf8') }));
-  const client = await pool.connect();
+  const client = transaction ?? await pool.connect();
   const applied: string[] = [];
   try {
-    await client.query('select pg_advisory_lock($1)', [LOCK_KEY]);
+    await client.query(transaction ? 'select pg_advisory_xact_lock($1)' : 'select pg_advisory_lock($1)', [LOCK_KEY]);
     await client.query('create table if not exists schema_migrations (version text primary key, applied_at timestamptz not null default now())');
     await client.query('alter table schema_migrations add column if not exists checksum text');
     const { rows } = await client.query<{ version: string; checksum: string | null }>('select version, checksum from schema_migrations');
@@ -122,28 +123,30 @@ export async function migrate(pool: pg.Pool, dir = DIR): Promise<string[]> {
 
     for (const { version, sql, sum } of pending) {
       try {
-        await client.query('begin');
+        if (!transaction) await client.query('begin');
         const before = await client.query<{ x: string }>('select pg_current_xact_id()::text as x');
         await client.query(sql);
         // 第二道防线：事务号变了说明文件里的语句提前结束了事务，不登记，回滚剩下的
         const after = await client.query<{ x: string }>('select pg_current_xact_id()::text as x');
         if (after.rows[0].x !== before.rows[0].x) throw new Error('迁移提前结束了执行器的事务');
         await client.query('insert into schema_migrations (version, checksum) values ($1, $2)', [version, sum]);
-        await client.query('commit');
+        if (!transaction) await client.query('commit');
       } catch (e) {
-        await client.query('rollback');
+        if (!transaction) await client.query('rollback');
         throw new Error(`迁移 ${version} 失败：${(e as Error).message}`);
       }
       applied.push(version);
     }
   } finally {
-    let unlocked = false;
-    try {
-      unlocked = (await client.query<{ ok: boolean }>('select pg_advisory_unlock($1) as ok', [LOCK_KEY])).rows[0].ok;
-    } catch {
-      // 解锁失败：下面销毁连接，会话结束锁随之释放
+    if (!transaction) {
+      let unlocked = false;
+      try {
+        unlocked = (await client.query<{ ok: boolean }>('select pg_advisory_unlock($1) as ok', [LOCK_KEY])).rows[0].ok;
+      } catch {
+        // 解锁失败：下面销毁连接，会话结束锁随之释放
+      }
+      client.release(!unlocked);
     }
-    client.release(!unlocked);
   }
   return applied;
 }

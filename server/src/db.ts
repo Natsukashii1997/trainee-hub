@@ -6,6 +6,6 @@ export function createPool(connectionString: string | undefined = process.env.DA
   // 连不上时 2 秒内报错，健康检查不会一直挂着
   const pool = new pg.Pool({ connectionString, connectionTimeoutMillis: 2000, max: 5 });
   // 数据库重启或断开时，空闲连接会报错；不处理会让整个进程崩掉
-  pool.on('error', err => console.error(`数据库连接断开：${err.message}`));
+  pool.on('error', () => console.error('数据库连接断开，请检查数据库状态与连接配置'));
   return pool;
 }

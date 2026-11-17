@@ -41,8 +41,7 @@ export async function readHealth(pool: pg.Pool): Promise<Health> {
     const migration = await currentMigration(pool);
     return { ok: migration !== null, db: 'up', migration, checkedAt, ...(migration === null ? { message: '数据库已连通，但还没有执行迁移' } : {}) };
   } catch (e) {
-    const err = e as Error & { code?: string };
-    return { ok: false, db: 'down', migration: null, message: `数据库连不上：${err.code ?? err.message}`, checkedAt };
+    return { ok: false, db: 'down', migration: null, message: '数据库连不上，请检查数据库状态与连接配置', checkedAt };
   }
 }
 
@@ -71,7 +70,13 @@ async function readJson(req: http.IncomingMessage): Promise<Record<string, unkno
 function cookieOf(req: http.IncomingMessage, name: string): string | undefined {
   for (const part of (req.headers.cookie ?? '').split(';')) {
     const i = part.indexOf('=');
-    if (i > 0 && part.slice(0, i).trim() === name) return decodeURIComponent(part.slice(i + 1).trim());
+    if (i > 0 && part.slice(0, i).trim() === name) {
+      try {
+        return decodeURIComponent(part.slice(i + 1).trim());
+      } catch {
+        return undefined;
+      }
+    }
   }
   return undefined;
 }
@@ -165,7 +170,9 @@ export function createApp(pool: pg.Pool, options: AppOptions = {}): http.Server 
       }
       return send(res, 404, { error: '没有这个接口' });
     } catch (e) {
-      console.error(e);
+      // 数据库异常可能带整行数据、SQL 或连接串，只保留格式受限的错误码。
+      const code = (e as { code?: unknown })?.code;
+      console.error('服务内部出错', typeof code === 'string' && /^[A-Z0-9]{5}$/.test(code) ? code : 'UNKNOWN');
       if (!res.headersSent) send(res, 500, { error: '服务内部出错' });
     }
   });

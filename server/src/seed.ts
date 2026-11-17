@@ -8,7 +8,7 @@ import type pg from 'pg';
 import type { Actor } from './authorize.ts';
 import { runCommand } from './commands/index.ts';
 import { createPool } from './db.ts';
-import { migrate } from './migrate.ts';
+import { LOCK_KEY, migrate } from './migrate.ts';
 
 /** 能不能运行初始化脚本：不能时返回中文原因，能时返回 null */
 export function demoRefusal(env: Record<string, string | undefined>, url: string | undefined): string | null {
@@ -93,9 +93,9 @@ const IN_PROJECT: Record<string, { project: string; milestone: string }> = {
 };
 
 /** 写入示例数据（假定库是刚迁移好的空库），在一个事务里 */
-export async function seedDemo(client: pg.PoolClient): Promise<void> {
+export async function seedDemo(client: pg.PoolClient, inTransaction = false): Promise<void> {
   const q = (sql: string, params: unknown[] = []) => client.query(sql, params);
-  await q('begin');
+  if (!inTransaction) await q('begin');
   try {
     // 路径模板（先写阶段、模块、任务模板，最后冻结：被期次绑定后只读）
     await q("insert into path_template (id, name, version) values ('pt-demo', '标准培养路径（示例）', 'v1.0')");
@@ -161,9 +161,9 @@ export async function seedDemo(client: pg.PoolClient): Promise<void> {
     // 事件日志：示例数据本身也留痕，来源记为初始化脚本
     await q("insert into event_log (type, subject_type, subject_id, actor_id, source, project_id, occurred_at) values ('C01', 'project', 'pj-1', 'u-lin', 'script', 'pj-1', '2026-10-19T02:00:00Z'), ('C02', 'project', 'pj-1', 'u-zhou', 'script', 'pj-1', '2026-10-20T02:00:00Z'), ('C01', 'project', 'pj-2', 'u-xu', 'script', 'pj-2', '2026-11-06T02:00:00Z')");
 
-    await q('commit');
+    if (!inTransaction) await q('commit');
   } catch (e) {
-    await q('rollback');
+    if (!inTransaction) await q('rollback');
     throw e;
   }
 }
@@ -211,13 +211,25 @@ export async function seedStory(pool: pg.Pool): Promise<void> {
 export async function resetDemo(pool: pg.Pool, env: Record<string, string | undefined>, url: string | undefined): Promise<void> {
   const refused = demoRefusal(env, url);
   if (refused) throw new Error(refused);
-  await pool.query('drop schema public cascade; create schema public');
-  await migrate(pool);
   const client = await pool.connect();
+  let discard = false;
   try {
-    await seedDemo(client);
+    await client.query('begin');
+    // 与独立迁移互斥，先拿锁再清库；事务结束自动释放。
+    await client.query('select pg_advisory_xact_lock($1)', [LOCK_KEY]);
+    await client.query('drop schema public cascade; create schema public');
+    await migrate(pool, undefined, client);
+    await seedDemo(client, true);
+    await client.query('commit');
+  } catch (e) {
+    try {
+      await client.query('rollback');
+    } catch {
+      discard = true;
+    }
+    throw e;
   } finally {
-    client.release();
+    client.release(discard);
   }
 }
 

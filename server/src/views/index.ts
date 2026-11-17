@@ -4,6 +4,7 @@ import type { Actor } from '../authorize.ts';
 import { path, profile, taskDetail, timeline } from './growth.ts';
 import { milestoneDetail, projectDetail, projectList } from './projects.ts';
 import { type Db, notFound } from './shared.ts';
+import { CommandError } from '../commands/kit.ts';
 import { dashboard, home, todo } from './work.ts';
 
 type View = (db: Db, actor: Actor, ...params: string[]) => Promise<unknown>;
@@ -27,7 +28,15 @@ const ROUTES: [RegExp, View][] = [
 export async function runView(db: Db, actor: Actor, route: string): Promise<unknown> {
   for (const [pattern, view] of ROUTES) {
     const m = pattern.exec(route);
-    if (m) return view(db, actor, ...m.slice(1).map(decodeURIComponent));
+    if (m) {
+      let params: string[];
+      try {
+        params = m.slice(1).map(decodeURIComponent);
+      } catch {
+        throw new CommandError(400, '查询编号的 URL 编码不合法');
+      }
+      return view(db, actor, ...params);
+    }
   }
   throw notFound('查询');
 }
