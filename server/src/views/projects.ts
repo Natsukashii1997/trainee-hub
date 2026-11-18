@@ -2,7 +2,7 @@
 import { type Actor, readScope } from '../authorize.ts';
 import { projectMentor } from '../mentor.ts';
 import {
-  actions, blockedSql, currentMilestone, type Db, deadlineChanges, need, notFound, q, reviews, submissionTimeline, userName,
+  actions, blockedSql, currentMilestone, type Db, deadlineChanges, feedbackItems, need, notFound, q, reviews, submissionTimeline, userName,
 } from './shared.ts';
 
 async function members(db: Db, projectId: string) {
@@ -67,15 +67,20 @@ export async function projectDetail(db: Db, actor: Actor, id: string) {
   };
 }
 
-/** 节点详情（P3）：目标与验收标准、截止调整、成果版本时间线（评审、下一步行动、认定）、受阻记录与响应、关联的培养任务 */
+/** 节点详情（P3，PRD v3.0 第 1 页）：任务标准、截止调整、成果版本时间线（评审与反馈条目、下一步行动、认定、验证）、
+ *  挂在这个里程碑上的口头反馈、成员待验证的反馈、受阻记录与响应、关联的培养任务。
+ *  反馈只给本人和带教看（PRD 2.3）：管培生只拿到自己的反馈条目和验证 */
 export async function milestoneDetail(db: Db, actor: Actor, id: string) {
   const [m] = await q<Record<string, unknown> & { projectId: string }>(db,
     `select m.id, m.name, m.goal, m.acceptance_criteria as "acceptanceCriteria", m.status, m.due_at as "dueAt", m.original_due_at as "originalDueAt",
+            m.common_mistakes as "commonMistakes", m.escalation, m.sample_links as "sampleLinks", m.created_by as "createdBy", mu.name as "createdByName", m.created_at as "createdAt",
             m.cancel_reason as "cancelReason", ${blockedSql('m.id')} as blocked, m.project_id as "projectId", p.name as "projectName", p.goal as "projectGoal", p.status as "projectStatus"
-     from milestone m join project p on p.id = m.project_id where m.id = $1`, [id]);
+     from milestone m join project p on p.id = m.project_id join app_user mu on mu.id = m.created_by where m.id = $1`, [id]);
   if (!m) throw notFound('关键节点');
   const team = await members(db, m.projectId);
   need(actor, { traineeIds: team.map(x => x.id) });
+  const scope = readScope(actor);
+  const people = scope ? [scope] : team.map(x => x.id);
   const blockers = await q<Record<string, unknown> & { id: string }>(db,
     `select b.id, b.reason, b.decider, b.status, b.handler_id as "handlerId", hu.name as "handlerName", b.created_by as "createdBy", cu.name as "createdByName",
             b.created_at as "createdAt", b.resolved_by as "resolvedBy", ru.name as "resolvedByName", b.resolved_at as "resolvedAt", b.resolve_note as "resolveNote"
@@ -92,8 +97,17 @@ export async function milestoneDetail(db: Db, actor: Actor, id: string) {
   return {
     ...m,
     members: team,
+    mentor: await userName(db, await projectMentor(db, m.projectId)),
     deadlineChanges: await deadlineChanges(db, 'milestone', id),
-    submissions: await submissionTimeline(db, { milestoneId: id }),
+    submissions: await submissionTimeline(db, { milestoneId: id }, scope),
+    verbalFeedback: await feedbackItems(db, "f.source = 'verbal' and f.milestone_id = $1 and f.trainee_id = any($2)", [id, people]),
+    pendingFeedback: (await feedbackItems(db, 'f.trainee_id = any($1) and f.verify_next', [people])).filter(f => f.pending),
+    // 最新一版待评审时，评审这一版能顺手验证的反馈：提交人在这一版提交之前收到的、还待验证的（与 C08、C40 的前置条件一致，在库里按精确时间比）
+    verifiableFeedbackIds: (await q<{ id: string }>(db,
+      `select f.id from submission s join feedback_item f on f.trainee_id = s.submitter_id and f.created_at < s.submitted_at and f.verify_next
+       where s.milestone_id = $1 and s.review_state = 'pending' and ($2::text is null or f.trainee_id = $2)
+         and not exists (select 1 from feedback_verification v where v.feedback_id = f.id and (v.result = 'improved' or v.submission_id = s.id))
+       order by f.created_at, f.no, f.id`, [id, scope])).map(r => r.id),
     blockers: blockers.map(b => ({ ...b, responses: responses.filter(r => r.blockerId === b.id) })),
     tasks,
   };

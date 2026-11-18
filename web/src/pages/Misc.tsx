@@ -83,7 +83,6 @@ export function Login() {
 const PENDING: Record<string, { title: string; level: 'A' | 'B' | 'C'; issue: number; crumbs: Crumb[]; desc: string }> = {
   P1: { title: '项目列表', level: 'A', issue: 45, crumbs: [{ label: '项目实践' }], desc: '项目名称、状态、主责、当前节点、受阻标记、项目带教；可创建项目。' },
   P2: { title: '项目详情', level: 'A', issue: 45, crumbs: [{ label: '项目实践', to: '/projects' }], desc: '基本信息与验收条件、成员与项目带教、关键节点列表、关联的培养任务、最近反馈。' },
-  P3: { title: '节点详情', level: 'A', issue: 45, crumbs: [{ label: '项目实践', to: '/projects' }], desc: '节点目标与验收标准、成果版本时间线、评审面板、受阻记录与响应。' },
   T5: { title: '阶段复盘', level: 'B', issue: 49, crumbs: [{ label: '培养成长' }], desc: '自评 5 问、带教结论；自动汇总项目、成果、反馈和证据覆盖。' },
   K2: { title: '知识资料', level: 'B', issue: 49, crumbs: [{ label: '知识与工具', to: '/knowledge' }], desc: '资料卡片、四维标签筛选；模板与 SOP 筛选视图。' },
   K3: { title: '业务案例', level: 'B', issue: 49, crumbs: [{ label: '知识与工具', to: '/knowledge' }], desc: '案例列表与详情：来源项目、方法、验证结果、已知限制。' },
