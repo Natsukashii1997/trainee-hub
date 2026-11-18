@@ -6,9 +6,9 @@
 
 | 要做的事 | 先读 |
 |---|---|
-| 改需求、加功能 | [docs/PRD.md](docs/PRD.md)（上篇「骨架」是唯一实现依据；下篇「精细规则池」是第二轮草案，不实现） |
+| 改需求、加功能 | 先读 [docs/PRD-v3.0-总纲.md](docs/PRD-v3.0-总纲.md)（v3.0 的方向、范围、阶段，冲突时以它为准）；再读 [docs/PRD.md](docs/PRD.md)（文首对照表写明各节在 v3.0 下有效、推后还是冻结；上篇是对象、命令、状态边界的依据，下篇「精细规则池」是草案，不实现） |
 | 写后端、加命令或查询 | [docs/PRD.md](docs/PRD.md) 第 4 节业务命令与状态边界、第 13 节数据模型；[docs/骨架验收.md](docs/骨架验收.md) |
-| 做界面、新页面 | [docs/页面清单.md](docs/页面清单.md)（每页级别 A/B/C、对象、命令）；[docs/PRD.md](docs/PRD.md) 附录 A 视觉规范（V3 柔光）；[web/src/components/README.md](web/src/components/README.md) 组件用法与示例页 `/dev/kit`；视觉基准 [v3-home.html](docs/research/2026-11-06-structure/design/v3-home.html) |
+| 做界面、新页面 | 第一阶段按页面推进：顺序和每页的流程见 [总纲 12.2](docs/PRD-v3.0-总纲.md) 与 [docs/页面清单.md](docs/页面清单.md) 文首的 8 页；一页做完、常浩确认后再做下一页。[docs/页面清单.md](docs/页面清单.md)（每页级别 A/B/C、对象、命令）；[docs/PRD.md](docs/PRD.md) 附录 A 视觉规范（V3 柔光）；[web/src/components/README.md](web/src/components/README.md) 组件用法与示例页 `/dev/kit`；视觉基准 [v3-home.html](docs/research/2026-11-06-structure/design/v3-home.html) |
 | 改数据、加规则或查询 | [web/src/data/README.md](web/src/data/README.md)（全部导出与对应 PRD 小节） |
 | 排障、改脚本、装 launchd 或定时任务 | 先 `grep -n 关键词 docs/LESSONS.md`，再搜全局坑 `/Users/nat/Documents/ChatGPT/个人/work/agent-kit/LESSONS.md` |
 | 加或改用到 AI 的功能、改机器人接口 | 下面「AI 接入」一节；[docs/PRD.md](docs/PRD.md) 第 15 节 |
