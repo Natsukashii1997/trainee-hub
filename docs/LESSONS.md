@@ -69,3 +69,11 @@
 - 证据：示例库查询 `verbal 06:00:47.196126`、`第 2 版 06:00:47.19677`；改后 `feedback.test.ts` 断言待验证 3 条与可验证 3 条一致。
 - 升级：未升级。
 
+
+## L-06 CI 的 `ubuntu-latest` 换成 26.04，后端测试找不到 PostgreSQL 16（2026-11-18）
+
+- 现象：PR #77、#78 的 CI 同一天全部失败，`数据库脚本出错：找不到 /usr/lib/postgresql/16/bin/initdb`；前一天 `codex/audit-fix-1118` 还是绿的，代码没动过数据库脚本。
+- 根因：`ci.yml` 用 `runs-on: ubuntu-latest`，并写死 `PG_BIN: /usr/lib/postgresql/16/bin`，靠的是 24.04 镜像自带 PostgreSQL 16。2026-11-18 起 `ubuntu-latest` 指向 `ubuntu-26.04`（日志 `Image: ubuntu-26.04`），镜像里没有这个路径。
+- 正确做法：依赖镜像自带软件和固定路径的 job，`runs-on` 写死具体版本（这里是 `ubuntu-24.04`），不用 `-latest`；CI 突然全红、代码没动时，先看「Set up job」里的 `Image:` 和上一次绿的比。
+- 证据：失败 run 44314564343 的 `Image: ubuntu-26.04`；11-17 绿的 run 是 `Image: ubuntu-24.04`。
+- 升级：未升级（换别的项目也成立，可提议升为全局 G 条目）。

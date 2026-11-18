@@ -37,7 +37,8 @@
 - 与授权不一致之处、遗留问题、范围外发现：
   - 首页会话（第 5 页）和本会话共用这个工作区和分支。它在总纲 6.4、第 8 节、`docs/页面清单.md` 第 5 行、本文件主线里写的第 5 页定版与「五张卡都保留」的决定是文档，随文档 PR 一起提交；它的接通代码（`server/src/views/work.ts`、`server/src/views/views.test.ts` 等）没有提交，留给它自己的 PR。首页设计稿 `docs/research/2026-11-18-v3/design/home-trainee.html` 与 `home-trainee-src/` 随文档 PR 提交，因为页面清单引用了它。
   - 「当前阶段目标」那一行的改写仍等常浩点头。
-- 本轮新坑：无。
+  - 开 PR 后 CI 全红：GitHub 当天把 `ubuntu-latest` 换成 26.04，没有 PostgreSQL 16（见 L-06）。`ci.yml` 改为 `runs-on: ubuntu-24.04`，提交 `14f2079` 推到 #77，同一改动拣到 #78。
+- 本轮新坑：L-06。
 
 ## 第 1 页「里程碑详情」按 B 版接通：任务标准、分条反馈与验证（2026-11-18，Claude，常浩回复「B」选定版式；未提交、无需发布）
 
