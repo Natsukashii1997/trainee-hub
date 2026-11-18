@@ -128,6 +128,54 @@ describe('首页（两种角色）与决策看板', () => {
     assert.deepEqual(h.progress, { itemsTotal: 5, itemsCovered: 1, evidenceTotal: 1 });
   });
 
+  test('管培生首页 v3.0（总纲 6.4）：在等带教的、这次要改的（最新 3 条）、本周、进度卡', async () => {
+    // 周颖评 V1 需改进，分 4 条反馈、其中 3 条约好下次验证；再口头记 1 条下次验证；林夏在 ms-1-2 标受阻
+    const v1 = await run<{ submissionId: string }>(lin, 'C06', { milestoneId: 'ms-1-1', url: 'https://feishu.cn/docx/v1' });
+    const r1 = await run<{ reviewId: string }>(zhou, 'C08', {
+      submissionId: v1.submissionId, grade: '需改进', actions: [{ kind: 'revise', content: '补样本' }],
+      feedback: [{ content: '口径没有依据', verifyNext: true }, { content: '只有一个班组', verifyNext: true }, { content: '没写不处理什么', verifyNext: true }, { content: '抽查做得好' }],
+    });
+    // 口头反馈的命令（C29）在第 6 页做，这里和示例数据一样直接写一条
+    await pool.query("insert into feedback_item (trainee_id, source, milestone_id, content, verify_next, created_by, created_at) values ('u-lin', 'verbal', 'ms-1-1', '汇报先说结论', true, 'u-zhou', now() + interval '1 second')");
+    await run(lin, 'C10', { milestoneId: 'ms-1-2', reason: '等试点班组' });
+    // 本周三 10:00（北京时间）截止的里程碑、下周的培养任务（不算本周）
+    await pool.query(`update milestone set due_at = ((date_trunc('week', now() at time zone 'Asia/Shanghai'))::date + 2 + time '10:00') at time zone 'Asia/Shanghai' where id = 'ms-1-1'`);
+    await pool.query(`update task_instance set due_at = ((date_trunc('week', now() at time zone 'Asia/Shanghai'))::date + 9 + time '10:00') at time zone 'Asia/Shanghai' where id = (select id from task_instance where path_id = 'p-lin' and status <> 'cancelled' and open_at <= now() order by due_at desc limit 1)`);
+
+    let h = await view(lin, 'home');
+    // 下一步：未完成的「修改再交」；当前里程碑就是它所在的那个，不再重复放进「做完接着做」
+    assert.deepEqual([h.next.main.kind, h.next.main.actionKind, h.next.main.milestoneId, h.next.main.content], ['action', 'revise', 'ms-1-1', '补样本']);
+    assert.ok(h.next.main.dueAt, '行动带所在里程碑的截止');
+    assert.equal(h.next.then, null);
+    // 在等带教的：V1 已评，没有待评审的；受阻未响应 1 条，处理人默认是项目带教
+    assert.deepEqual(h.waiting.reviews, []);
+    assert.deepEqual(pick(h.waiting.blockers, 'milestoneId'), ['ms-1-2']);
+    // 这次要改的：4 条待验证，只给最新 3 条（口头那条最新）
+    assert.equal(h.toFix.total, 4);
+    assert.deepEqual(pick(h.toFix.items, 'content'), ['汇报先说结论', '没写不处理什么', '只有一个班组']);
+    // 本周：只有 ms-1-1；k-lin-6 在下周
+    assert.deepEqual(h.week.items.map((i: Any) => `${i.kind}:${i.id}:${i.done}`), ['milestone:ms-1-1:false']);
+
+    // 修改再交 V2 后：在等带教的出现这一版，本周的 ms-1-1 算已交
+    await run(lin, 'C07', { prevReviewId: r1.reviewId, url: 'https://feishu.cn/docx/v2', changeNote: '补了两个班组' });
+    await run(zhou, 'C11', { blockerId: h.waiting.blockers[0].blockerId, content: '已联系试点班组' });
+    h = await view(lin, 'home');
+    assert.deepEqual(h.waiting.reviews.map((s: Any) => `${s.milestoneId}:${s.version}:${s.reviewerName}`), ['ms-1-1:2:周颖']);
+    // 修改再交后没有未完成的行动：下一步退回主推项目的当前里程碑，标出在等谁评审
+    assert.deepEqual([h.next.main.kind, h.next.main.milestoneId, h.next.main.milestoneStatus, h.next.main.reviewerName], ['milestone', 'ms-1-1', 'submitted', '周颖']);
+    assert.deepEqual(h.waiting.blockers, [], '响应过的受阻不算在等带教');
+    assert.deepEqual(h.week.items.map((i: Any) => `${i.id}:${i.done}`), ['ms-1-1:true']);
+
+    // 进度卡：和事实对象一致
+    const [path] = (await pool.query(`select id, (((now() at time zone 'Asia/Shanghai')::date) - start_date + 1) as day, (end_date - start_date + 1) as total from personal_path where user_id = 'u-lin'`)).rows;
+    const [cnt] = (await pool.query(`select count(*) filter (where status <> 'cancelled')::int as total, count(*) filter (where status <> 'cancelled' and due_at <= now())::int as due, count(*) filter (where status = 'passed')::int as passed from task_instance where path_id = $1`, [path.id])).rows;
+    assert.deepEqual([h.growth.day, h.growth.totalDays], [path.day, path.total]);
+    assert.deepEqual(h.growth.tasks, cnt);
+    assert.deepEqual(pick(h.growth.stages, 'name'), ['入职', '通识', '轮岗', '定岗']);
+    assert.deepEqual(pick(h.growth.rotation, 'module'), ['客服岗', '销售岗']);
+    assert.equal(h.growth.current?.id ?? null, h.station?.id ?? null);
+  });
+
   test('带教首页：待我判断、我带的人（风险标记）；有管理权限的才有决策看板', async () => {
     // ms-1-1 连续两次需改进；许诺的 ms-2-1 受阻
     const v1 = await run<{ submissionId: string }>(lin, 'C06', { milestoneId: 'ms-1-1', url: 'https://feishu.cn/docx/v1' });

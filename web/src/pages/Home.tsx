@@ -1,16 +1,17 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Sheet } from '../components/Layout';
 import {
-  Avatar, AvatarStack, CardHead, CopyBox, Countdown, DayStrip, Drawer, Empty, Icon, MetaPill, Metric, PageHead, PhaseBar, ProgressBar,
+  Avatar, CardHead, Countdown, DayStrip, Drawer, Empty, Icon, MetaPill, Metric, PageHead, PhaseBar, ProgressBar,
   StationChain, StatusPill, Tile, useSession, useToast, type Domain, type IconName, type StepState, type Tone,
 } from '../components/ui';
 import { Timeline, type TimelineItem } from '../components/schedule';
 import * as api from '../data/api';
-import { TODO_RULE_LABEL, type ScheduleItem, type ScheduleKind, type Todo, type User } from '../data/types';
+import { command, view } from '../data/server';
+import { TODO_RULE_LABEL, type Todo, type User } from '../data/types';
 import { daysSince, fmtCn, fmtDate, fmtDue, fmtTime, fmtWeekday, isoWeek } from '../lib/time';
-import { addDays, atBj, bjYmd, daysBetween, workdaysBetween } from '../lib/workday';
-import { KIND, MenteeGrid, SCHEDULE_CSS, cdParts, refHref } from './Schedule';
+import { addDays, atBj, bjYmd } from '../lib/workday';
+import { MenteeGrid, SCHEDULE_CSS, cdParts } from './Schedule';
 
 /* 首页（PRD 3.1）：首屏按角色切换，焦点取自己「待办」里最急的两件；下方放团队动态。 */
 
@@ -128,18 +129,6 @@ const TidLink = () => (
     <Tile icon="spark" domain="ai" /><span className="grow1"><b>外部发现 · Tidings</b><small>今日 Skill 榜与 AI 日报</small></span><Icon name="ext" />
   </a>
 );
-function TidCard({ area }: { area: string }) {
-  return (
-    <section className="card vcol" style={{ gridArea: area }} aria-label="AI 发现">
-      <CardHead title="AI 发现" more={{ to: '/ai', label: 'AI' }} />
-      <div className="stack" style={{ gap: 8, marginTop: 12 }}>
-        <TidLink />
-        <Link className="hm-tid" to="/ai/assets"><Tile icon="grid" domain="ai" /><span className="grow1"><b>内部资产库</b><small>本月新上架 {api.newAssetsThisMonth().length} 个 · 按岗位筛选</small></span><Icon name="right" /></Link>
-      </div>
-      <p className="muted" style={{ fontSize: 11.5, marginTop: 'auto', paddingTop: 10 }}>好用的方法上架后计入贡献榜</p>
-    </section>
-  );
-}
 function Feed({ limit = 4, area, className = '', pin = true }: { limit?: number; area?: string; className?: string; pin?: boolean }) {
   const ev = api.nextTeamEvent();
   return (
@@ -163,190 +152,285 @@ function Feed({ limit = 4, area, className = '', pin = true }: { limit?: number;
   );
 }
 
-// ================= 管培生 =================
-/** 「我的本周」切片只放：所在站与第几周、换站日、截止、周报、轻测、团队活动 */
-const SLICE = new Set<ScheduleKind>(['switch', 'taskDue', 'reviseDue', 'weekly', 'quiz', 'material', 'teamEvent']);
-const isDone = (i: ScheduleItem) => i.status === 'submitted' || i.status === 'passed';
+// ================= 管培生（v3.0 第 5 页，A 版「原位替换」；数据来自后端首页查询 /api/views/home，总纲 6.4） =================
+type Step = {
+  kind: 'action' | 'milestone'; actionId?: string; actionKind?: 'revise' | 'advance'; content?: string;
+  milestoneId: string | null; taskId?: string | null; subjectName: string; projectId: string | null; projectName: string | null;
+  dueAt: string | null; milestoneStatus: string | null; reviewerName?: string | null;
+};
+type WaitReview = { submissionId: string; version: number; submittedAt: string; reviewerName: string; milestoneId: string | null; subjectName: string; projectId: string | null };
+type WaitBlocker = { blockerId: string; createdAt: string; handlerName: string | null; milestoneId: string; milestoneName: string; projectId: string };
+type FixItem = { id: string; source: 'review' | 'verbal'; content: string; createdByName: string; version: number | null; milestoneId: string | null; milestoneName: string | null; projectId?: string | null };
+type WeekItem = { kind: 'milestone' | 'task'; id: string; title: string; dueAt: string; done: boolean; milestoneId: string | null; projectId: string | null };
+type StationBrief = { id: string; module: string; startDate: string; endDate: string; pos: 'past' | 'current' | 'future'; settled: boolean };
+export interface TraineeHomeView {
+  station: { module: string } | null;
+  next: { main: Step | null; then: Step | null };
+  waiting: { reviews: WaitReview[]; blockers: WaitBlocker[] };
+  toFix: { total: number; items: FixItem[] };
+  week: { start: string; items: WeekItem[]; switches: { id: string; module: string; startDate: string }[] };
+  growth: null | {
+    day: number; totalDays: number; tasks: { total: number; due: number; passed: number };
+    stages: { no: number; name: string; state: StepState }[];
+    rotation: StationBrief[]; current: (StationBrief & { days: number; dayNo: number }) | null; next: StationBrief | null;
+  };
+}
 
-function TraineeHome({ me }: { me: User }) {
+const STEP_KIND = { revise: '修改再交', advance: '推进后续' } as const;
+/** 日期字段（YYYY-MM-DD，北京时间的那一天）转成能交给格式化函数的时刻 */
+const dayIso = (d: string) => `${d}T00:00:00+08:00`;
+const msHref = (x: { projectId?: string | null; milestoneId?: string | null }) => (x.projectId && x.milestoneId ? `/projects/${x.projectId}/milestones/${x.milestoneId}` : null);
+const errText = (e: unknown) => (e instanceof Error ? e.message : '没有成功，请稍后再试');
+function waitedText(iso: string, now: string) {
+  const h = Math.floor((Date.parse(now) - Date.parse(iso)) / 3_600_000);
+  return h < 1 ? '刚交' : h < 24 ? `已等 ${h} 小时` : `已等 ${Math.floor(h / 24)} 天`;
+}
+const stepTitle = (s: Step) => (s.kind === 'action' ? s.content ?? s.subjectName : s.subjectName);
+const stepWhere = (s: Step) => [s.projectName, s.kind === 'action' ? s.subjectName : null].filter(Boolean).join(' · ');
+const stepGo = (s: Step) => (s.kind === 'action' && s.actionKind === 'revise' ? '去修改' : '查看里程碑');
+
+/** 深色「下一步」卡：现在最该做的一件事；行动可以就地标记已处理（C09） */
+function NextCard({ next, now, reload }: { next: TraineeHomeView['next']; now: string; reload: () => Promise<void> }) {
+  const say = useToast();
+  const [closing, setClosing] = useState(false);
+  const [result, setResult] = useState<'done' | 'dropped'>('done');
+  const [note, setNote] = useState('');
+  const m = next.main;
+  if (!m) {
+    return (
+      <article className="card dark nx" style={{ gridArea: 'nx' }} aria-label="下一步">
+        <div className="r1"><span className="tile d-grow" aria-hidden="true"><Icon name="check" /></span><span>下一步</span></div>
+        <h3>现在没有要你动手的事</h3>
+        <p className="nx-sub">带教评审后给你的下一步行动、新开始的里程碑，会出现在这里。</p>
+      </article>
+    );
+  }
+  const href = msHref(m);
+  const waitingReview = m.kind === 'milestone' && m.milestoneStatus === 'submitted';
+  const late = m.dueAt ? Date.parse(m.dueAt) < Date.parse(now) : false;
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      await command('C09', { actionId: m.actionId, result, resolution: note.trim() || undefined });
+      say(result === 'done' ? '已标记完成' : '已标记不再需要');
+      setClosing(false); setNote('');
+      await reload();
+    } catch (err) { say(errText(err)); }
+  };
+  const then = next.then;
+  const thenHref = then ? msHref(then) : null;
+  return (
+    <article className="card dark nx" style={{ gridArea: 'nx' }} aria-label="下一步">
+      <div className="r1">
+        <span className="tile d-exam" aria-hidden="true"><Icon name={m.kind === 'action' ? 'pen' : 'flag'} /></span>
+        <span>{m.kind === 'action' ? `下一步 · ${STEP_KIND[m.actionKind ?? 'revise']}` : '下一步 · 当前里程碑'}{stepWhere(m) && ` · ${stepWhere(m)}`}</span>
+        {m.dueAt && <span className={`chip ${late || daysSince(m.dueAt, now) === 0 ? 'due' : 'plain'}`}>{late ? '已过截止' : fmtDue(m.dueAt, now)}</span>}
+      </div>
+      <h3>{stepTitle(m)}</h3>
+      <div className="foot">
+        {waitingReview ? (
+          <div><div className="nx-state">已交，等 <b>{m.reviewerName ?? '带教'}</b> 评审</div><div className="lbl">评审后的下一步会换到这里</div></div>
+        ) : m.dueAt ? (
+          <div><div className="cd">{cdParts(now, m.dueAt).map(([n, u]) => <span key={u} style={{ display: 'contents' }}><span className="n">{n}</span><span className="u">{u}</span></span>)}</div><div className="lbl">{late ? '已过截止' : '距截止'}</div></div>
+        ) : <div />}
+        <div className="row" style={{ gap: 8 }}>
+          {m.kind === 'action' && !closing && <button type="button" className="btn ghost sm" onClick={() => setClosing(true)}>标记已处理</button>}
+          {href && <Link className="btn pri" to={href}>{stepGo(m)}</Link>}
+        </div>
+      </div>
+      {closing ? (
+        <form className="then nx-close" onSubmit={submit} aria-label="处理这条下一步行动">
+          <div className="seg" role="group" aria-label="处理结果">
+            <button type="button" aria-pressed={result === 'done'} onClick={() => setResult('done')}>已完成</button>
+            <button type="button" aria-pressed={result === 'dropped'} onClick={() => setResult('dropped')}>不再需要</button>
+          </div>
+          <input id="nx-note" className="input grow1" value={note} onChange={e => setNote(e.target.value)} placeholder={result === 'done' ? '完成依据（可不填）' : '不再需要的原因（必填）'} aria-label={result === 'done' ? '完成依据' : '不再需要的原因'} />
+          <button type="submit" className="btn sec sm" disabled={result === 'dropped' && !note.trim()}>确认</button>
+          <button type="button" className="btn ghost sm" onClick={() => setClosing(false)}>取消</button>
+        </form>
+      ) : then && (
+        <div className="then">
+          <span className="tl">做完接着做</span>
+          <span className="tile sm d-grow" aria-hidden="true"><Icon name={then.kind === 'action' ? 'pen' : 'flag'} /></span>
+          <span className="grow1"><b>{stepTitle(then)}</b><small>{[stepWhere(then), then.dueAt ? fmtDue(then.dueAt, now) : null].filter(Boolean).join(' · ')}</small></span>
+          {thenHref && <Link className="btn sec sm" to={thenHref}>{stepGo(then)}</Link>}
+        </div>
+      )}
+    </article>
+  );
+}
+
+/** 带教点评：左边在等带教的，右边这次要改的（总纲 6.4 第 2、3 件事） */
+function MentorNotes({ waiting, toFix, now }: { waiting: TraineeHomeView['waiting']; toFix: TraineeHomeView['toFix']; now: string }) {
+  const n = waiting.reviews.length + waiting.blockers.length;
+  const row = (key: string, href: string | null, body: ReactNode) => (href ? <Link key={key} className="doc" to={href}>{body}<Icon name="right" /></Link> : <div key={key} className="doc">{body}</div>);
+  return (
+    <section className="card vcol rvm" style={{ gridArea: 'rv' }} aria-label="带教点评">
+      <CardHead title="带教点评" />
+      <div className="rvm-b">
+        <div className="vcol" aria-label="在等带教的">
+          <div className="sec-l"><span>在等带教的</span><span>{n ? `${n} 项` : ''}</span></div>
+          {n ? (
+            <div className="stack" style={{ gap: 8 }}>
+              {waiting.reviews.map(w => row(`r-${w.submissionId}`, msHref(w), <><Tile icon="clock" domain="ment" /><span className="grow1"><b>{w.subjectName} · 第 {w.version} 版</b><small>{w.reviewerName} 评审 · {waitedText(w.submittedAt, now)}</small></span></>))}
+              {waiting.blockers.map(b => row(`b-${b.blockerId}`, msHref(b), <><Tile icon="alert" domain="exam" /><span className="grow1"><b>受阻 · {b.milestoneName}</b><small>{b.handlerName ?? '带教'} 响应 · {waitedText(b.createdAt, now)}</small></span></>))}
+            </div>
+          ) : <Empty icon="inbox" title="没有在等带教的">交的成果都评完了，受阻也都有回应。</Empty>}
+          <p className="muted row rvm-note"><Icon name="info" size={13} />带教 2 个工作日内点评，超时抄送管理员</p>
+        </div>
+        <div className="vcol" aria-label="这次要改的">
+          <div className="sec-l"><span>这次要改的</span><span>{toFix.total ? `${toFix.total} 条待验证` : ''}</span></div>
+          {toFix.items.length ? (
+            <div className="stack" style={{ gap: 8 }}>
+              {toFix.items.map(f => {
+                const href = msHref({ projectId: f.projectId, milestoneId: f.milestoneId });
+                const body = <><span className="tx">{f.content}</span><small>{f.createdByName} · {f.source === 'verbal' ? '口头反馈' : `第 ${f.version} 版评审`}{f.milestoneName ? ` · ${f.milestoneName}` : ''}</small></>;
+                return href ? <Link key={f.id} className="hm-fix" to={href}>{body}</Link> : <div key={f.id} className="hm-fix">{body}</div>;
+              })}
+            </div>
+          ) : <Empty icon="check" title="没有待验证的反馈">带教约好下次验证的反馈会出现在这里。</Empty>}
+          {toFix.total > toFix.items.length && <p className="muted" style={{ fontSize: 11.5, marginTop: 8 }}>只列最新 3 条，另有 {toFix.total - toFix.items.length} 条在对应的里程碑页</p>}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** 进度双圆环：外环绿色是路径任务完成（已通过 / 到今天应完成），内环黑色是培养时间 */
+function ProgressRings({ passed, due, day, total }: { passed: number; due: number; day: number; total: number }) {
+  const done = due ? Math.min(1, passed / due) : 0;
+  const time = total ? Math.min(1, Math.max(0, day / total)) : 0;
+  const arc = (r: number, p: number, color: string) => {
+    const c = 2 * Math.PI * r;
+    return <>
+      <circle cx="52" cy="52" r={r} fill="none" stroke="rgba(21,25,38,.07)" strokeWidth="10" />
+      {p > 0 && <circle cx="52" cy="52" r={r} fill="none" stroke={color} strokeWidth="10" strokeLinecap="round" strokeDasharray={`${(c * p).toFixed(1)} ${c.toFixed(1)}`} transform="rotate(-90 52 52)" />}
+    </>;
+  };
+  return (
+    <div className="hm-ring">
+      <svg viewBox="0 0 104 104" role="img" aria-label={`完成 ${passed}/${due}，时间 ${Math.round(time * 100)}%`}>{arc(44, done, 'var(--grow)')}{arc(30, time, 'var(--ink)')}</svg>
+      <div className="lg">
+        <div><i style={{ background: 'var(--grow)' }} /><span className="l">完成进度</span><span className="v">{passed}<small>/ {due}</small></span><span className="s">已通过 / 应完成</span></div>
+        <div><i style={{ background: 'var(--ink)' }} /><span className="l">时间进度</span><span className="v">{Math.round(time * 100)}<small>%</small></span><span className="s">第 {day} / {total} 天</span></div>
+      </div>
+    </div>
+  );
+}
+
+function TraineeHome() {
   const nav = useNavigate();
-  const now = api.now();
-  const focus = api.homeFocus(me);
-  const urgent = api.todosOf(me.id).filter(x => x.dueAt && daysSince(x.dueAt, now) >= -1).length;
-  const pos = api.currentPosition(me.id);
-  const prog = api.progressOf(me.id);
-  const week = api.myWeek(me.id);
-  const next = api.myWeek(me.id, me, 1);
-  const cal = api.workdayCalendar();
+  const { actor } = useSession();
+  const [h, setH] = useState<TraineeHomeView | null>(null);
+  const [error, setError] = useState('');
+  const who = actor?.id;
+  const load = useCallback(async () => {
+    if (!who) return;
+    try { setH(await view<TraineeHomeView>('home')); setError(''); } catch (e) { setH(null); setError(errText(e)); }
+  }, [who]);
+  useEffect(() => { setH(null); void load(); }, [load]);
+  const now = new Date().toISOString();
+  const kicker = <>{fmtCn(now)} {fmtWeekday(now)}<i aria-hidden="true" />{fmtTime(now)}</>;
+  const name = actor?.name ?? '';
+  if (error) return <><PageHead kicker={kicker} title={`${name}，你好`} /><section className="card" style={{ marginTop: 20 }}><Empty size="lg" icon="alert" title="首页没有加载出来">{error}</Empty></section></>;
+  if (!h) return <><PageHead kicker={kicker} title={`${name}，你好`} /><section className="card" style={{ marginTop: 20 }}><p className="muted">加载中…</p></section></>;
 
-  // 我的本周：本周的条目 + 下周到下一次换站为止的换站、活动
-  const slice = [...week.items.filter(i => SLICE.has(i.kind)), ...next.items.filter(i => i.kind === 'switch' || i.kind === 'teamEvent')].slice(0, 7);
-  const tl: TimelineItem[] = slice.map(i => {
-    const k = KIND[i.kind];
-    const thisWeek = t(i.startAt) < t(week.range[1]);
-    const past = t(i.startAt) < t(now);
-    return {
-      id: i.id, start: thisWeek ? fmtWeekday(i.startAt) : fmtDate(i.startAt), end: fmtTime(i.startAt),
-      title: i.kind === 'switch' ? i.title.replace('换站 · ', '换站 → ') : i.title.replace(/^(分享会|读书会)：/, ''),
-      aside: isDone(i) ? '已提交' : i.status === 'overdue' ? '已逾期' : k.label,
-      domain: k.domain, point: true, done: isDone(i) || (past && i.status !== 'overdue'),
-    };
-  });
-  const delivered = week.items.filter(i => SLICE.has(i.kind) && isDone(i)).length;
-  const weekTotal = week.items.filter(i => SLICE.has(i.kind)).length;
+  const g = h.growth;
+  const main = h.next.main;
+  const todoCount = main && !(main.kind === 'milestone' && (main.milestoneStatus === 'submitted' || main.milestoneStatus === 'passed')) ? (h.next.then ? 2 : 1) : 0;
+
+  // 我的本周：本周截止的里程碑与培养任务 + 本周和下周的换站，按时间排，最多 7 条
+  const tl: (TimelineItem & { at: number; href: string | null })[] = [
+    ...h.week.items.map(i => ({
+      id: `${i.kind}:${i.id}`, at: Date.parse(i.dueAt), href: msHref(i),
+      start: fmtWeekday(i.dueAt), end: fmtTime(i.dueAt), title: i.title,
+      aside: i.done ? '已交' : Date.parse(i.dueAt) < Date.parse(now) ? '已逾期' : i.kind === 'milestone' ? '里程碑' : '培养任务',
+      domain: (i.kind === 'milestone' ? 'exam' : 'grow') as Domain, point: true, done: i.done,
+    })),
+    ...h.week.switches.map(s => ({
+      id: `switch:${s.id}`, at: Date.parse(dayIso(s.startDate)), href: null,
+      start: fmtDate(dayIso(s.startDate)), end: fmtWeekday(dayIso(s.startDate)), title: `换站 → 到${s.module}`, aside: '换站', domain: 'acc' as Domain, point: true,
+    })),
+  ].sort((a, b) => a.at - b.at).slice(0, 7);
+  const delivered = h.week.items.filter(i => i.done).length;
 
   // 我的进度
-  const sp = api.stationsProgress(me.id);
-  const rotIds = new Set((pos?.rotation ?? []).map(s => s.id));
-  const rot = sp.stations.filter(s => rotIds.has(s.station.id));
-  const chain = rot.map(s => ({
-    name: s.module.name, state: (s.settled && s.pos === 'left' ? 'done' : s.pos === 'left' ? 'due' : s.pos === 'current' ? 'cur' : 'todo') as StepState,
-    sub: sp.next && s.station.id === sp.next.id ? fmtDate(s.station.startAt) : undefined,
-    title: `${s.module.name}站 ${fmtDate(s.station.startAt)}–${fmtDate(s.station.endAt)} · ${s.settled ? '已结清' : s.pos === 'left' ? '时间到了，还没结清' : s.pos === 'current' ? '在站' : '待开始'}（${s.settle.passed}/${s.settle.total}）`,
+  const gap = g ? g.tasks.passed - g.tasks.due : 0;
+  /** 站名链上用短名（客服岗 → 客服），其余地方用全名 */
+  const short = (m: string) => m.replace(/岗$/, '');
+  const chain = (g?.rotation ?? []).map(s => ({
+    name: short(s.module), state: (s.pos === 'past' ? (s.settled ? 'done' : 'due') : s.pos === 'current' ? 'cur' : 'todo') as StepState,
+    sub: g?.next && s.id === g.next.id ? fmtDate(dayIso(s.startDate)) : undefined,
+    title: `${s.module} ${fmtDate(dayIso(s.startDate))}–${fmtDate(dayIso(s.endDate))} · ${s.pos === 'past' ? (s.settled ? '已结清' : '时间到了，还没结清') : s.pos === 'current' ? '在站' : '待开始'}`,
   }));
-  const phases = api.stagesAll().map(st => {
-    const ss = sp.stations.filter(s => s.module.stageId === st.id);
-    const state: StepState = ss.length && ss.every(s => s.pos === 'left') ? 'done' : ss.some(s => s.pos === 'current') ? 'cur' : 'todo';
-    return { name: st.name.split('：')[0], state };
-  });
-  const cur = pos?.station;
-  const curDays = cur ? daysBetween(bjYmd(cur.startAt), bjYmd(cur.endAt)) + 1 : 0;
-  const curPassed = cur ? Math.min(curDays, daysBetween(bjYmd(cur.startAt), bjYmd(now))) : 0;
-  const gap = prog?.gap ?? 0;
-
-  // 点评
-  const rv = api.latestReviewOf(me.id, me);
-  const rvTask = rv ? api.taskById(rv.taskId) : undefined;
-  const waiting = api.tasksOf(me.id).filter(x => x.status === 'submitted' && x.completion === 'link').map(x => {
-    const td = api.allTodos().find(y => y.rule === 'R02' && y.subjectId === x.id);
-    return { task: x, mentor: api.userById(api.responsibleMentorId(x)), dueAt: td?.dueAt };
-  });
-
-  // 推荐 AI 资产（规则推荐，不调用 AI，PRD 15.3）：给正在做的路径任务
-  const working = api.tasksOf(me.id).filter(x => x.kind === 'path' && api.isOpen(x)).sort((a, b) => Number(b.status === 'doing') - Number(a.status === 'doing'))[0];
-  const rec = api.assetsForTemplate(api.templateById(working?.templateId))[0] ?? api.listAssets()[0];
-  const recFor = rec && working && api.assetsForTemplate(api.templateById(working.templateId)).includes(rec) ? working.name : null;
-  const res = api.resourcesForModule(pos?.module.id).slice(0, 3);
-  const say = useToast();
+  const lateStations = (g?.rotation ?? []).filter(s => s.pos === 'past' && !s.settled).length;
+  const cur = g?.current;
+  const weekNo = cur ? Math.floor((cur.dayNo - 1) / 7) + 1 : 0;
 
   return (
     <>
-      <PageHead kicker={<Kicker />}
-        title={urgent ? <>{me.name}，今天有 <em>{urgent} 件事</em>要处理</> : <>{me.name}，今明两天<em>没有要赶的事</em></>}
-        right={<><MetaPill>第 <b>{isoWeek(now)}</b> 周</MetaPill>{prog && <MetaPill>培养第 <b>{prog.time.day}</b> / {prog.time.total} 天</MetaPill>}</>} />
+      <PageHead kicker={kicker}
+        title={todoCount ? <>{name}，现在有 <em>{todoCount} 件事</em>要做</>
+          : main?.kind === 'milestone' && main.milestoneStatus === 'submitted' ? <>{name}，成果在等 <em>{main.reviewerName ?? '带教'}</em> 评审</>
+            : <>{name}，现在<em>没有要你动手的事</em></>}
+        right={<><MetaPill>第 <b>{isoWeek(now)}</b> 周</MetaPill>{g && <MetaPill>培养第 <b>{g.day}</b> / {g.totalDays} 天</MetaPill>}</>} />
       <div className="hm-t">
-        {focus[0] ? <FocusCard todo={focus[0]} me={me} primary area="f1" /> : <ClearCard area="f1" text="待办都处理完了，看看这周后面的安排。" />}
-        {focus[1] ? <FocusCard todo={focus[1]} me={me} primary={false} area="f2" /> : <ClearCard area="f2" text="其余待办都不急。" />}
+        <NextCard next={h.next} now={now} reload={load} />
+        <MentorNotes waiting={h.waiting} toFix={h.toFix} now={now} />
 
         <section className="card vcol" style={{ gridArea: 'week' }} aria-label="我的本周">
-          <CardHead title="我的本周" sub={week.module ? `${week.module.name}站 · 第 ${week.weekInStation} 周` : fmtDate(week.range[0])} more={{ to: '/schedule/week', label: '日程' }} />
+          <CardHead title="我的本周" sub={cur ? `${cur.module}站 · 第 ${weekNo} 周` : `${fmtDate(dayIso(h.week.start))} 起`} />
           <div className="vcol grow1" style={{ marginTop: 14 }}>
-            {tl.length ? <Timeline fill items={tl} onSelect={id => { const it = slice.find(x => x.id === id); const h = it && refHref(it, me); if (h) nav(h); }} />
-              : <Empty icon="cal" title="这周没有截止">下一站和活动会出现在这里。</Empty>}
+            {tl.length ? <Timeline fill items={tl} onSelect={id => { const it = tl.find(x => x.id === id); if (it?.href) nav(it.href); }} />
+              : <Empty icon="cal" title="这周没有截止">本周截止的里程碑、培养任务和换站会出现在这里。</Empty>}
           </div>
           <div className="divider dash" style={{ margin: '12px 0 0' }} />
           <div className="row" style={{ paddingTop: 10, fontSize: 11.5, color: 'var(--mute)', justifyContent: 'space-between' }}>
-            <span>本周 {weekTotal} 项 · 已交 {delivered}</span>
-            {week.nextStation && <span>下一站 <b style={{ color: 'var(--ink)', fontWeight: 600 }}>{api.moduleById(week.nextStation.moduleId).name}</b> · {fmtDate(week.nextStation.startAt)}</span>}
+            <span>本周 {h.week.items.length} 项 · 已交 {delivered}</span>
+            {g?.next && <span>下一站 <b style={{ color: 'var(--ink)', fontWeight: 600 }}>{g.next.module}</b> · {fmtDate(dayIso(g.next.startDate))}</span>}
           </div>
         </section>
 
         <section className="card vcol" style={{ gridArea: 'prog' }} aria-label="我的进度">
-          <CardHead title="我的进度" more={{ to: '/growth/me', label: '成长' }} />
-          {prog ? <>
-            <div className="hm-two">
-              <div><span className="l">时间进度</span><span className="v">{prog.time.pct}<small>%</small></span><ProgressBar value={prog.time.pct} domain="acc" thin /><span className="s">第 {prog.time.day} / {prog.time.total} 天</span></div>
-              <div><span className="l">完成进度</span><span className="v">{prog.completion.passed}<small>/ {prog.completion.due}</small></span><ProgressBar value={prog.completion.pct} domain="grow" thin /><span className="s">已通过 / 应完成</span></div>
-            </div>
+          <CardHead title="我的进度" />
+          {g ? <>
+            <ProgressRings passed={g.tasks.passed} due={g.tasks.due} day={g.day} total={g.totalDays} />
             <div className="row" style={{ marginTop: 10, gap: 6, fontSize: 12 }}>
               <StatusPill tone={gap < 0 ? 'warn' : 'ok'} icon={gap < 0 ? 'alert' : 'check'}>{gap < 0 ? `落后 ${-gap} 项` : gap > 0 ? `超前 ${gap} 项` : '按计划'}</StatusPill>
-              <span className="muted">共 {prog.completion.all} 项路径任务</span>
+              <span className="muted">共 {g.tasks.total} 项路径任务</span>
             </div>
-          </> : null}
-          <div className="sec-l">阶段</div>
-          <PhaseBar phases={phases} />
-          {chain.length > 0 && <>
-            <div className="sec-l"><span>轮岗六站</span><span>{rot.filter(s => s.settled).length} / {rot.length} 已结清{rot.some(s => s.pos === 'left' && !s.settled) ? ` · ${rot.filter(s => s.pos === 'left' && !s.settled).length} 站时间到了未结清` : ''}</span></div>
-            <div style={{ marginTop: 4 }}><StationChain stations={chain} /></div>
-          </>}
-          {cur && pos && (
-            <div className="well" style={{ marginTop: 'auto' }}>
-              <div className="row" style={{ justifyContent: 'space-between', fontSize: 12.5 }}><b style={{ fontWeight: 600 }}>{pos.module.name}岗 · 第 {pos.week} 周</b><span className="num muted" style={{ fontSize: 11.5 }}>{fmtDate(cur.startAt)}–{fmtDate(cur.endAt)}</span></div>
-              <div style={{ marginTop: 8 }}><DayStrip total={curDays} passed={curPassed} /></div>
-              <div className="row" style={{ marginTop: 6, justifyContent: 'space-between', fontSize: 11.5, color: 'var(--mute)' }}>
-                <span>第 {curPassed + 1} / {curDays} 天</span>
-                {sp.next ? <span>{workdaysBetween(now, sp.next.startAt, cal)} 个工作日后换到{api.moduleById(sp.next.moduleId).name}</span> : <span>还剩 {curDays - curPassed - 1} 天</span>}
+            <div className="sec-l">阶段</div>
+            <PhaseBar phases={g.stages} />
+            {chain.length > 0 && <>
+              <div className="sec-l"><span>轮岗 {chain.length} 站</span><span>{g.rotation.filter(s => s.settled && s.pos === 'past').length} / {chain.length} 已结清{lateStations ? ` · ${lateStations} 站时间到了未结清` : ''}</span></div>
+              <div style={{ marginTop: 4 }}><StationChain stations={chain} /></div>
+            </>}
+            {cur && (
+              <div className="well" style={{ marginTop: 'auto' }}>
+                <div className="row" style={{ justifyContent: 'space-between', fontSize: 12.5 }}><b style={{ fontWeight: 600 }}>{cur.module} · 第 {weekNo} 周</b><span className="num muted" style={{ fontSize: 11.5 }}>{fmtDate(dayIso(cur.startDate))}–{fmtDate(dayIso(cur.endDate))}</span></div>
+                <div style={{ marginTop: 8 }}><DayStrip total={cur.days} passed={cur.dayNo - 1} /></div>
+                <div className="row" style={{ marginTop: 6, justifyContent: 'space-between', fontSize: 11.5, color: 'var(--mute)' }}>
+                  <span>第 {cur.dayNo} / {cur.days} 天</span>
+                  {g.next ? <span>{cur.days - cur.dayNo + 1} 天后换到{g.next.module}</span> : <span>还剩 {cur.days - cur.dayNo} 天</span>}
+                </div>
               </div>
-            </div>
-          )}
-        </section>
-
-        <section className="card" style={{ gridArea: 'rv' }} aria-label="最新点评">
-          <CardHead title="最新点评" more={{ to: '/growth/me', label: '全部' }} />
-          {rv && rvTask ? (() => { const m = api.userById(rv.mentorId); return <>
-            <div className="row" style={{ marginTop: 14, gap: 10 }}>
-              <Avatar name={m.name} color={m.color} />
-              <Link className="grow1" to={`/growth/tasks/${rvTask.id}`}><b style={{ display: 'block', fontWeight: 600 }}>{m.name}</b><small className="muted" style={{ fontSize: 11.5 }}>{rvTask.moduleId ? `${api.moduleById(rvTask.moduleId).name}岗 · ` : ''}{rvTask.name}</small></Link>
-              <StatusPill tone={rv.grade === '需改进' ? 'warn' : 'ok'} icon={rv.grade === '需改进' ? undefined : 'check'}>{rv.grade}</StatusPill>
-            </div>
-            <p className="quote hm-clamp">{rv.comment}</p>
-            <p className="muted" style={{ fontSize: 11.5, marginTop: 8 }}>{fmtDate(rv.at)} 点评</p>
-          </>; })() : <Empty icon="pen" title="还没有点评">交了产出后，带教的点评会出现在这里。</Empty>}
-        </section>
-
-        <section className="card vcol" style={{ gridArea: 'wait' }} aria-label="等待点评">
-          <CardHead title="等待点评" sub={`${waiting.length} 份`} />
-          {waiting.length ? (
-            <div className="stack" style={{ gap: 8, marginTop: 12 }}>
-              {waiting.map(w => {
-                const late = w.dueAt ? t(w.dueAt) < t(now) : false;
-                return (
-                  <Link key={w.task.id} className="doc" to={`/growth/tasks/${w.task.id}`}>
-                    <Tile icon="clock" domain="ment" />
-                    <span className="grow1"><b>{w.task.name}</b><small>{w.mentor.name} 点评 · {w.dueAt ? `${fmtDue(w.dueAt, now)} 前` : '期限待定'}</small></span>
-                    {late ? <StatusPill tone="due">已超时</StatusPill> : <Icon name="right" />}
-                  </Link>
-                );
-              })}
-            </div>
-          ) : <Empty icon="inbox" title="没有在等的点评">交的产出都评完了。</Empty>}
-          <p className="muted row" style={{ marginTop: 'auto', paddingTop: 10, fontSize: 11.5, gap: 6 }}><Icon name="info" size={13} />带教 2 个工作日内点评，超时抄送管理员</p>
+            )}
+          </> : <Empty icon="cal" title="还没有个人路径">管理员排好你的培养路径后，这里显示进度。</Empty>}
         </section>
 
         <section className="card vcol" style={{ gridArea: 'res' }} aria-label="当前岗位资料">
-          <CardHead title={pos ? `${pos.module.name}岗资料` : '岗位资料'} sub="当前站" />
-          <div style={{ marginTop: 12 }}>
-            {res.length ? res.map(r => (
-              <button key={r.id} type="button" className="doc" style={{ width: '100%', textAlign: 'left' }} onClick={() => say('知识库二期接入，届时点开直接跳到飞书文档')}>
-                <Tile icon={r.source.startsWith('FAQ') ? 'q' : 'doc'} domain="ment" /><span className="grow1"><b>{r.title}</b><small>{r.source} · {fmtDate(r.updatedAt)} 更新</small></span><Icon name="ext" />
-              </button>
-            )) : <Empty icon="book" title="这一站还没有资料" />}
-          </div>
-          <div className="row muted" style={{ marginTop: 'auto', paddingTop: 12, fontSize: 11.5, gap: 6 }}><Icon name="sync" size={13} />按当前轮岗站推送</div>
+          <CardHead title={h.station ? `${h.station.module}资料` : '岗位资料'} sub="当前站" />
+          <Empty icon="book" title="第二阶段接入">按当前轮岗站推送飞书知识库里的资料。</Empty>
         </section>
-
-        {rec ? (
-          <section className="reco" style={{ gridArea: 'ai' }} aria-label="这一步可以用">
-            <div className="r1"><span className="tile"><Icon name="spark" /></span>这一步可以用 · 推荐 AI 资产{recFor ? <span className="for">适合你正在写的<b>{recFor}</b></span> : <span className="for">团队里用得最多</span>}</div>
-            <div className="row" style={{ alignItems: 'flex-end', gap: 24 }}>
-              <div className="grow1">
-                <h2><Link to={`/ai/assets/${rec.id}`} style={{ color: 'inherit' }}>{rec.title}</Link><span className="kbd">{rec.type.toUpperCase()}</span></h2>
-                <p>{rec.summary}</p>
-              </div>
-              <div style={{ borderLeft: '1px solid rgba(255,255,255,.1)', paddingLeft: 20, display: 'grid', gap: 10, width: 188, flex: 'none' }}>
-                <div className="row" style={{ fontSize: 12, color: '#C9CCE0' }}><Avatar name={api.userById(rec.authorId).name} color={api.userById(rec.authorId).color} solid size="sm" />作者 <b style={{ color: '#fff', fontWeight: 500 }}>{api.userById(rec.authorId).name}</b></div>
-                <div className="row"><span className="bignum">{api.uses(rec)}</span><small style={{ fontSize: 12, color: '#C9CCE0' }}>人用过</small>
-                  <span style={{ marginLeft: 'auto' }}><AvatarStack people={rec.usedBy.slice(0, 3).map(u => api.userById(u)).map(u => ({ name: u.name, color: u.color }))} /></span></div>
-              </div>
-            </div>
-            {rec.usage && <div className="how">用法：{rec.usage}</div>}
-            {rec.installCmd ? <CopyBox text={rec.installCmd} /> : <Link className="btn sec sm" style={{ marginTop: 12 }} to={`/ai/assets/${rec.id}`}>查看用法</Link>}
-          </section>
-        ) : <section className="card" style={{ gridArea: 'ai' }}><Empty icon="spark" title="这一步还没有推荐">去 AI 资产库看看大家在用什么。</Empty></section>}
-
-        <Feed area="feed" />
-        <LeaderBoard me={me} area="board" tid={false} />
-        <TidCard area="tid" />
+        <section className="card vcol" style={{ gridArea: 'feed' }} aria-label="团队动态">
+          <CardHead title="团队动态" sub="公开内容" />
+          <Empty icon="team" title="第二阶段接入">分享会、新上架的方法和公告会出现在这里。</Empty>
+        </section>
+        <section className="card vcol" style={{ gridArea: 'tid' }} aria-label="AI 发现">
+          <CardHead title="AI 发现" />
+          <div className="stack" style={{ gap: 8, marginTop: 12 }}><TidLink /></div>
+          <p className="muted" style={{ fontSize: 11.5, marginTop: 'auto', paddingTop: 10 }}>内部资产库第二阶段接入</p>
+        </section>
       </div>
     </>
   );
@@ -683,7 +767,7 @@ export default function Home() {
   return (
     <Sheet crumbs={[{ label: '首页' }]}>
       <style>{CSS + SCHEDULE_CSS}</style>
-      {role === 'trainee' && <TraineeHome me={me} />}
+      {role === 'trainee' && <TraineeHome />}
       {role === 'mentor' && <MentorHome me={me} />}
       {role === 'admin' && <AdminHome me={me} />}
       {role === 'colleague' && <ColleagueHome me={me} />}
@@ -693,14 +777,54 @@ export default function Home() {
 
 // ---------- 本页样式（只作用于 hm- 前缀；需要时由主会话并入 app.css） ----------
 const CSS = `
-.hm-t { margin-top: 20px; display: grid; gap: var(--gap); grid-template-columns: 1fr 1fr 1.08fr 1.08fr; grid-template-rows: 176px 292px auto auto;
-  grid-template-areas: "f1 f2 week prog" "rv wait week prog" "res ai ai board" "feed feed feed tid"; align-items: stretch; }
-.hm-two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
-.hm-two > div { display: grid; gap: 6px; padding: 12px; border-radius: 14px; background: var(--well); box-shadow: 0 0 0 1px var(--line); }
-.hm-two .l { font-size: 11.5px; color: var(--mute); }
-.hm-two .v { font-family: var(--num); font-size: 26px; font-weight: 700; letter-spacing: -.02em; line-height: 1; }
-.hm-two .v small { font-size: 13px; font-weight: 600; color: var(--ink2); margin-left: 2px; }
-.hm-two .s { font-size: 11px; color: var(--mute); }
+.hm-t { margin-top: 20px; display: grid; gap: var(--gap); grid-template-columns: 1fr 1fr 1.08fr 1.08fr;
+  grid-template-areas: "nx nx week prog" "rv rv week prog" "res feed feed tid"; align-items: stretch; }
+/* 管培生首页 · 深色「下一步」卡（排法沿用 .reco 与原焦点卡） */
+.nx { display: flex; flex-direction: column; padding: 20px 22px; }
+.nx .r1 { display: flex; align-items: center; gap: 8px; font-size: 12px; color: rgb(201, 204, 224); min-width: 0; }
+.nx .r1 > span:nth-child(2) { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .r1 .tile { width: 24px; height: 24px; border-radius: 8px; }
+.nx .r1 .tile .ico { width: 13px; height: 13px; }
+.nx .r1 .chip { margin-left: auto; flex: none; }
+.nx .r1 .chip.plain { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.nx h3 { margin-top: 14px; font-size: var(--fs-2xl); font-weight: 400; letter-spacing: -0.01em; line-height: 1.25; }
+.nx .nx-sub { margin-top: 8px; font-size: 13px; line-height: 1.7; color: rgb(211, 214, 230); }
+.nx .foot { margin-top: auto; padding-top: 16px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.nx .cd .n { font-size: var(--fs-3xl); color: #fff; }
+.nx .cd .u { color: rgb(201, 204, 224); }
+.nx .lbl { font-size: 11.5px; color: rgb(201, 204, 224); margin-top: 6px; }
+.nx .nx-state { font-size: 15px; color: #fff; }
+.nx .nx-state b { font-weight: 600; }
+.nx .btn.ghost { color: rgb(201, 204, 224); }
+.nx .btn.ghost:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
+.nx .then { margin-top: 14px; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: rgba(255, 255, 255, 0.07); box-shadow: rgba(255, 255, 255, 0.08) 0px 0px 0px 1px inset; }
+.nx .then .tl { font-size: 11.5px; color: rgb(201, 204, 224); white-space: nowrap; padding-right: 10px; box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.1); }
+.nx .then b { display: block; font-size: 13px; font-weight: 500; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .then small { display: block; font-size: 11.5px; color: rgb(201, 204, 224); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .nx-close .seg { background: rgba(255, 255, 255, 0.1); }
+.nx .nx-close .seg button { color: rgb(201, 204, 224); }
+.nx .nx-close .seg button[aria-pressed="true"] { color: var(--ink); }
+.nx .nx-close .input { height: 32px; min-width: 0; }
+/* 带教点评：左边在等带教的，右边这次要改的 */
+.rvm-b { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+.rvm .sec-l { margin-top: 14px; }
+.rvm .rvm-note { margin-top: auto; padding-top: 10px; font-size: 11.5px; gap: 6px; }
+.rvm .empty { padding: 16px 8px; }
+.hm-fix { display: grid; gap: 4px; padding: 10px 12px; border-radius: 14px; background: var(--well); box-shadow: 0 0 0 1px var(--line); transition: background var(--t), box-shadow var(--t); }
+a.hm-fix:hover { background: rgb(255, 255, 255); box-shadow: 0 0 0 1px var(--line2), 0 6px 14px -8px rgba(28,36,64,.2); }
+.hm-fix .tx { font-size: 13px; line-height: 1.6; color: var(--ink2); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.hm-fix small { font-size: 11.5px; color: var(--mute); }
+/* 进度：双圆环，外环完成、内环时间 */
+.hm-ring { display: flex; align-items: center; gap: 16px; margin-top: 14px; padding: 12px; border-radius: 14px; background: var(--well); box-shadow: 0 0 0 1px var(--line); }
+.hm-ring svg { width: 84px; height: 84px; flex: none; }
+.hm-ring .lg { display: grid; gap: 10px; min-width: 0; }
+.hm-ring .lg > div { display: grid; grid-template-columns: 8px minmax(0, 1fr); column-gap: 6px; align-items: center; }
+.hm-ring .lg i { width: 8px; height: 8px; border-radius: 50%; }
+.hm-ring .l { font-size: 11.5px; color: var(--mute); }
+.hm-ring .v, .hm-ring .s { grid-column: 2; }
+.hm-ring .v { margin-top: 3px; font-family: var(--num); font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; }
+.hm-ring .v small { font-size: 12px; font-weight: 600; color: var(--ink2); margin-left: 2px; }
+.hm-ring .s { margin-top: 2px; font-size: 11px; color: var(--mute); }
 .hm-clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .hm-lb { margin-top: 8px; display: grid; }
 .hm-lb .lr { display: flex; align-items: center; gap: 10px; padding: 7px 6px; border-radius: 10px; font-size: 13px; }
