@@ -4,6 +4,17 @@
 
 更新：2026-11-14。《TraineeOS》产品文档并入：常浩三批逐条确认了 17 项决定，PRD 升 v2.1（PR #62，常浩回复「合并」）；issue 已按方案重切（#63–#71，改写 #17、#2）；#44 挑版 PR #61 等附录 A 那条确认后合并。唯一下一步：常浩回复 #44 附录 A 的改动确认、合并 PR #61，然后进入 C 阶段，从 #46 开始做。
 
+## LESSONS 升级行补层级词、加规则检查（2026-11-19，Claude，跨项目复盘收尾子 agent，常浩批了「老项目接入 LESSONS 升级行检查：一次补齐」；已提交到 `claude/lessons-level`、PR 待合并、无需发布）
+
+- 时间：开工 `2026-11-19 10:18`（`date '+%F %H:%M'` 记录）。来由：跨项目复盘 D 批，各项目 LESSONS 的「升级」行统一带层级词，并由规则检查守住。
+- 改了哪些文件：`scripts/check-rules.mjs`（加 `lessons` 规则：每条 `## L-xx` 要有以〔结构〕〔机检〕〔体检〕〔文字〕〔提醒〕开头的「- 升级：」一行，写法照起步骨架）；`tests/check-rules.test.mjs`（加 1 条测试：缺升级行、升级行不带层级词各报一次，格式样例和合规条目不误报）；`docs/LESSONS.md`（「怎么升级」补一条层级词要求，格式样例改成「〔提醒〕未升级。」，与起步骨架一致）；L-01～L-04 的升级行补层级词（原文保留）：L-01〔提醒〕未升级、待批积压清单组 14；L-02〔结构〕部分升级（`scripts/db.mjs` 起库统一带 `LC_ALL`，写明不覆盖的情形）；L-03、L-04〔提醒〕未升级。`.github/workflows/ci.yml` 改为固定 `runs-on: ubuntu-24.04`（与 PR #77、#78、#79 同一行：11-18 起 `ubuntu-latest` 换成 26.04，不带 PostgreSQL 16，本 PR 的 CI 第一次跑在 `test:server` 找不到 `initdb`）。另修起步骨架带来的漏报：判断占位标题前先去掉反引号里的内容（标题里的 `<all_urls>` 之类原来会让整条不查），写法同 chatgpt-clipper#10（`cd80285`），并加 1 条测试；骨架本身由主会话另行处理。本节交接。
+- 测试：`npm test` 改前：vitest `Tests 96 passed (96)`，后端 `ℹ pass 108` / `ℹ fail 0`，`node --test tests/*.test.mjs` `ℹ pass 4` / `ℹ fail 0`，`通用规则检查通过`；改后：vitest `Tests 96 passed (96)`，后端 `ℹ pass 108` / `ℹ fail 0`，`node --test tests/*.test.mjs` `ℹ pass 6` / `ℹ fail 0`，`通用规则检查通过`。中间态（加了规则、LESSONS 还没补）`node scripts/check-rules.mjs` 报 4 处（L-01～L-04 升级行不带层级词），证据 `新规则在补齐前的报错.log`。
+- 验证：在 worktree `~/Sandbox/worktrees/trainee-hub-lessons-level` 里跑；改前改后日志在 `~/Library/Application Support/trainee-hub/evidence/2026-11-19-lessons-level/`。
+- 截图：无。
+- 发布与回读：无需发布。
+- 与授权不一致之处、遗留问题、范围外发现：L-02 定〔结构〕部分升级是按代码现状判断，拿不准，在 PR 里单列；积压清单只列了 L-01（推断：清单按 `feat/ui-prototype` 分支统计，那里只有 L-01），L-02～L-04 按现状判断。规则检查经 `npm test` 接进了 CI（`.github/workflows/ci.yml`），PR 时会跑。
+- 本轮新坑：无。
+
 主线：TraineeOS 落地｜完成 2/7
 
 - ✅ A 拍板：三批 17 项已确认（[决定记录](docs/research/2026-11-14-traineeos/决定记录.md)）；#44 挑版待合并（PR #61，等附录 A 改动确认）
