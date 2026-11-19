@@ -38,7 +38,7 @@
 - 证据：浏览器里量「，」的宽度，修前 6.06px、修后 29.25px，与视觉稿一致；`npm run build` 后 `dist/assets` 里有 5 个 woff2。
 - 补充（2026-11-19）：latin 子集的范围本身含 `U+2000-206F`（常用标点区），中文里的 “ ” … — 仍归 Geist：20px 下「…」Geist 11.46px、苹方 20px，「“」7.48px 对 10.74px；，。：？！（ 等全角标点已回落苹方（Chromium 用 `CSS.getPlatformFontsForNode` 查实际字体）。页面里有「正在连接后端…」这类文案；要不要把这几个字符也让给中文字体，未定。证据：`~/Library/Application Support/trainee-hub/evidence/2026-11-19-b2-lessons/trainee-font-probe/`。
 - 升级：〔提醒〕未升级。已批：积压清单组 14，已提升为全局 G-44。
-- 提升：已提升为全局 G-44（2026-11-19，agent-kit 第二批）。
+- 提升：已提升为全局 G-44（2026-11-19，agent-kit#83）。
 
 ## L-02 macOS 上自起 PostgreSQL，pg_ctl 启动即退出「postmaster became multithreaded during startup」（2026-11-06）
 
