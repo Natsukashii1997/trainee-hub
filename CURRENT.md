@@ -7,7 +7,7 @@
 ## LESSONS 升级行补层级词、加规则检查（2026-11-19，Claude，跨项目复盘收尾子 agent，常浩批了「老项目接入 LESSONS 升级行检查：一次补齐」；已提交到 `claude/lessons-level`、PR 待合并、无需发布）
 
 - 时间：开工 `2026-11-19 10:18`（`date '+%F %H:%M'` 记录）。来由：跨项目复盘 D 批，各项目 LESSONS 的「升级」行统一带层级词，并由规则检查守住。
-- 改了哪些文件：`scripts/check-rules.mjs`（加 `lessons` 规则：每条 `## L-xx` 要有以〔结构〕〔机检〕〔体检〕〔文字〕〔提醒〕开头的「- 升级：」一行，写法照起步骨架）；`tests/check-rules.test.mjs`（加 1 条测试：缺升级行、升级行不带层级词各报一次，格式样例和合规条目不误报）；`docs/LESSONS.md`（「怎么升级」补一条层级词要求，格式样例改成「〔提醒〕未升级。」，与起步骨架一致）；L-01～L-04 的升级行补层级词（原文保留）：L-01〔提醒〕未升级、待批积压清单组 14；L-02〔结构〕部分升级（`scripts/db.mjs` 起库统一带 `LC_ALL`，写明不覆盖的情形）；L-03、L-04〔提醒〕未升级。本节交接。
+- 改了哪些文件：`scripts/check-rules.mjs`（加 `lessons` 规则：每条 `## L-xx` 要有以〔结构〕〔机检〕〔体检〕〔文字〕〔提醒〕开头的「- 升级：」一行，写法照起步骨架）；`tests/check-rules.test.mjs`（加 1 条测试：缺升级行、升级行不带层级词各报一次，格式样例和合规条目不误报）；`docs/LESSONS.md`（「怎么升级」补一条层级词要求，格式样例改成「〔提醒〕未升级。」，与起步骨架一致）；L-01～L-04 的升级行补层级词（原文保留）：L-01〔提醒〕未升级、待批积压清单组 14；L-02〔结构〕部分升级（`scripts/db.mjs` 起库统一带 `LC_ALL`，写明不覆盖的情形）；L-03、L-04〔提醒〕未升级。`.github/workflows/ci.yml` 改为固定 `runs-on: ubuntu-24.04`（与 PR #77、#78、#79 同一行：11-18 起 `ubuntu-latest` 换成 26.04，不带 PostgreSQL 16，本 PR 的 CI 第一次跑在 `test:server` 找不到 `initdb`）。本节交接。
 - 测试：`npm test` 改前：vitest `Tests 96 passed (96)`，后端 `ℹ pass 108` / `ℹ fail 0`，`node --test tests/*.test.mjs` `ℹ pass 4` / `ℹ fail 0`，`通用规则检查通过`；改后：vitest `Tests 96 passed (96)`，后端 `ℹ pass 108` / `ℹ fail 0`，`node --test tests/*.test.mjs` `ℹ pass 5` / `ℹ fail 0`，`通用规则检查通过`。中间态（加了规则、LESSONS 还没补）`node scripts/check-rules.mjs` 报 4 处（L-01～L-04 升级行不带层级词），证据 `新规则在补齐前的报错.log`。
 - 验证：在 worktree `~/Sandbox/worktrees/trainee-hub-lessons-level` 里跑；改前改后日志在 `~/Library/Application Support/trainee-hub/evidence/2026-11-19-lessons-level/`。
 - 截图：无。
