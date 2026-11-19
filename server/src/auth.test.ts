@@ -159,7 +159,8 @@ describe('统一授权入口', () => {
     assert.equal(readScope(lin), 'u-lin');
   });
 
-  test('19 条命令都登记了名字', () => {
-    assert.equal(all.length, 19);
+  test('20 条命令都登记了名字（v2.1 的 C01–C19，加 v3.0 第一阶段的 C40）', () => {
+    assert.equal(all.length, 20);
+    assert.equal(COMMANDS.C40, '验证反馈');
   });
 });

@@ -85,8 +85,32 @@ export async function reviews(db: Db, where: string, params: unknown[], limit = 
      where ${where} order by r.created_at desc, r.id limit ${limit}`, params);
 }
 
-/** 成果版本时间线（节点详情、任务详情用）：每版带评审、下一步行动、认定 */
-export async function submissionTimeline(db: Db, subject: { milestoneId?: string; taskId?: string }) {
+/**
+ * 反馈条目（PRD v3.0 总纲 6.2）：含来源、挂靠对象和全部验证记录；where 里用 f 指反馈条目。
+ * 「待验证」= 标了下次验证、还没有一条「已改善」的验证；「仍存在」「这次没涉及」之后仍待验证。
+ */
+export async function feedbackItems(db: Db, where: string, params: unknown[]) {
+  const rows = await q<Record<string, unknown> & { id: string; reviewId: string | null; pending: boolean }>(db,
+    `select f.id, f.trainee_id as "traineeId", tu.name as "traineeName", f.source, f.content, f.tags, f.nature,
+            f.needs_action as "needsAction", f.verify_next as "verifyNext", f.created_by as "createdBy", cu.name as "createdByName", f.created_at as "createdAt",
+            f.review_id as "reviewId", f.submission_id as "submissionId", s.version, f.milestone_id as "milestoneId", m.name as "milestoneName",
+            (f.verify_next and not exists (select 1 from feedback_verification v where v.feedback_id = f.id and v.result = 'improved')) as pending
+     from feedback_item f join app_user tu on tu.id = f.trainee_id join app_user cu on cu.id = f.created_by
+     left join submission s on s.id = f.submission_id left join milestone m on m.id = f.milestone_id
+     where ${where} order by f.created_at, f.no, f.id`, params);
+  if (!rows.length) return [];
+  const checks = await q<Record<string, unknown> & { feedbackId: string }>(db,
+    `select v.id, v.feedback_id as "feedbackId", v.result, v.submission_id as "submissionId", s.version, coalesce(m.name, t.name) as "subjectName",
+            v.verified_by as "verifiedBy", u.name as "verifiedByName", v.verified_at as "verifiedAt"
+     from feedback_verification v join submission s on s.id = v.submission_id join app_user u on u.id = v.verified_by
+     left join milestone m on m.id = s.milestone_id left join task_instance t on t.id = s.task_id
+     where v.feedback_id = any($1) order by v.verified_at, v.id`, [rows.map(r => r.id)]);
+  return rows.map(r => ({ ...r, verifications: checks.filter(c => c.feedbackId === r.id) }));
+}
+
+/** 成果版本时间线（节点详情、任务详情用）：每版带评审（含反馈条目）、下一步行动、认定、在这一版上做的验证。
+ *  scope 是只能看哪位管培生的反馈（readScope 的结果），null 表示不限 */
+export async function submissionTimeline(db: Db, subject: { milestoneId?: string; taskId?: string }, scope: string | null = null) {
   const [col, id] = subject.milestoneId ? ['milestone_id', subject.milestoneId] : ['task_id', subject.taskId];
   const subs = await q<Record<string, unknown> & { id: string }>(db,
     `select s.id, s.version, s.url, s.note, s.change_note as "changeNote", s.channel, s.submitted_at as "submittedAt",
@@ -103,12 +127,18 @@ export async function submissionTimeline(db: Db, subject: { milestoneId?: string
             c.status, c.credited_by as "creditedBy", c.credited_at as "creditedAt"
      from submission_credit c join task_instance t on t.id = c.task_id join personal_path pp on pp.id = t.path_id join app_user u on u.id = pp.user_id
      where c.submission_id = any($1) order by u.id, t.id`, [ids]);
+  const fb = await feedbackItems(db, 'f.submission_id = any($1) and ($2::text is null or f.trainee_id = $2)', [ids, scope]);
+  const checks = await q<Record<string, unknown> & { submissionId: string }>(db,
+    `select v.id, v.submission_id as "submissionId", v.feedback_id as "feedbackId", f.content, v.result, v.verified_by as "verifiedBy", u.name as "verifiedByName", v.verified_at as "verifiedAt"
+     from feedback_verification v join feedback_item f on f.id = v.feedback_id join app_user u on u.id = v.verified_by
+     where v.submission_id = any($1) and ($2::text is null or f.trainee_id = $2) order by v.verified_at, v.id`, [ids, scope]);
   return subs.map(s => {
     const review = revs.find(r => r.submissionId === s.id) ?? null;
     return {
       ...s,
-      review: review && { ...review, actions: acts.filter(a => a.reviewId === review.id) },
+      review: review && { ...review, actions: acts.filter(a => a.reviewId === review.id), feedback: fb.filter(f => f.reviewId === review.id) },
       credits: credits.filter(c => c.submissionId === s.id),
+      verifications: checks.filter(c => c.submissionId === s.id),
     };
   });
 }

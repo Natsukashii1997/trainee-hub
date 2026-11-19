@@ -63,3 +63,19 @@
 - 正确做法：不改项目配置、不放宽来源校验。先 `lsof -nP -iTCP:5320 -sTCP:LISTEN` 看端口是谁的，别人的进程不要停；需要并行预览时，后端启动命令显式写 `PORT=5325`，前端用 scratchpad 里的临时 vite 配置（继承 `vite.config.ts`，换端口，代理里加 `headers: { origin: 'http://127.0.0.1:5320' }`），用完删掉 launch.json 里的临时配置。
 - 证据：本会话预览日志「后端启动失败：listen EADDRINUSE: address already in use 127.0.0.1:5333」；登录页截图上的「不接受其他网站发来的请求」；改用临时配置后登录与切换正常（`~/Library/Application Support/trainee-hub/evidence/2026-11-09-43/`）。
 - 升级：〔提醒〕未升级。
+
+## L-05 「这条反馈能不能在这一版上验证」前端按毫秒比时间，和后端判断不一致（2026-11-18）
+
+- 现象：#45 演示故事里口头反馈和第 2 版相隔不到 1 毫秒写入。页面上第 2 版排在口头反馈前面，带教评审时「上次说的」只列出 2 条；后端却认为 3 条都能验证。
+- 根因：PostgreSQL 的 `timestamptz` 精确到微秒，JSON 里转成 JS `Date` 只剩毫秒，同一毫秒里的先后丢了。页面拿截短后的时间重算后端的前置条件。
+- 正确做法：凡是和命令前置条件一致的判断（能不能验证、能不能评审），由后端查询直接返回结果（如 `verifiableFeedbackIds`），页面不自己按时间重算；同一事务里写的多条记录要排序时，加显式序号列（如 `feedback_item.no`），不靠 `created_at`。
+- 证据：示例库查询 `verbal 06:00:47.196126`、`第 2 版 06:00:47.19677`；改后 `feedback.test.ts` 断言待验证 3 条与可验证 3 条一致。
+- 升级：〔提醒〕未升级。
+
+## L-06 CI 的 `ubuntu-latest` 换成 26.04，后端测试找不到 PostgreSQL 16（2026-11-18）
+
+- 现象：PR #77、#78 的 CI 同一天全部失败，`数据库脚本出错：找不到 /usr/lib/postgresql/16/bin/initdb`；前一天 `codex/audit-fix-1118` 还是绿的，代码没动过数据库脚本。
+- 根因：`ci.yml` 用 `runs-on: ubuntu-latest`，并写死 `PG_BIN: /usr/lib/postgresql/16/bin`，靠的是 24.04 镜像自带 PostgreSQL 16。2026-11-18 起 `ubuntu-latest` 指向 `ubuntu-26.04`（日志 `Image: ubuntu-26.04`），镜像里没有这个路径。
+- 正确做法：依赖镜像自带软件和固定路径的 job，`runs-on` 写死具体版本（这里是 `ubuntu-24.04`），不用 `-latest`；CI 突然全红、代码没动时，先看「Set up job」里的 `Image:` 和上一次绿的比。
+- 证据：失败 run 44314564343 的 `Image: ubuntu-26.04`；11-17 绿的 run 是 `Image: ubuntu-24.04`。
+- 升级：〔提醒〕未升级（换别的项目也成立，可提议升为全局 G 条目）。
