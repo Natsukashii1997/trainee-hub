@@ -1,4 +1,4 @@
-// 通用规则检查：只查机器能判定的几条（AGENTS.md「规则」；全局坑 G-02）。项目长出自己的硬规矩、且能机检的，照 RULES 的样子往下加。
+// 通用规则检查：只查机器能判定的几条（AGENTS.md「规则」；全局坑 G-02；LESSONS「升级」行）。项目长出自己的硬规矩、且能机检的，照 RULES 的样子往下加。
 // 只认 Node / 前端项目的写法，别的技术栈按需改。用法：node scripts/check-rules.mjs；tests/check-rules.test.mjs 也会跑。
 import fs from 'node:fs';
 import path from 'node:path';
@@ -8,6 +8,7 @@ const RULES = {
   listen: '本机服务只监听 127.0.0.1（AGENTS.md 规则）',
   deps: '依赖只许 ALLOWED_DEPS 里的；要加依赖，先改 scripts/check-rules.mjs 的 ALLOWED_DEPS，并在交接里说明理由（AGENTS.md 规则）',
   time: '页面上的时间经统一的格式化函数按北京时间显示，不直接截取 ISO 字符串（全局坑 G-02）；截取的确实是北京时间字符串时，在行内注释写「北京时间」',
+  lessons: 'docs/LESSONS.md 每条坑都要有「- 升级：」一行，开头是〔结构〕〔机检〕〔体检〕〔文字〕〔提醒〕之一，后面写状态和去处，如「- 升级：〔提醒〕未升级。」「- 升级：〔机检〕已升级（2026-11-18，#12）：scripts/check-rules.mjs 的 xx 规则」；层级怎么选见全局 LESSONS「怎么升级」',
 };
 // 要扫的源码目录，按项目结构改；不存在的目录跳过
 const SCAN = ['web/src', 'server'];
@@ -28,6 +29,8 @@ const ALLOWED_DEPS = [
   '@types/pg', '@types/node',
   'vite', '@vitejs/plugin-react', 'typescript', 'vitest', 'jsdom', '@testing-library/react', '@types/react', '@types/react-dom',
 ];
+// LESSONS「升级」行开头的层级词，口径同全局 LESSONS「怎么升级」（agent-kit hooks/lessons-remind.mjs 的 LEVELS）
+const LEVELS = ['结构', '机检', '体检', '文字', '提醒'];
 
 function files(dir) {
   if (!fs.existsSync(dir)) return [];
@@ -52,7 +55,32 @@ export function checkRules(root) {
     const at = key => lines.findIndex(line => line.includes(`"${key}":`)) + 1;
     for (const name of Object.keys({ ...pkg.dependencies, ...pkg.devDependencies }).filter(n => !ALLOWED_DEPS.includes(n))) hit(pkgFile, at(name), 'deps', name);
   }
+  checkLessons(root, hit);
   return found;
+}
+
+// LESSONS 每条 L-xx 都要有以层级词开头的「升级」行；代码块里的格式样例和标题带 <占位> 的不算条目。
+// 反引号里的尖括号是真实内容不是占位（如标题里的 `<all_urls>`），先去掉再判断；起步骨架原写法会把这种条目整条跳过（剪藏插件 chatgpt-clipper#10 发现）
+function checkLessons(root, hit) {
+  const file = path.join(root, 'docs', 'LESSONS.md');
+  if (!fs.existsSync(file)) return;
+  let fence = false, cur = null;
+  const close = () => { if (cur && !cur.up) hit(file, cur.line, 'lessons', `${cur.id} 缺「- 升级：」一行`); cur = null; };
+  fs.readFileSync(file, 'utf8').split('\n').forEach((text, i) => {
+    if (/^\s*```/.test(text)) { fence = !fence; return; }
+    if (fence) return;
+    const head = text.match(/^## (L-\d+) (.*)$/);
+    if (head || text.startsWith('## ')) {
+      close();
+      if (head && !/<[^>]+>/.test(head[2].replace(/`[^`]*`/g, ''))) cur = { id: head[1], line: i + 1, up: false };
+      return;
+    }
+    const up = cur && text.match(/^- 升级：(.*)$/);
+    if (!up) return;
+    cur.up = true;
+    if (!LEVELS.some(level => up[1].startsWith(`〔${level}〕`))) hit(file, i + 1, 'lessons', `${cur.id} 的「升级」没以层级词开头：${text}`);
+  });
+  close();
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

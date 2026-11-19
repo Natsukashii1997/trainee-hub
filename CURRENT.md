@@ -26,6 +26,17 @@
 - ⏸ 从已有带教纪要里统计「重复反馈」：2026-11-18 常浩说先不做
 - 📌 仓库与目录改名为同一个英文名：改名计划待常浩确认
 
+## LESSONS 升级行补层级词、加规则检查（2026-11-19，Claude，跨项目复盘收尾子 agent，常浩批了「老项目接入 LESSONS 升级行检查：一次补齐」；已提交到 `claude/lessons-level`、PR 待合并、无需发布）
+
+- 时间：开工 `2026-11-19 10:18`（`date '+%F %H:%M'` 记录）。来由：跨项目复盘 D 批，各项目 LESSONS 的「升级」行统一带层级词，并由规则检查守住。
+- 改了哪些文件：`scripts/check-rules.mjs`（加 `lessons` 规则：每条 `## L-xx` 要有以〔结构〕〔机检〕〔体检〕〔文字〕〔提醒〕开头的「- 升级：」一行，写法照起步骨架）；`tests/check-rules.test.mjs`（加 1 条测试：缺升级行、升级行不带层级词各报一次，格式样例和合规条目不误报）；`docs/LESSONS.md`（「怎么升级」补一条层级词要求，格式样例改成「〔提醒〕未升级。」，与起步骨架一致）；L-01～L-04 的升级行补层级词（原文保留）：L-01〔提醒〕未升级、待批积压清单组 14；L-02〔结构〕部分升级（`scripts/db.mjs` 起库统一带 `LC_ALL`，写明不覆盖的情形）；L-03、L-04〔提醒〕未升级。`.github/workflows/ci.yml` 改为固定 `runs-on: ubuntu-24.04`（与 PR #77、#78、#79 同一行：11-18 起 `ubuntu-latest` 换成 26.04，不带 PostgreSQL 16，本 PR 的 CI 第一次跑在 `test:server` 找不到 `initdb`）。另修起步骨架带来的漏报：判断占位标题前先去掉反引号里的内容（标题里的 `<all_urls>` 之类原来会让整条不查），写法同 chatgpt-clipper#10（`cd80285`），并加 1 条测试；骨架本身由主会话另行处理。本节交接。
+- 测试：`npm test` 改前：vitest `Tests 96 passed (96)`，后端 `ℹ pass 108` / `ℹ fail 0`，`node --test tests/*.test.mjs` `ℹ pass 4` / `ℹ fail 0`，`通用规则检查通过`；改后：vitest `Tests 96 passed (96)`，后端 `ℹ pass 108` / `ℹ fail 0`，`node --test tests/*.test.mjs` `ℹ pass 6` / `ℹ fail 0`，`通用规则检查通过`。中间态（加了规则、LESSONS 还没补）`node scripts/check-rules.mjs` 报 4 处（L-01～L-04 升级行不带层级词），证据 `新规则在补齐前的报错.log`。
+- 验证：在 worktree `~/Sandbox/worktrees/trainee-hub-lessons-level` 里跑；改前改后日志在 `~/Library/Application Support/trainee-hub/evidence/2026-11-19-lessons-level/`。
+- 截图：无。
+- 发布与回读：无需发布。
+- 与授权不一致之处、遗留问题、范围外发现：L-02 定〔结构〕部分升级是按代码现状判断，拿不准，在 PR 里单列；积压清单只列了 L-01（推断：清单按 `feat/ui-prototype` 分支统计，那里只有 L-01），L-02～L-04 按现状判断。规则检查经 `npm test` 接进了 CI（`.github/workflows/ci.yml`），PR 时会跑。
+- 本轮新坑：无。
+
 ## 第 1 页「里程碑详情」验收通过，提交并开两个 PR（2026-11-18，Claude，常浩回复「按推荐开工」「通过」；已提交、无需发布）
 
 - 时间：开工 `2026-11-18 21:30`（`date '+%F %H:%M'` 记录）。★ 来由：常浩确认分批计划（验收 → 两个 PR → 第 2 页），用演示数据走完第 1 页后回复「通过」。
@@ -38,6 +49,7 @@
   - 首页会话（第 5 页）和本会话共用这个工作区和分支。它在总纲 6.4、第 8 节、`docs/页面清单.md` 第 5 行、本文件主线里写的第 5 页定版与「五张卡都保留」的决定是文档，随文档 PR 一起提交；它的接通代码（`server/src/views/work.ts`、`server/src/views/views.test.ts` 等）没有提交，留给它自己的 PR。首页设计稿 `docs/research/2026-11-18-v3/design/home-trainee.html` 与 `home-trainee-src/` 随文档 PR 提交，因为页面清单引用了它。
   - 「当前阶段目标」那一行的改写仍等常浩点头。
   - 开 PR 后 CI 全红：GitHub 当天把 `ubuntu-latest` 换成 26.04，没有 PostgreSQL 16（见 L-06）。`ci.yml` 改为 `runs-on: ubuntu-24.04`，提交 `14f2079` 推到 #77，同一改动拣到 #78。
+  - 11-19：#77 的分支被变基到含 #80–#82 的 main，#78 出现冲突。按 Auto-fix 合并 `origin/claude/prd-v3-docs`：CURRENT.md 保留两边（LESSONS 升级那一节放在本节之上），LESSONS 的 L-05、L-06 升级行补层级词〔提醒〕（新规则要求）。合并后全量测试里 `Milestone.test.tsx` 第 1 条时过时不过（机器忙时首屏等不到、或整条超 5 秒），给首屏查找放宽到 5 秒、整文件超时 15 秒，连跑 5 次全过；`npm test` vitest `100 passed`、后端 `ℹ pass 117`、交接与规则 `ℹ pass 6`，typecheck 通过，日志 `evidence/2026-11-18-45/npm-test-merge-78.log`。
 - 本轮新坑：L-06。
 
 ## 第 1 页「里程碑详情」按 B 版接通：任务标准、分条反馈与验证（2026-11-18，Claude，常浩回复「B」选定版式；未提交、无需发布）
