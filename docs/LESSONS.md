@@ -36,7 +36,9 @@
 - 根因：`@fontsource/geist-sans` 的 `@font-face` 不带 `unicode-range`，Geist 自带一套窄版全角标点（，。：等），在 `--sans` 里排在苹方前面，就把苹方的标点挡住了。视觉稿用的 Google Fonts 只下发 latin 子集，带了 `unicode-range`，所以没这个问题。
 - 正确做法：不直接 import `@fontsource/*/400.css`，改在 `web/src/styles/fonts.css` 自写 `@font-face`，`unicode-range` 照 Google Fonts 的 latin 子集限定，让中文和全角标点回落到系统中文字体。以后换西文字体也照这个做。
 - 证据：浏览器里量「，」的宽度，修前 6.06px、修后 29.25px，与视觉稿一致；`npm run build` 后 `dist/assets` 里有 5 个 woff2。
-- 升级：〔提醒〕未升级。待批：积压清单组 14（建议提升为全局坑）。
+- 补充（2026-11-19）：latin 子集的范围本身含 `U+2000-206F`（常用标点区），中文里的 “ ” … — 仍归 Geist：20px 下「…」Geist 11.46px、苹方 20px，「“」7.48px 对 10.74px；，。：？！（ 等全角标点已回落苹方（Chromium 用 `CSS.getPlatformFontsForNode` 查实际字体）。页面里有「正在连接后端…」这类文案；要不要把这几个字符也让给中文字体，未定。证据：`~/Library/Application Support/trainee-hub/evidence/2026-11-19-b2-lessons/trainee-font-probe/`。
+- 升级：〔提醒〕未升级。已批：积压清单组 14，已提升为全局 G-44。
+- 提升：已提升为全局 G-44（2026-11-19，agent-kit#83）。
 
 ## L-02 macOS 上自起 PostgreSQL，pg_ctl 启动即退出「postmaster became multithreaded during startup」（2026-11-06）
 
