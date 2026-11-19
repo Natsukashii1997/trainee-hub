@@ -27,6 +27,18 @@
 - ⏸ 从已有带教纪要里统计「重复反馈」：2026-11-18 常浩说先不做
 - 📌 仓库与目录改名为同一个英文名：改名计划待常浩确认
 
+## 安全审计 PR #72 按独立审查返修并变基（2026-11-20，Claude，常浩清 PR 积压时回「你来修」；已提交到 `codex/audit-fix-1118`、PR #72 待合并、无需发布）
+
+- 时间：开工 `2026-11-20 06:44`（取证据目录的创建时间）。来由：11-20 独立审查结论「修完再合」：和 main 有 2 处冲突；变基后 H02「失败恢复重置前的数据」不覆盖 main 后来加的演示故事。
+- 改了哪些文件：`server/src/seed.ts`（新增 `seedAll`：`npm run db:seed` 分两段，重置失败报「库里的数据没有变」，演示故事失败报「示例数据已重置、故事没写完、重跑即可」；入口改用它）；`server/src/reset-security.test.ts`（造故障连接池的写法提成 `failing`，补 2 条用例）；`server/src/permissions-security.test.ts`（标题不再写死「19 条命令」）；`.github/workflows/ci.yml` 不再改（main 已自己固定 ubuntu-24.04，本 PR 那次改动变基后为空）；本节。
+- 测试：`npm test` 原样结果：vitest `Tests  103 passed (103)`，后端 `ℹ pass 130` / `ℹ fail 0`，`node --test tests/*.test.mjs` `ℹ pass 6` / `ℹ fail 0`，`通用规则检查通过`；`npm run typecheck` 无报错。
+- 验证：数据库用独立的临时实例（`TRAINEE_HUB_HOME` 指临时目录、端口 25473），没有碰本机开发库和测试库；日志在 `~/Library/Application Support/trainee-hub/evidence/2026-11-20-pr72-fix/`。
+- 截图：无（无界面改动）。
+- 发布与回读：未发布（无需发布）。
+- 与授权不一致之处、遗留问题、范围外发现：① **没有把演示故事放进重置的事务**（审查给的第一种修法）：故事靠各步提交时间分先后，同一个事务里 `now()` 是同一个值（L-05），放进去会把故事的先后顺序弄乱；改用第二种，把两段的保证写清并在报错里说明。也就是说：故事中途失败时，重置前的数据已经没有了。要做到完全可恢复得换做法（先把旧 schema 改名留着、成功后再删），没做，等常浩定。② 审查的其余 4 项没修：500 日志只剩错误码（是取舍，要常浩定）、含 NUL 的输入仍返回 500、`migrate` 的 `transaction` 参数不校验调用方在事务里、测试夹具小问题里除标题外的两处。③ PR 正文「要常浩定的事」4 条和 M05、L02、L03 仍未动。
+- 本轮新坑：无。
+
+
 ## LESSONS 升级行补层级词、加规则检查（2026-11-19，Claude，跨项目复盘收尾子 agent，常浩批了「老项目接入 LESSONS 升级行检查：一次补齐」；已提交到 `claude/lessons-level`、PR 待合并、无需发布）
 
 - 时间：开工 `2026-11-19 10:18`（`date '+%F %H:%M'` 记录）。来由：跨项目复盘 D 批，各项目 LESSONS 的「升级」行统一带层级词，并由规则检查守住。
@@ -166,6 +178,26 @@
   - 项目主目录的 checkout 停在已合并的旧分支 `feat/ui-prototype`（PRD 还是 v1.1，落后 main 17 个提交），本轮在新工作区 `.claude/worktrees/prd-v3`（分支 `claude/prd-v3`，从 `origin/main` 开）里写，主目录未动。
   - PR #72（Codex 11-17 的安全审计，草稿）本轮没有读到内容（GitHub 连接超时）。
 - 本轮新坑：无。
+
+## 安全审计 11-18：故障原子性、异常脱敏与权限回归（2026-11-17，Codex，常浩授权审计修复并开 PR；本轮提交分支、无需发布）
+
+- 时间：开工 `2026-11-17 18:01`（`date '+%F %H:%M'` 记录）。本轮以 `origin/main` 的 `76be41e` 为起点，在 `codex/audit-fix-1118` 独立 worktree 执行。
+- 改了哪些文件：`server/src/seed.ts`、`migrate.ts` 将清库、迁移、示例数据纳入同一事务；`app.ts`、`db.ts` 脱敏异常并处理坏 Cookie；`views/index.ts` 处理非法 URL 编码；新增 `security.test.ts`、`reset-security.test.ts`、`permissions-security.test.ts`，共 10 条回归与权限测试；本文件记录交接。
+- 测试：隔离环境 `TRAINEE_HUB_HOME=本轮证据目录/db PGPORT_TRAINEE_HUB=25433 npm test` 原样结果 `Tests  96 passed (96)`，后端 `ℹ pass 118` / `ℹ fail 0`，交接及规则 `ℹ pass 4` / `ℹ fail 0`，`通用规则检查通过`；`npm run typecheck`、`npm run build` 退出码 0。原子性回归先 `ℹ pass 0` / `ℹ fail 2` 后 `ℹ pass 2` / `ℹ fail 0`，异常回归先 `ℹ pass 0` / `ℹ fail 5` 后 `ℹ pass 5` / `ℹ fail 0`。
+- 验证：只用新建的 `127.0.0.1:25433` PostgreSQL、合成数据及随机 HTTP 端口，原开发库和共享测试库未清空。HTTP 矩阵覆盖正式模式 4 种身份 Cookie × 11 条查询及 19 条命令，以及演示模式本人、他人、普通带教、管理者、未开通身份。H02 经独立只读控制流与内存故障注入复核。
+- 截图：无，未修改界面。
+- 发布与回读：草稿 PR #72 已创建（https://github.com/Natsukashii1997/trainee-hub/pull/72），代码提交 `5349df5`。首轮 CI 因 ubuntu-latest 缺 PostgreSQL 16 失败，追加修改 `.github/workflows/ci.yml` 固定 Ubuntu 24.04 并预检查 PostgreSQL 版本；这是本轮顺手修复。提交 `9188bdc` 的 CI 运行 `44064273595` 已通过，确认 PostgreSQL 16.15、前端 96、后端 118、交接与规则 4 条通过。无需发布。
+- 与授权不一致之处、遗留问题、范围外发现：H01 清库目标过宽为高风险，收紧允许的本机数据库与实际目标核对规则会改变既有行为，按用户要求列需常浩决定；M03 服务端成果 URL 来源与协议校验、M06 已定顶栏待办读取失败的未知态、L01 非法日期自动归一列待决定。M05 初始化中断破坏连接文件后的恢复属于完整生命周期改造，超出本轮小改范围；L02 客户端成功响应结构缺校验、L03 合成数据原型嵌套成绩裁剪不完整列专项遗留。以上新增发现由独立代理完整补读前端后提出，主代理已用纯内存探针复跑确认，证据为 `frontend-audit-probes.log`。飞书登录、正式最小权限、飞书及牛马之家导入目前尚未实现，继续按原项目主线推进。首轮基线后端 107 通过 / 1 连接超时，首轮新增矩阵错误地期待带教有自己的管培生路径，已更正为 404 后全量复跑通过，两份首败日志均保留。
+- 本轮新坑：无。
+
+### 主线：本轮安全审计｜完成 4/6
+
+- ✅ 核对规格与独立 worktree，起点 `76be41e`。
+- ✅ 审计复现与本轮修复，7 条回归先失败后通过，另补 3 条权限测试。
+- ✅ 全量回归，审计报告在 `~/Sandbox/2026-11-17-codex-quota/audits/trainee-hub.md`，日志在 `~/Library/Application Support/trainee-hub/evidence/2026-11-17-security/`。
+- ✅ 推送 `codex/audit-fix-1118` 并创建草稿 PR #72；会话结束清理 worktree 的回读记在外部审计报告，分支保留。
+- ❓ H01、M03、M06、L01 的行为或已定界面变化等待常浩决定，详见报告。
+- 📌 M05 初始化生命周期专项、L02 客户端响应校验、L03 原型嵌套成绩裁剪本轮未修，持续登记。此处不改变原 TraineeOS 项目阶段与待办。
 
 ## PRD v2.1：并入 TraineeOS 产品文档与牛马之家迁移（2026-11-14，Claude，常浩分三批逐条确认 17 项决定并要求写 PRD v2.1；未提交、无需发布）
 
