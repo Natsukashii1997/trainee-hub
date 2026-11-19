@@ -169,7 +169,7 @@ export async function seedDemo(client: pg.PoolClient, inTransaction = false): Pr
 }
 
 /**
- * 演示故事（PRD v3.0 第 1 页验收用，只在 npm run db:seed 时写，后端测试不写）：
+ * 演示故事（PRD v3.0 第 1 页验收用，只在 npm run db:seed 时写，后端测试只在 seedAll 的用例里写）：
  * 林夏交「问题定义」第 1 版 → 周颖评「需改进」，分条写 4 条反馈（2 条下次验证、1 条这一版就要补）→ 周颖记一条口头反馈（下次验证）
  * → 林夏修改再交第 2 版，等周颖评审。全部经业务命令写入，和真实操作留下的数据一样。
  */
@@ -233,6 +233,26 @@ export async function resetDemo(pool: pg.Pool, env: Record<string, string | unde
   }
 }
 
+/**
+ * npm run db:seed 做的全部事，分两段，失败时报错写明库现在是什么样：
+ * 1. 重置（resetDemo）：清库、迁移、基础示例在一个事务里，失败就回滚，库里的数据和重置前一样；
+ * 2. 演示故事（seedStory）：经业务命令一步一步写，每步各自提交。不放进上面那个事务：故事靠各步提交时间分先后，
+ *    同一个事务里 now() 是同一个值（L-05）。所以它中途失败时，重置前的数据已经没有了，库里是完整的基础示例加故事的前几步。
+ */
+export async function seedAll(pool: pg.Pool, env: Record<string, string | undefined>, url: string | undefined): Promise<string> {
+  try {
+    await resetDemo(pool, env, url);
+  } catch (e) {
+    throw new Error(`初始化失败，库里的数据没有变：${(e as Error).message}`);
+  }
+  try {
+    await seedStory(pool);
+  } catch (e) {
+    throw new Error(`示例数据已重置（重置前的数据已清掉），但第 1 页的演示故事没有写完：${(e as Error).message}。修好原因后重跑 npm run db:seed，会从头重置`);
+  }
+  return '已重置本机库并写入示例数据（全部虚构），含第 1 页的演示故事';
+}
+
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const url = process.env.DATABASE_URL;
   const refused = demoRefusal(process.env, url);
@@ -242,11 +262,9 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   } else {
     const pool = createPool(url);
     try {
-      await resetDemo(pool, process.env, url);
-      await seedStory(pool);
-      console.log('已重置本机库并写入示例数据（全部虚构），含第 1 页的演示故事');
+      console.log(await seedAll(pool, process.env, url));
     } catch (e) {
-      console.error(`初始化失败：${(e as Error).message}`);
+      console.error((e as Error).message);
       process.exitCode = 1;
     } finally {
       await pool.end();

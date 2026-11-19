@@ -43,7 +43,7 @@ async function withApp(demo: boolean, check: (base: string) => Promise<void>) {
   }
 }
 
-test('安全权限矩阵：非演示模式的全部查询与 19 条命令一律 401', async () => {
+test('安全权限矩阵：非演示模式的全部查询与全部命令一律 401', async () => {
   await withApp(false, async base => {
     for (const userId of ['u-lin', 'u-zhou', 'u-wu', 'u-unopened']) {
       const headers = { cookie: `th_demo_user=${userId}` };
