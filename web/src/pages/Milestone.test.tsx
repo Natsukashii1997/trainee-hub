@@ -60,11 +60,14 @@ const mount = () => render(
 );
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
+// 首屏要先等身份、会话、里程碑三次请求；机器忙时默认 1 秒等不到、整条 5 秒跑不完，放宽到 5 秒和 15 秒
+const FIRST = { timeout: 5000 };
+vi.setConfig({ testTimeout: 15000 });
 
 test('带教评审第 2 版：列出这一版之前的待验证反馈（含口头的），逐条验证、分条写新反馈，一次提交 C08', async () => {
   backend(ZHOU, milestone('submitted', true));
   mount();
-  const check = await screen.findByRole('region', { name: '上次说的，这次改了吗' });
+  const check = await screen.findByRole('region', { name: '上次说的，这次改了吗' }, FIRST);
   // 4 条待验证都在第 2 版提交之前，都能在这一版上验证
   expect(within(check).getByText('4 条待验证')).toBeTruthy();
   const items = within(check).getAllByRole('group', { name: '验证结果' });
@@ -90,7 +93,7 @@ test('带教评审第 2 版：列出这一版之前的待验证反馈（含口�
 test('没选结论不提交', async () => {
   backend(ZHOU, milestone('submitted', true));
   mount();
-  fireEvent.click(await screen.findByRole('button', { name: '提交评审' }));
+  fireEvent.click(await screen.findByRole('button', { name: '提交评审' }, FIRST));
   expect(await screen.findByText('还没选结论。')).toBeTruthy();
   expect(posts).toEqual([]);
 });
@@ -98,7 +101,7 @@ test('没选结论不提交', async () => {
 test('管培生需修改：「这次要改的」先列这一版就要补上的，待验证最多 3 条；修改说明必填，提交 C07', async () => {
   backend(LIN, milestone('revise', false));
   mount();
-  const fix = await screen.findByRole('region', { name: '这次要改的' });
+  const fix = await screen.findByRole('region', { name: '这次要改的' }, FIRST);
   expect(within(fix).getByText('没写不处理什么')).toBeTruthy();
   expect(within(fix).getAllByText(/分类口径没有依据|只有一个班组的数据|汇报先说结论/)).toHaveLength(3);
   expect(within(fix).queryByText('另一个里程碑上的反馈')).toBeNull();
@@ -116,7 +119,7 @@ test('管培生需修改：「这次要改的」先列这一版就要补上的�
 test('时间线：任务标准五件事、各版成果、评审里的分条反馈和口头反馈按时间排，最后一格是现在', async () => {
   backend(LIN, milestone('submitted', true));
   mount();
-  const std = await screen.findByRole('region', { name: '任务标准' });
+  const std = await screen.findByRole('region', { name: '任务标准' }, FIRST);
   for (const t of ['为什么做、交付什么', '怎样算好', '常见失误', '什么情况要及时找带教', '样例']) expect(within(std).getByText(t)).toBeTruthy();
   const titles = screen.getAllByRole('region').map(r => r.getAttribute('aria-label'));
   expect(titles.slice(0, 5)).toEqual(['任务标准', '第 1 版', '第 1 版评审', '口头反馈', '第 2 版']);
