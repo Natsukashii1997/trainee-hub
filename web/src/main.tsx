@@ -33,6 +33,7 @@ const AIAccess = lazy(() => import('./pages/Admin').then(m => ({ default: m.AIAc
 const Login = lazy(() => import('./pages/Misc').then(m => ({ default: m.Login })));
 const Soon = lazy(() => import('./pages/Misc').then(m => ({ default: m.Soon })));
 const Pending = lazy(() => import('./pages/Misc').then(m => ({ default: m.Pending })));
+const MilestoneDetail = lazy(() => import('./pages/Milestone').then(m => ({ default: m.MilestoneDetail })));
 
 /** 旧地址带参数的重定向：把 :param 换成当前地址里的值 */
 function Moved({ to }: { to: string }) {
@@ -61,7 +62,7 @@ createRoot(document.getElementById('root')!).render(
               {/* 项目实践：P1–P3 */}
               <Route path="projects" element={<Pending page="P1" />} />
               <Route path="projects/:id" element={<Pending page="P2" />} />
-              <Route path="projects/:id/milestones/:mid" element={<Pending page="P3" />} />
+              <Route path="projects/:id/milestones/:mid" element={<MilestoneDetail />} />
               {/* 培养成长：T1–T7 */}
               <Route path="growth" element={<Navigate to="/growth/path" replace />} />
               <Route path="growth/path" element={<MyPath />} />

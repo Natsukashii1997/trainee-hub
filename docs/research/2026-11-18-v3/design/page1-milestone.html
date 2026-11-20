@@ -1,0 +1,326 @@
+<title>里程碑详情三版</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Manrope:wght@500;600;700&display=swap">
+<style>
+/* 布局：上面是切换条和这一版的取舍说明，下面是产品页面本体。视觉全部取自 web/src/styles/app.css（V3 柔光），产品只有浅色一种外观。 */
+:root {
+  color-scheme: light;
+  --bg: #ECEFF4; --glass: rgba(255,255,255,.72); --glass-hi: rgba(255,255,255,.9);
+  --well: rgba(255,255,255,.75); --sunk: rgba(21,25,38,.045); --dark: #1A1D2C;
+  --ink: #151926; --ink2: #363C4E; --mute: #5A6175; --faint: #8A90A0;
+  --line: rgba(21,25,38,.07); --line2: rgba(21,25,38,.11);
+  --acc: #4A4ED8; --acc-ink: #3438B8; --acc-soft: #E7E8FC;
+  --grow: #2E9E68; --grow-soft: #DBF2E5; --grow-ink: #155C39;
+  --ment: #3C8BDB; --ment-soft: #DCEAF9; --ment-ink: #1A4C86;
+  --warn: #D08A12; --warn-soft: #FBEED4; --warn-ink: #7A4A00;
+  --due: #E5484D; --due-soft: #FCE3E3; --due-ink: #A3262B;
+  --sh: 0 0 0 1px rgba(28,36,64,.05), 0 1px 2px rgba(28,36,64,.04), 0 10px 30px -10px rgba(28,36,64,.10), 0 24px 60px -24px rgba(28,36,64,.10);
+  --sh-in: inset 0 1px 0 rgba(255,255,255,.9);
+  --sh-acc: 0 6px 16px -6px rgba(74,78,216,.6), inset 0 1px 0 rgba(255,255,255,.18);
+  --r-sm: 9px; --r-md: 12px; --r-lg: 16px; --r-xl: 22px; --r-2xl: 24px; --gap: 12px;
+  --sans: "Geist", "PingFang SC", "Noto Sans SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  --num: "Manrope", "Geist", "PingFang SC", system-ui, sans-serif;
+  --ease: cubic-bezier(.2,.7,.2,1); --t: .2s;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 13px; line-height: 1.55; -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums;
+  padding-block: 20px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3, h4, p, ul, ol { margin: 0; padding: 0; } ul, ol { list-style: none; }
+h1, h2, h3 { text-wrap: balance; }
+button, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: none; padding: 0; }
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+a { color: var(--acc-ink); text-decoration: none; } a:hover { text-decoration: underline; }
+.wrap { max-width: 1240px; margin: 0 auto; display: grid; gap: 14px; }
+
+/* 预览页自己的部分 */
+.top { display: grid; gap: 10px; }
+.top h1 { font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
+.top p { color: var(--mute); max-width: 68ch; }
+.ctl { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.note { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.note > div { background: var(--sunk); border-radius: var(--r-lg); padding: 10px 14px; }
+.note b { display: block; font-size: 11.5px; font-weight: 600; color: var(--mute); letter-spacing: .04em; margin-bottom: 2px; }
+.frame { border-radius: 28px; padding: 14px; background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.25)); box-shadow: 0 0 0 1px var(--line); display: grid; gap: var(--gap); }
+
+/* 以下与 app.css 一致 */
+.card { position: relative; min-width: 0; background: var(--glass); border-radius: var(--r-xl); box-shadow: var(--sh), var(--sh-in); padding: 18px 18px 16px; display: grid; gap: 12px; align-content: start; }
+.card.dark { background: var(--dark); color: #fff; border-radius: var(--r-2xl); box-shadow: inset 0 0 0 1px rgba(255,255,255,.06), inset 0 1px 0 rgba(255,255,255,.08), 0 20px 50px -18px rgba(54,58,120,.55); }
+.card.dark .sub { color: rgba(255,255,255,.66); }
+.hd { display: flex; align-items: center; gap: 8px; min-height: 22px; flex-wrap: wrap; }
+.hd h2 { font-size: 14.5px; font-weight: 600; letter-spacing: -.005em; }
+.hd .sub, .sub { font-size: 12px; color: var(--mute); }
+.hd .r { margin-left: auto; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.well { border-radius: 14px; background: var(--well); box-shadow: 0 0 0 1px var(--line); padding: 10px 12px; min-width: 0; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: var(--r-md); font-size: 13px; font-weight: 500; white-space: nowrap; transition: transform var(--t) var(--ease), box-shadow var(--t); }
+.btn.pri { background: var(--acc); color: #fff; box-shadow: var(--sh-acc); } .btn.pri:hover { transform: translateY(-1px); }
+.btn.sec { background: #fff; color: var(--ink); box-shadow: 0 0 0 1px var(--line2), 0 1px 2px rgba(28,36,64,.06); }
+.btn.ghost { color: var(--ink2); } .btn.ghost:hover { background: rgba(21,25,38,.05); }
+.btn.sm { height: 32px; padding: 0 12px; border-radius: 11px; font-size: 12.5px; }
+.btn.xs { height: 26px; padding: 0 9px; border-radius: 8px; font-size: 12px; }
+.card.dark .btn.sec { background: rgba(255,255,255,.12); color: #fff; box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); }
+.chip { display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 9px; border-radius: 999px; font-size: 11.5px; font-weight: 500; line-height: 1; white-space: nowrap; background: rgba(21,25,38,.06); color: var(--ink2); }
+.chip.dot::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.chip.ok { background: var(--grow-soft); color: var(--grow-ink); } .chip.warn { background: var(--warn-soft); color: var(--warn-ink); }
+.chip.due { background: var(--due-soft); color: var(--due-ink); } .chip.info { background: var(--ment-soft); color: var(--ment-ink); }
+.chip.acc { background: var(--acc-soft); color: var(--acc-ink); }
+.card.dark .chip { background: rgba(255,255,255,.12); color: #fff; }
+.seg { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: var(--r-md); background: rgba(21,25,38,.05); flex-wrap: wrap; }
+.seg button { height: 28px; padding: 0 12px; border-radius: var(--r-sm); font-size: 12.5px; color: var(--ink2); white-space: nowrap; }
+.seg button[aria-pressed="true"] { background: #fff; color: var(--ink); font-weight: 500; box-shadow: 0 0 0 1px var(--line), 0 2px 6px -2px rgba(28,36,64,.16); }
+.seg-l { font-size: 11.5px; color: var(--mute); margin-right: 2px; }
+.input, .textarea { width: 100%; padding: 9px 12px; border: 0; border-radius: var(--r-md); background: rgba(255,255,255,.85); box-shadow: 0 0 0 1px var(--line2); font-size: 13px; }
+.textarea { min-height: 64px; resize: vertical; line-height: 1.5; }
+.crumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--mute); flex-wrap: wrap; } .crumb b { color: var(--ink); font-weight: 500; }
+
+/* 这一页用到的区块 */
+.mhead { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.mhead h2 { font-size: 19px; font-weight: 600; letter-spacing: -.01em; margin-right: 4px; }
+.meta { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--mute); font-size: 12px; } .meta b { color: var(--ink2); font-weight: 500; }
+.std { display: grid; gap: 10px; }
+.std dt { font-size: 11.5px; font-weight: 600; color: var(--mute); letter-spacing: .04em; }
+.std dd { margin: 2px 0 0; color: var(--ink2); }
+.std ol { counter-reset: n; display: grid; gap: 4px; }
+.std ol li { counter-increment: n; padding-left: 22px; position: relative; }
+.std ol li::before { content: counter(n); position: absolute; left: 0; top: 1px; width: 16px; height: 16px; border-radius: 50%; background: var(--acc-soft); color: var(--acc-ink); font: 600 10.5px/16px var(--num); text-align: center; }
+.std .miss li { padding-left: 14px; position: relative; } .std .miss li::before { content: ""; position: absolute; left: 2px; top: 8px; width: 5px; height: 5px; border-radius: 50%; background: var(--warn); }
+.items { display: grid; gap: 8px; }
+.it { display: grid; gap: 6px; }
+.it p { color: var(--ink); }
+.it > .seg, .it > .vbtn { justify-self: start; }
+.it .tags { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.acts { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+.vbtn { display: inline-flex; gap: 2px; padding: 3px; border-radius: 10px; background: rgba(21,25,38,.05); flex-wrap: wrap; }
+.vbtn button { height: 26px; padding: 0 10px; border-radius: 8px; font-size: 12px; color: var(--ink2); }
+.vbtn button[aria-pressed="true"] { background: #fff; font-weight: 500; box-shadow: 0 0 0 1px var(--line), 0 2px 6px -2px rgba(28,36,64,.16); }
+.vbtn button[data-v="ok"][aria-pressed="true"] { color: var(--grow-ink); } .vbtn button[data-v="still"][aria-pressed="true"] { color: var(--due-ink); }
+.card.dark .well { background: rgba(255,255,255,.07); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
+.card.dark .it p { color: #fff; }
+.card.dark a:not(.btn) { color: #C5C8FF; }
+.card.dark .ver { background: rgba(255,255,255,.16); }
+.card.dark .quote { border-color: rgba(255,255,255,.2); color: rgba(255,255,255,.8); }
+.card.dark .vbtn { background: rgba(255,255,255,.08); }
+.card.dark .vbtn button { color: rgba(255,255,255,.78); }
+.card.dark .vbtn button[aria-pressed="true"] { color: var(--ink); }
+.card.dark .vbtn button[data-v="ok"][aria-pressed="true"] { color: var(--grow-ink); }
+.card.dark .vbtn button[data-v="still"][aria-pressed="true"] { color: var(--due-ink); }
+.sub-l { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.ver { font: 700 12px/22px var(--num); padding: 0 8px; border-radius: 7px; background: var(--ink); color: #fff; }
+.quote { border-left: 2px solid var(--line2); padding-left: 10px; color: var(--ink2); }
+.next { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.tog { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 8px; font-size: 12px; background: rgba(21,25,38,.05); color: var(--ink2); }
+.tog[aria-pressed="true"] { background: var(--acc-soft); color: var(--acc-ink); font-weight: 500; }
+.tog::before { content: ""; width: 12px; height: 12px; border-radius: 4px; box-shadow: inset 0 0 0 1.5px currentColor; }
+.tog[aria-pressed="true"]::before { background: currentColor; }
+.verdict button[aria-pressed="true"][data-k="good"] { color: var(--grow-ink); } .verdict button[aria-pressed="true"][data-k="fix"] { color: var(--warn-ink); }
+.toast { font-size: 12px; color: var(--grow-ink); background: var(--grow-soft); border-radius: 10px; padding: 6px 10px; }
+
+/* A 标准常驻 */
+.A { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: var(--gap); align-items: start; }
+.A .side { position: sticky; top: 12px; }
+/* B 一条时间线 */
+.B { display: grid; gap: var(--gap); max-width: 880px; width: 100%; margin: 0 auto; }
+.tl { display: grid; gap: 0; }
+.node { display: grid; grid-template-columns: 92px 18px minmax(0, 1fr); gap: 0 10px; }
+.node .when { text-align: right; font: 600 12px/1.4 var(--num); color: var(--mute); padding-top: 18px; }
+.node .when small { display: block; font: 400 11px/1.4 var(--sans); color: var(--faint); }
+.node .rail { position: relative; } .node .rail::before { content: ""; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: var(--line2); }
+.node:first-child .rail::before { top: 22px; } .node:last-child .rail::before { bottom: calc(100% - 22px); }
+.node .rail::after { content: ""; position: absolute; left: 3px; top: 18px; width: 12px; height: 12px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px var(--faint); }
+.node.now .rail::after { background: var(--acc); box-shadow: 0 0 0 2px var(--acc), 0 0 0 6px var(--acc-soft); }
+.node .body { padding: 6px 0; min-width: 0; }
+details.fold > summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+details.fold > summary::-webkit-details-marker { display: none; }
+details.fold > summary::after { content: "展开"; margin-left: auto; font-size: 12px; color: var(--mute); }
+details.fold[open] > summary::after { content: "收起"; }
+details.fold[open] > summary { margin-bottom: 10px; }
+/* C 判断台 */
+.C { display: grid; gap: var(--gap); }
+.hero { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; }
+.hero h3 { font-size: 19px; font-weight: 600; letter-spacing: -.01em; }
+.hero .r { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.15fr); gap: var(--gap); align-items: start; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.step { font: 700 11px/18px var(--num); width: 18px; height: 18px; border-radius: 50%; background: var(--ink); color: #fff; text-align: center; flex: none; }
+
+@media (max-width: 900px) {
+  .note, .A, .cols { grid-template-columns: minmax(0, 1fr); }
+  .A .side { position: static; }
+  .node { grid-template-columns: 18px minmax(0, 1fr); } .node .when { grid-column: 2; text-align: left; padding: 10px 0 0; } .node .rail { grid-row: 1 / span 2; }
+  .frame { padding: 8px; border-radius: 20px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>里程碑详情：三版版式</h1>
+    <p>PRD v3.0 第 1 页。三版的内容和视觉相同（V3 柔光），差别只在信息怎么组织。示例数据是虚构的；按钮可以点，用来感受操作顺序，不会真的保存。</p>
+    <div class="ctl">
+      <div class="seg" role="group" aria-label="版式"><span class="seg-l">版式</span>
+        <button id="v-A" data-set="variant" data-val="A">A 标准常驻</button>
+        <button id="v-B" data-set="variant" data-val="B">B 一条时间线</button>
+        <button id="v-C" data-set="variant" data-val="C">C 判断台</button>
+      </div>
+      <div class="seg" role="group" aria-label="视角"><span class="seg-l">视角</span>
+        <button id="r-mentor" data-set="role" data-val="mentor">带教：评审第 2 版</button>
+        <button id="r-trainee" data-set="role" data-val="trainee">管培生：准备再交</button>
+      </div>
+    </div>
+    <div class="note" id="note"></div>
+  </header>
+  <main class="frame" id="frame"></main>
+</div>
+
+<script>
+const S = { variant: 'A', role: 'mentor', verify: { f1: null, f2: null, o1: null }, verdict: null,
+  drafts: [ { t: '问题陈述现在能被证伪了，这一条改到位。', keep: false }, { t: '三个判断里第二个只有访谈一个来源，补一份续费数据再下判断。', keep: true } ],
+  tab: null, toast: '' };
+
+const NOTES = {
+  A: ['怎么组织', '左边常驻任务标准，右边是当前要做的事，再往下是历史版本。', '适合', '评审和修改时都要对着标准看；标准内容长也放得下。', '代价', '标准占掉一栏，右边变窄；来回几轮之后历史要往下翻。'],
+  B: ['怎么组织', '整页是一条时间线：立标准、交第 1 版、评审、修改、交第 2 版，最后一格是现在要做的事。', '适合', '想看清一轮一轮怎么改过来的；证据链最完整，评估时回看方便。', '代价', '现在要做的事在最下面；标准默认收起，要点开才看得到。'],
+  C: ['怎么组织', '最上面一块说清现在要判断什么，下面三栏从左到右就是操作顺序；标准和历史收在页签里。', '适合', '带教每天要快速处理多份成果；一屏做完，不用滚动。', '代价', '标准和历史默认看不到全貌；内容多时三栏会挤。']
+};
+
+const FB = [
+  { id: 'f1', t: '问题陈述写的是解法（「搭一个续费提醒系统」），不是问题。先说清楚谁在什么环节流失、凭什么判断。', tag: '问题定义', kind: '通用标准问题', keep: true },
+  { id: 'f2', t: '三个判断里有两个没有写证据来源。', tag: '证据来源', kind: '通用标准问题', keep: true },
+  { id: 'f3', t: '范围里没有写「不解决什么」。', tag: '范围', kind: '', keep: false, act: true },
+  { id: 'f4', t: '访谈提纲做得细，按用户分层来问的角度很好，保留。', tag: '做得好', kind: '', keep: false }
+];
+const ORAL = { id: 'o1', t: '汇报时先说结论，再说过程。', src: '11-13 一对一，口头', tag: '结论先行' };
+const VLAB = { ok: '已改善', still: '仍存在', na: '这次没涉及' };
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function mhead() {
+  const st = S.role === 'mentor' ? '<span class="chip info dot">待评审</span>' : '<span class="chip warn dot">需修改</span>';
+  return `<div class="card"><div class="crumb">项目 <span>/</span> 续费流失原因诊断 <span>/</span> <b>里程碑</b></div>
+    <div class="mhead"><h2>完成问题定义并通过评审</h2>${st}
+      ${S.role === 'mentor' ? '<button class="btn xs sec" data-act="oral">记一条口头反馈</button>' : ''}</div>
+    <div class="meta"><span>主责 <b>林夏</b></span><span>评审负责人 <b>周颖</b></span><span>截止 <b>11-19 周四</b></span>
+      <span>${S.role === 'mentor' ? '第 2 版 11-17 提交，<b>已等 1 个工作日</b>' : '第 1 版 11-12 评审，<b>修改截止 11-17</b>'}</span></div>
+    ${S.toast ? `<div class="toast" role="status">${S.toast}</div>` : ''}</div>`;
+}
+function stdBody(short) {
+  const good = `<div><dt>怎样算好</dt><dd><ol><li>问题陈述一句话说得清，而且可以被证伪</li><li>每个判断都注明证据来源：数据、访谈或观察</li><li>写明这次不解决什么</li><li>业务负责人看完能回答「同意先做这个」</li></ol></dd></div>`;
+  if (short) return `<dl class="std">${good}</dl>`;
+  return `<dl class="std">
+    <div><dt>为什么做</dt><dd>续费率连续两个季度下滑，业务方想知道先解决哪一段。这份问题定义决定后面两周的调研往哪里投。</dd></div>
+    <div><dt>交付什么</dt><dd>一页问题定义（飞书文档）：现象、问题陈述、范围、判断依据、验收条件。</dd></div>
+    ${good}
+    <div><dt>常见失误</dt><dd><ul class="miss"><li>先想好解法，再倒推问题</li><li>把现象当成原因</li><li>证据只有一个来源</li></ul></dd></div>
+    <div><dt>什么情况要及时找带教</dt><dd>续费数据的口径超过 1 天拿不到；业务方对范围有不同意见。</dd></div>
+    <div><dt>样例</dt><dd><a href="#" data-act="noop">上一期：师资匹配问题定义（通过版）</a></dd></div></dl>`;
+}
+function stdCard() { return `<div class="card"><div class="hd"><h2>任务标准</h2><span class="sub">周颖 11-05 写</span></div>${stdBody(false)}</div>`; }
+
+function verifyItems() {
+  const list = S.role === 'mentor' ? [...FB.filter(f => f.keep), ORAL] : [...FB.filter(f => f.keep || f.act), ORAL];
+  return `<div class="items">${list.map(f => {
+    const v = S.verify[f.id];
+    const ctl = S.role === 'mentor'
+      ? `<div class="vbtn" role="group" aria-label="验证结果">${Object.keys(VLAB).map(k => `<button data-act="verify" data-id="${f.id}" data-v="${k}" aria-pressed="${v === k}">${VLAB[k]}</button>`).join('')}</div>`
+      : (f.act ? '<span class="chip warn">这版就要补上</span>' : '<span class="chip acc">下一版上验证</span>');
+    return `<div class="well it"><p>${f.t}</p><div class="tags"><span class="chip">${f.tag}</span><span class="sub">${f.src || '第 1 版评审'}</span></div><div class="tags">${ctl}</div></div>`; // 每条一格
+  }).join('')}</div>`;
+}
+function subLine(v) {
+  return v === 2
+    ? `<div class="sub-l"><span class="ver">第 2 版</span><a href="#" data-act="noop">问题定义 v2（飞书文档）</a><span class="sub">林夏 · 11-17 16:20 提交</span></div>
+       <div class="quote"><b>修改说明：</b>重写了问题陈述；每个判断补了证据来源；加了「不解决什么」一节。</div>`
+    : `<div class="sub-l"><span class="ver">第 1 版</span><a href="#" data-act="noop">问题定义 v1（飞书文档）</a><span class="sub">林夏 · 11-11 提交</span><span class="chip warn">需改进</span><span class="sub">周颖 11-12 评审</span></div>`;
+}
+function fbList() {
+  return `<div class="items">${FB.map(f => `<div class="well it"><p>${f.t}</p><div class="tags"><span class="chip">${f.tag}</span>${f.kind ? `<span class="chip">${f.kind}</span>` : ''}${f.keep ? '<span class="chip acc">下次验证</span>' : ''}${f.act ? '<span class="chip warn">需要行动</span>' : ''}</div></div>`).join('')}</div>
+    <div class="next"><span class="chip">下一步行动</span><span>修改再交</span><span class="sub">负责人 林夏 · 截止 11-17</span></div>`;
+}
+function composer() {
+  return `<div class="items">${S.drafts.map((d, i) => `<div class="well it"><p>${esc(d.t)}</p><div class="tags"><button class="tog" data-act="keep" data-i="${i}" aria-pressed="${d.keep}">下次验证</button><span class="sub">标签和性质可选填</span></div></div>`).join('')}
+      <div class="it"><label class="sub" for="newfb">再写一条反馈</label><textarea class="textarea" id="newfb" placeholder="一条只说一件事"></textarea>
+      <div class="tags"><button class="btn xs sec" data-act="add">加上这一条</button></div></div></div>
+    <div class="it"><span class="sub">结论</span><div class="seg verdict" role="group" aria-label="结论">
+      <button data-act="verdict" data-k="great" aria-pressed="${S.verdict === 'great'}">优秀</button>
+      <button data-act="verdict" data-k="good" aria-pressed="${S.verdict === 'good'}">达标</button>
+      <button data-act="verdict" data-k="fix" aria-pressed="${S.verdict === 'fix'}">需改进</button></div></div>
+    <div class="acts"><button class="btn pri" data-act="submit">提交评审</button><span class="sub">通过后可顺手记为能力证据</span></div>`;
+}
+function resubmit() {
+  return `<div class="it"><label class="sub" for="lk">成果链接（飞书文档或 GitHub）</label><input class="input" id="lk" value="https://example.feishu.cn/docx/问题定义-v2"></div>
+    <div class="it"><label class="sub" for="chg">修改说明（必填）：这一版针对上面哪几条改了什么</label><textarea class="textarea" id="chg">重写了问题陈述；每个判断补了证据来源；加了「不解决什么」一节。</textarea></div>
+    <div class="acts"><button class="btn pri" data-act="resubmit">提交第 2 版</button><button class="btn ghost" data-act="block">推进不下去，标记受阻</button></div>`;
+}
+function history() { return `<div class="card"><div class="hd"><h2>历史版本</h2><span class="sub">1 轮评审</span></div>${subLine(1)}${fbList()}</div>`; }
+
+const V = {
+  A() {
+    const main = S.role === 'mentor'
+      ? `<div class="card dark"><div class="hd"><h2>评审第 2 版</h2><span class="sub">已等 1 个工作日</span></div>${subLine(2)}</div>
+         <div class="card"><div class="hd"><h2>上次说的，这次改了吗</h2><span class="sub">3 条待验证</span></div>${verifyItems()}</div>
+         <div class="card"><div class="hd"><h2>这一版的反馈</h2></div>${composer()}</div>`
+      : `<div class="card dark"><div class="hd"><h2>这次要改的</h2><span class="sub">4 条，其中 3 条会在下一版上验证</span></div>${verifyItems()}</div>
+         <div class="card"><div class="hd"><h2>修改再交</h2><span class="sub">修改截止 11-17</span></div>${resubmit()}</div>`;
+    return `${mhead()}<div class="A"><div class="side">${stdCard()}</div><div style="display:grid;gap:12px;min-width:0">${main}${history()}</div></div>`;
+  },
+  B() {
+    const node = (when, sub, body, now) => `<div class="node${now ? ' now' : ''}"><div class="when">${when}<small>${sub}</small></div><div class="rail"></div><div class="body">${body}</div></div>`;
+    const nodes = [
+      node('11-05', '周颖', `<div class="card"><details class="fold"><summary><div class="hd"><h2>立任务标准</h2><span class="sub">为什么做、交付什么、怎样算好、常见失误</span></div></summary>${stdBody(false)}</details></div>`),
+      node('11-11', '林夏', `<div class="card">${subLine(1)}</div>`),
+      node('11-12', '周颖', `<div class="card"><div class="hd"><h2>评审：需改进</h2><span class="sub">4 条反馈，2 条下次验证</span></div>${fbList()}</div>`),
+      node('11-13', '周颖', `<div class="card"><div class="hd"><h2>口头反馈</h2><span class="sub">一对一</span></div><div class="well it"><p>${ORAL.t}</p><div class="tags"><span class="chip">${ORAL.tag}</span><span class="chip acc">下次验证</span></div></div></div>`)
+    ];
+    if (S.role === 'mentor') {
+      nodes.push(node('11-17', '林夏', `<div class="card">${subLine(2)}</div>`));
+      nodes.push(node('现在', '等你判断', `<div class="card dark"><div class="hd"><h2>上次说的，这次改了吗</h2><span class="sub">3 条待验证</span></div>${verifyItems()}</div>
+        <div class="card" style="margin-top:12px"><div class="hd"><h2>这一版的反馈</h2></div>${composer()}</div>`, true));
+    } else {
+      nodes.push(node('现在', '等你再交', `<div class="card dark"><div class="hd"><h2>这次要改的</h2><span class="sub">4 条，其中 3 条会在下一版上验证</span></div>${verifyItems()}</div>
+        <div class="card" style="margin-top:12px"><div class="hd"><h2>修改再交</h2><span class="sub">修改截止 11-17</span></div>${resubmit()}</div>`, true));
+    }
+    return `<div class="B">${mhead()}<div class="tl">${nodes.join('')}</div></div>`;
+  },
+  C() {
+    const hero = S.role === 'mentor'
+      ? `<div class="card dark"><div class="hero"><div><h3>林夏交了第 2 版，等你判断</h3><div class="sub">已等 1 个工作日 · 上次有 3 条约好这次验证</div></div><div class="r"><a class="btn sec" href="#" data-act="noop">打开第 2 版</a></div></div>
+         <div class="quote" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.8)"><b>修改说明：</b>重写了问题陈述；每个判断补了证据来源；加了「不解决什么」一节。</div></div>`
+      : `<div class="card dark"><div class="hero"><div><h3>这次要改 4 条，改完再交</h3><div class="sub">修改截止 11-17 · 评审负责人 周颖</div></div><div class="r"><a class="btn sec" href="#" data-act="noop">打开第 1 版</a></div></div></div>`;
+    const c1 = `<div class="card"><div class="hd"><span class="step">1</span><h2>${S.role === 'mentor' ? '上次说的，这次改了吗' : '这次要改的'}</h2></div>${verifyItems()}</div>`;
+    const c2 = `<div class="card"><div class="hd"><span class="step">2</span><h2>对着标准看</h2><span class="sub">只列「怎样算好」</span></div>${stdBody(true)}
+      <div class="tags"><button class="btn xs sec" data-act="tab" data-tab="std">看完整的任务标准</button></div></div>`;
+    const c3 = S.role === 'mentor'
+      ? `<div class="card"><div class="hd"><span class="step">3</span><h2>这一版的反馈</h2></div>${composer()}</div>`
+      : `<div class="card"><div class="hd"><span class="step">3</span><h2>修改再交</h2></div>${resubmit()}</div>`;
+    const tabs = [['std', '任务标准'], ['his', '历史版本'], ['blk', '下一步与受阻']];
+    const panel = S.tab === 'std' ? stdBody(false) : S.tab === 'his' ? subLine(1) + fbList()
+      : S.tab === 'blk' ? `<div class="next"><span class="chip">下一步行动</span><span>修改再交</span><span class="sub">负责人 林夏 · 截止 11-17</span></div><div class="sub">当前没有受阻。</div>` : '';
+    return `<div class="C">${mhead()}${hero}<div class="cols">${c1}${c2}${c3}</div>
+      <div class="card"><div class="tabs">${tabs.map(([k, l]) => `<button class="btn sm ${S.tab === k ? 'sec' : 'ghost'}" data-act="tab" data-tab="${k}" aria-expanded="${S.tab === k}">${l}</button>`).join('')}<span class="sub" style="align-self:center">${S.tab ? '' : '默认收起，点开查看'}</span></div>${panel}</div></div>`;
+  }
+};
+
+function render() {
+  for (const b of document.querySelectorAll('[data-set]')) b.setAttribute('aria-pressed', String(S[b.dataset.set] === b.dataset.val));
+  const n = NOTES[S.variant];
+  document.getElementById('note').innerHTML = [0, 2, 4].map(i => `<div><b>${n[i]}</b>${n[i + 1]}</div>`).join('');
+  document.getElementById('frame').innerHTML = V[S.variant]();
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-set], [data-act]'); if (!b) return;
+  if (b.dataset.set) { S[b.dataset.set] = b.dataset.val; S.toast = ''; if (b.dataset.set === 'role') S.tab = null; return render(); }
+  const a = b.dataset.act; if (b.tagName === 'A') e.preventDefault();
+  if (a === 'verify') S.verify[b.dataset.id] = S.verify[b.dataset.id] === b.dataset.v ? null : b.dataset.v;
+  else if (a === 'keep') S.drafts[+b.dataset.i].keep = !S.drafts[+b.dataset.i].keep;
+  else if (a === 'verdict') S.verdict = b.dataset.k;
+  else if (a === 'add') { const t = document.getElementById('newfb').value.trim(); if (!t) return; S.drafts.push({ t, keep: false }); }
+  else if (a === 'tab') S.tab = S.tab === b.dataset.tab ? null : b.dataset.tab;
+  else if (a === 'submit') { const left = Object.values(S.verify).filter(v => !v).length;
+    S.toast = !S.verdict ? '还没选结论。' : left ? `还有 ${left} 条上次的反馈没验证，可以先提交，它们会留到下一次。演示：评审已记录。` : '演示：评审和 3 条验证结果已记录。'; }
+  else if (a === 'resubmit') S.toast = '演示：第 2 版已提交，等周颖评审。';
+  else if (a === 'block') S.toast = '演示：这里会让你写清卡在哪、需要谁决定。';
+  else if (a === 'oral') S.toast = '演示：这里弹出一个小输入框，写一句、可选「下次验证」，30 秒记完。';
+  else return;
+  render();
+});
+render();
+</script>

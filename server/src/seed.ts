@@ -5,8 +5,10 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type pg from 'pg';
+import type { Actor } from './authorize.ts';
+import { runCommand } from './commands/index.ts';
 import { createPool } from './db.ts';
-import { migrate } from './migrate.ts';
+import { LOCK_KEY, migrate } from './migrate.ts';
 
 /** 能不能运行初始化脚本：不能时返回中文原因，能时返回 null */
 export function demoRefusal(env: Record<string, string | undefined>, url: string | undefined): string | null {
@@ -91,9 +93,9 @@ const IN_PROJECT: Record<string, { project: string; milestone: string }> = {
 };
 
 /** 写入示例数据（假定库是刚迁移好的空库），在一个事务里 */
-export async function seedDemo(client: pg.PoolClient): Promise<void> {
+export async function seedDemo(client: pg.PoolClient, inTransaction = false): Promise<void> {
   const q = (sql: string, params: unknown[] = []) => client.query(sql, params);
-  await q('begin');
+  if (!inTransaction) await q('begin');
   try {
     // 路径模板（先写阶段、模块、任务模板，最后冻结：被期次绑定后只读）
     await q("insert into path_template (id, name, version) values ('pt-demo', '标准培养路径（示例）', 'v1.0')");
@@ -141,6 +143,11 @@ export async function seedDemo(client: pg.PoolClient): Promise<void> {
     await q("insert into milestone (id, project_id, name, goal, acceptance_criteria, original_due_at, due_at, status, created_by) values ('ms-1-2', 'pj-1', '分流方案验证', '在一个班组试用分流方案一周', '有试用前后的对比数据和客服主管反馈', $1, $1, 'todo', 'u-lin')", [dueOn('2026-12-04')]);
     await q("insert into milestone (id, project_id, name, goal, acceptance_criteria, original_due_at, due_at, status, created_by) values ('ms-2-1', 'pj-2', '现状梳理', '画出三个渠道的转化漏斗', '每个渠道的各环节数据有出处', $1, $1, 'todo', 'u-xu')", [dueOn('2026-11-20')]);
     for (const [task, link] of Object.entries(IN_PROJECT)) await q('insert into milestone_task (milestone_id, task_id) values ($1, $2)', [link.milestone, task]);
+    // 任务标准的三项（PRD v3.0 总纲 6.1）
+    await q("update milestone set common_mistakes = $2, escalation = $3, sample_links = $4 where id = $1", ['ms-1-1',
+      '先想好分流方案，再倒推问题\n把来电现象当成原因\n样本只取了一个班组',
+      '工单系统的来电标签一天内导不出来；客服主管对分类口径有不同意见',
+      JSON.stringify([{ title: '上一期：退费工单分类（通过版，示例）', url: 'https://example.feishu.cn/docx/sample-refund' }])]);
 
     // 带教关系：周颖是两人的默认带教；吴桐带许诺的销售站，也是许诺在渠道转化复盘里的项目带教
     await q("insert into mentorship (id, mentor_id, trainee_id, scope, start_date) values ('mt-1', 'u-zhou', 'u-lin', 'all', $1), ('mt-2', 'u-zhou', 'u-xu', 'all', $1)", [COHORT_START]);
@@ -154,25 +161,96 @@ export async function seedDemo(client: pg.PoolClient): Promise<void> {
     // 事件日志：示例数据本身也留痕，来源记为初始化脚本
     await q("insert into event_log (type, subject_type, subject_id, actor_id, source, project_id, occurred_at) values ('C01', 'project', 'pj-1', 'u-lin', 'script', 'pj-1', '2026-10-19T02:00:00Z'), ('C02', 'project', 'pj-1', 'u-zhou', 'script', 'pj-1', '2026-10-20T02:00:00Z'), ('C01', 'project', 'pj-2', 'u-xu', 'script', 'pj-2', '2026-11-06T02:00:00Z')");
 
-    await q('commit');
+    if (!inTransaction) await q('commit');
   } catch (e) {
-    await q('rollback');
+    if (!inTransaction) await q('rollback');
     throw e;
   }
+}
+
+/**
+ * 演示故事（PRD v3.0 第 1 页验收用，只在 npm run db:seed 时写，后端测试只在 seedAll 的用例里写）：
+ * 林夏交「问题定义」第 1 版 → 周颖评「需改进」，分条写 4 条反馈（2 条下次验证、1 条这一版就要补）→ 周颖记一条口头反馈（下次验证）
+ * → 林夏修改再交第 2 版，等周颖评审。全部经业务命令写入，和真实操作留下的数据一样。
+ */
+export async function seedStory(pool: pg.Pool): Promise<void> {
+  const lin: Actor = { id: 'u-lin', name: '林夏', role: 'trainee', isAdmin: false };
+  const zhou: Actor = { id: 'u-zhou', name: '周颖', role: 'mentor', isAdmin: true };
+  // 每步之间隔一点时间：页面上的时间精确到毫秒，同一毫秒里的几步分不出先后
+  const pause = () => new Promise(resolve => setTimeout(resolve, 20));
+  const run = async <T>(actor: Actor, command: Parameters<typeof runCommand>[2], input: Record<string, unknown>) => {
+    await pause();
+    return runCommand(pool, actor, command, input, 'web') as Promise<T>;
+  };
+  const v1 = await run<{ submissionId: string }>(lin, 'C06', { milestoneId: 'ms-1-1', url: 'https://example.feishu.cn/docx/call-problem-v1', note: '第一版问题定义，分类按工单标签做的' });
+  const r1 = await run<{ reviewId: string }>(zhou, 'C08', {
+    submissionId: v1.submissionId, grade: '需改进',
+    keyIssue: '分类口径没说清楚，占比只来自一个班组', judgment: '方向对，证据还撑不起「量最大的三类」这个结论',
+    actions: [{ kind: 'revise', content: '按下面几条改完再交' }],
+    feedback: [
+      { content: '分类口径直接用了工单系统的标签，没有说明为什么这样分。先写清楚分类口径和依据，再分。', tags: ['分类口径'], nature: 'standard', verifyNext: true },
+      { content: '三类问题的占比只有一个班组的数据，补上另外两个班组再下判断。', tags: ['证据来源'], nature: 'standard', verifyNext: true },
+      { content: '没有写这次不处理哪些来电（比如投诉升级件）。', tags: ['范围'], needsAction: true },
+      { content: '抽样听录音核对标签的做法很好，保留。', tags: ['做得好'] },
+    ],
+  });
+  // 口头反馈的入口（C29）在第 6 页做；这里先直接写一条，挂在这个里程碑上
+  await pause();
+  const client = await pool.connect();
+  try {
+    await client.query(
+      "insert into feedback_item (trainee_id, source, milestone_id, content, tags, verify_next, created_by) values ('u-lin', 'verbal', 'ms-1-1', $1, $2, true, 'u-zhou')",
+      ['周会上汇报时先说结论，再说过程。', ['结论先行']]);
+  } finally {
+    client.release();
+  }
+  await run(lin, 'C07', { prevReviewId: r1.reviewId, url: 'https://example.feishu.cn/docx/call-problem-v2', changeNote: '写清了分类口径和依据；三个班组的数据都补上了；加了「不处理哪些来电」一节。' });
 }
 
 /** 清空库、从头迁移、写入示例数据。不满足演示模式或库不在本机时直接拒绝，什么都不做 */
 export async function resetDemo(pool: pg.Pool, env: Record<string, string | undefined>, url: string | undefined): Promise<void> {
   const refused = demoRefusal(env, url);
   if (refused) throw new Error(refused);
-  await pool.query('drop schema public cascade; create schema public');
-  await migrate(pool);
   const client = await pool.connect();
+  let discard = false;
   try {
-    await seedDemo(client);
+    await client.query('begin');
+    // 与独立迁移互斥，先拿锁再清库；事务结束自动释放。
+    await client.query('select pg_advisory_xact_lock($1)', [LOCK_KEY]);
+    await client.query('drop schema public cascade; create schema public');
+    await migrate(pool, undefined, client);
+    await seedDemo(client, true);
+    await client.query('commit');
+  } catch (e) {
+    try {
+      await client.query('rollback');
+    } catch {
+      discard = true;
+    }
+    throw e;
   } finally {
-    client.release();
+    client.release(discard);
   }
+}
+
+/**
+ * npm run db:seed 做的全部事，分两段，失败时报错写明库现在是什么样：
+ * 1. 重置（resetDemo）：清库、迁移、基础示例在一个事务里，失败就回滚，库里的数据和重置前一样；
+ * 2. 演示故事（seedStory）：经业务命令一步一步写，每步各自提交。不放进上面那个事务：故事靠各步提交时间分先后，
+ *    同一个事务里 now() 是同一个值（L-05）。所以它中途失败时，重置前的数据已经没有了，库里是完整的基础示例加故事的前几步。
+ */
+export async function seedAll(pool: pg.Pool, env: Record<string, string | undefined>, url: string | undefined): Promise<string> {
+  try {
+    await resetDemo(pool, env, url);
+  } catch (e) {
+    throw new Error(`初始化失败，库里的数据没有变：${(e as Error).message}`);
+  }
+  try {
+    await seedStory(pool);
+  } catch (e) {
+    throw new Error(`示例数据已重置（重置前的数据已清掉），但第 1 页的演示故事没有写完：${(e as Error).message}。修好原因后重跑 npm run db:seed，会从头重置`);
+  }
+  return '已重置本机库并写入示例数据（全部虚构），含第 1 页的演示故事';
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
@@ -184,10 +262,9 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   } else {
     const pool = createPool(url);
     try {
-      await resetDemo(pool, process.env, url);
-      console.log('已重置本机库并写入示例数据（全部虚构）');
+      console.log(await seedAll(pool, process.env, url));
     } catch (e) {
-      console.error(`初始化失败：${(e as Error).message}`);
+      console.error((e as Error).message);
       process.exitCode = 1;
     } finally {
       await pool.end();

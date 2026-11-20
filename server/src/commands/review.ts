@@ -1,8 +1,10 @@
 // 成果、评审、下一步行动、认定的命令（PRD 2.4、3.3、4.2–4.5、第 7 节；issue #38）：
 // C06 提交成果、C07 修改再交、C08 评审、C09 处理下一步行动。
+// PRD v3.0（总纲 6.2、7.2；issue #45）：C08 加反馈条目和顺手验证上次的反馈；C40 单独验证一条反馈。
 import type pg from 'pg';
 import type { CommandId } from '../authorize.ts';
 import { projectMentor, stationMentor } from '../mentor.ts';
+import { insertFeedback, parseFeedback, parseResult, parseVerifications, prepareVerifications } from './feedback.ts';
 import { CommandError, type Handler, ids, text } from './kit.ts';
 
 const STATUS_CN: Record<string, string> = {
@@ -164,9 +166,11 @@ const C08: Handler = async (tx, actor, input) => {
   const judgment = text(input, 'judgment', '带教判断', false);
   const actions = parseActions(input);
   const creditTaskIds = ids(input, 'creditTaskIds', '认定的培养任务');
+  const feedback = parseFeedback(input);
+  const verifications = parseVerifications(input);
 
-  const sub = await tx.query<{ milestone_id: string | null; task_id: string | null; submitter_id: string; review_state: string; version: number }>(
-    'select milestone_id, task_id, submitter_id, review_state, version from submission where id = $1 for update', [submissionId]);
+  const sub = await tx.query<{ milestone_id: string | null; task_id: string | null; submitter_id: string; review_state: string; version: number; submitted_at: Date }>(
+    'select milestone_id, task_id, submitter_id, review_state, version, submitted_at from submission where id = $1 for update', [submissionId]);
   if (!sub.rows[0]) throw new CommandError(404, '没有这个成果版本');
   const row = sub.rows[0];
   const s = await lockSubject(tx, ...subjectOf(row));
@@ -202,11 +206,16 @@ const C08: Handler = async (tx, actor, input) => {
     creditOwners = rows.map(x => x.user_id);
   }
   const passed = grade !== '需改进';
+  const verify = verifications.length
+    ? await prepareVerifications(tx, verifications, { id: submissionId, version: row.version, submittedAt: row.submitted_at, submitterId: row.submitter_id, projectId: s.projectId, traineeIds: s.traineeIds }, actor.id)
+    : null;
 
   return {
     traineeIds: s.traineeIds,
     precondition: () => {
       if (row.review_state !== 'pending') return '这个成果版本已经评审过';
+      const unverifiable = verify?.problem();
+      if (unverifiable) return unverifiable;
       if (latest?.id !== submissionId) return '只能评审这一对象最新的成果版本';
       if (!passed && !owned.some(a => a.kind === 'revise')) return '结论为需改进时，至少要有一条「修改再交」行动';
       if (passed && owned.some(a => a.kind === 'revise')) return '「修改再交」行动只用在需改进的评审里';
@@ -230,16 +239,19 @@ const C08: Handler = async (tx, actor, input) => {
           [reviewId, a.kind, a.content, a.ownerId, a.targetMilestoneId]);
         actionIds.push(r.rows[0].id);
       }
+      // 反馈条目属于这一版的提交人（总纲 7.1）
+      const feedbackIds = await insertFeedback(tx, feedback, { traineeId: row.submitter_id, reviewId, submissionId, milestoneId: s.kind === 'milestone' ? s.id : null, actorId: actor.id });
+      const verifyEvents = verify ? await verify.apply() : [];
       if (creditTaskIds.length) {
         await tx.query("insert into submission_credit (submission_id, task_id, status, credited_by, credited_at) select $1, unnest($2::text[]), 'credited', $3, now()", [submissionId, creditTaskIds, actor.id]);
         await tx.query("update task_instance set status = 'passed' where id = any($1)", [creditTaskIds]);
       }
       return {
-        result: { reviewId, status, actionIds, creditedTaskIds: creditTaskIds },
+        result: { reviewId, status, actionIds, creditedTaskIds: creditTaskIds, feedbackIds, verifiedFeedbackIds: verifications.map(v => v.feedbackId) },
         events: [{
           subjectType: 'review', subjectId: reviewId, ...eventScope(s, row.submitter_id),
-          payload: { submissionId, version: row.version, grade, actionIds, creditedTaskIds: creditTaskIds, creditedTrainees: [...new Set(creditOwners)] },
-        }],
+          payload: { submissionId, version: row.version, grade, actionIds, creditedTaskIds: creditTaskIds, creditedTrainees: [...new Set(creditOwners)], feedbackIds },
+        }, ...verifyEvents],
       };
     },
   };
@@ -265,4 +277,22 @@ const C09: Handler = async (tx, _actor, input) => {
   };
 };
 
-export const reviewHandlers: Partial<Record<CommandId, Handler>> = { C06, C07, C08, C09 };
+/** C40 验证反馈：在某份成果版本上记一条「下次验证」的反馈改了没有（总纲 6.2）。评审时一起验证走 C08 的 verifications */
+const C40: Handler = async (tx, actor, input) => {
+  const feedbackId = text(input, 'feedbackId', '反馈') as string;
+  const submissionId = text(input, 'submissionId', '成果版本') as string;
+  const result = parseResult(input);
+  const sub = await tx.query<{ milestone_id: string | null; task_id: string | null; submitter_id: string; version: number; submitted_at: Date }>(
+    'select milestone_id, task_id, submitter_id, version, submitted_at from submission where id = $1', [submissionId]);
+  if (!sub.rows[0]) throw new CommandError(404, '没有这个成果版本');
+  const row = sub.rows[0];
+  const s = await lockSubject(tx, ...subjectOf(row));
+  const verify = await prepareVerifications(tx, [{ feedbackId, result }], { id: submissionId, version: row.version, submittedAt: row.submitted_at, submitterId: row.submitter_id, projectId: s.projectId, traineeIds: s.traineeIds }, actor.id);
+  return {
+    traineeIds: verify.traineeIds,
+    precondition: verify.problem,
+    apply: async () => ({ result: { feedbackId, submissionId, result }, events: await verify.apply() }),
+  };
+};
+
+export const reviewHandlers: Partial<Record<CommandId, Handler>> = { C06, C07, C08, C09, C40 };

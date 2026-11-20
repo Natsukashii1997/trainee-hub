@@ -1,0 +1,76 @@
+/* ===== 三版预览新增：只用 app.css 的变量与写法 ===== */
+.hm-t[data-v] { grid-template-rows: none; grid-auto-rows: auto; }
+.hm-t.v-a { grid-template-areas: "nx nx week prog" "rv rv week prog" "res feed feed tid"; }
+.hm-t.v-b { grid-template-areas: "nx nx rv rv" "week week week prog" "res feed feed tid"; }
+.hm-t.v-c { grid-template-areas: "nx nx nx prog" "week week week prog" "rv rv res tid" "feed feed feed feed"; }
+
+/* 下一步：深色卡，排法沿用 .reco 与 .focus */
+.nx { display: flex; flex-direction: column; padding: 20px 22px; }
+.nx .r1 { display: flex; align-items: center; gap: 8px; font-size: 12px; color: rgb(201, 204, 224); }
+.nx .r1 .tile { width: 24px; height: 24px; border-radius: 8px; }
+.nx .r1 .tile .ico { width: 13px; height: 13px; }
+.nx .r1 .chip { margin-left: auto; }
+.nx h3 { margin-top: 14px; font-size: var(--fs-2xl); font-weight: 400; letter-spacing: -0.01em; line-height: 1.25; }
+.nx .foot { margin-top: auto; padding-top: 16px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.nx .cd .n { font-size: var(--fs-3xl); color: #fff; }
+.nx .cd .u { color: rgb(201, 204, 224); }
+.nx .lbl { font-size: 11.5px; color: rgb(201, 204, 224); margin-top: 6px; }
+.nx .then { margin-top: 14px; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: rgba(255, 255, 255, 0.07); box-shadow: rgba(255, 255, 255, 0.08) 0px 0px 0px 1px inset; }
+.nx .then .tl { font-size: 11.5px; color: rgb(201, 204, 224); white-space: nowrap; padding-right: 10px; box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.1); }
+.nx .then b { display: block; font-size: 13px; font-weight: 500; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .then small { display: block; font-size: 11.5px; color: rgb(201, 204, 224); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx .then .pct { display: flex; align-items: center; gap: 8px; flex: none; font-family: var(--num); font-size: 12px; font-weight: 600; color: #fff; }
+.nx .then .lbar { display: block; width: 64px; background: rgba(255, 255, 255, 0.12); }
+
+/* 带教点评：等待点评 + 最新点评（宽卡左右两栏） */
+.rvm-b { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+.rvm .sec-l { margin-top: 14px; }
+.rvm .rvm-w .muted.row { margin-top: auto; padding-top: 10px; }
+
+/* 进度：双圆环，外环完成、内环时间 */
+.hm-ring { display: flex; align-items: center; gap: 16px; margin-top: 14px; padding: 12px; border-radius: 14px; background: var(--well); box-shadow: 0 0 0 1px var(--line); }
+.hm-ring svg { width: 84px; height: 84px; flex: none; }
+.hm-ring .lg { display: grid; gap: 10px; min-width: 0; }
+.hm-ring .lg > div { display: grid; grid-template-columns: 8px minmax(0, 1fr); column-gap: 6px; align-items: center; }
+.hm-ring .lg i { width: 8px; height: 8px; border-radius: 50%; }
+.hm-ring .l { font-size: 11.5px; color: var(--mute); }
+.hm-ring .v, .hm-ring .s { grid-column: 2; }
+.hm-ring .v { margin-top: 3px; font-family: var(--num); font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; }
+.hm-ring .v small { font-size: 12px; font-weight: 600; color: var(--ink2); margin-left: 2px; }
+.hm-ring .s { margin-top: 2px; font-size: 11px; color: var(--mute); }
+
+/* 横向周视图：一天一格，今天描黑边 */
+.wk7 { flex: 1; grid-auto-rows: 1fr; margin-top: 14px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+.wd { display: flex; flex-direction: column; gap: 6px; padding: 10px 8px; border-radius: 14px; background: var(--well); box-shadow: 0 0 0 1px var(--line); min-height: 132px; min-width: 0; }
+.wd .dh { display: flex; align-items: baseline; justify-content: space-between; gap: 4px; padding: 0 2px 2px; font-size: 11.5px; color: var(--mute); }
+.wd .dh b { font-family: var(--num); font-size: 12.5px; font-weight: 600; color: var(--ink); }
+.wd.past { background: var(--sunk); box-shadow: none; }
+.wd.past .dh b { color: var(--mute); }
+.wd.today { background: #fff; box-shadow: 0 0 0 1.5px var(--ink), 0 10px 24px -12px rgba(21, 25, 38, 0.35); }
+.wd.today .dh span { color: var(--ink); font-weight: 600; }
+.we { border-radius: 10px; padding: 7px 8px; background: var(--cs); }
+.we b { display: block; font-size: 12px; font-weight: 600; line-height: 1.4; color: var(--ink); text-wrap: balance; }
+.we small { display: block; margin-top: 2px; font-family: var(--num); font-size: 11px; color: var(--ci); }
+.we.done { background: var(--sunk); }
+.we.done b { color: var(--mute); text-decoration: line-through rgba(90, 97, 117, 0.45); }
+.we.done small { color: var(--mute); }
+.wk-next { margin-top: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.wk-next .lb { font-size: 11.5px; color: var(--mute); margin-right: 2px; }
+.wk-next .wi { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: var(--cs); color: var(--ci); font-size: 11.5px; }
+.wk-next .wi b { font-weight: 600; }
+
+/* 团队动态只占两列时，置顶活动放在列表上面 */
+.feed2 .hm-feed { grid-template-columns: 250px minmax(0, 1fr); gap: 16px; }
+.feed2 .li .tx b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* 版式切换条（预览专用） */
+.vsw { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); z-index: 40; display: flex; align-items: center; gap: 10px; padding: 6px 14px 6px 8px; border-radius: 999px; background: var(--glass-hi); backdrop-filter: blur(24px) saturate(1.4); box-shadow: var(--sh), var(--sh-in); max-width: calc(100vw - 24px); }
+.vsw .vnote { font-size: 12px; color: var(--mute); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vsw button:focus-visible { outline: 2px solid var(--acc); outline-offset: 1px; }
+.app { padding-bottom: 72px; }
+@media (max-width: 900px) { .vsw .vnote { display: none; } }
+
+.wk7.two { grid-auto-rows: auto; grid-template-rows: auto auto auto auto; }
+.wk7 .wl { grid-column: 1 / -1; font-size: 11.5px; color: var(--mute); margin: 2px 0 -2px 2px; }
+.wk7 .wl + .wd, .wk7 .wd { min-height: 0; }
+.wk7:not(.two) .wd { min-height: 132px; }
