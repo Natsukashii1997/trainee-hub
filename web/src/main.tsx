@@ -8,6 +8,7 @@ import { SessionProvider, ToastProvider } from './components/ui';
 import { ScheduleEvents, ScheduleIndex, ScheduleMentees, ScheduleRotation, ScheduleWeek } from './pages/Schedule';
 import { Todo } from './pages/Todo';
 import Kit from './pages/Kit';
+const Picks = lazy(() => import('./pages/dev/Picks'));
 
 /* 业务页面按需加载：各页面由不同 agent 并行重写，一个页面出错不拖垮整个应用（错误边界见 Layout 的 PageFrame）。 */
 const Home = lazy(() => import('./pages/Home'));
@@ -106,6 +107,7 @@ createRoot(document.getElementById('root')!).render(
               <Route path="incentive" element={<Navigate to="/admin/later" replace />} />
               {/* 组件示例（给页面开发对照） */}
               <Route path="dev/kit" element={<Kit />} />
+              <Route path="dev/picks" element={<Picks />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Routes>
