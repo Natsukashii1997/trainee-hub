@@ -316,7 +316,7 @@ function ContribCard({ u, contribs, className }: { u: User; contribs: ReturnType
   );
 }
 
-export const CSS = `
+const CSS = `
 .tm-card{display:flex;flex-direction:column;padding:18px 20px 16px}
 .tm-name{display:block;font-size:15px;font-weight:600}
 .tm-card small{display:block;font-size:11.5px}

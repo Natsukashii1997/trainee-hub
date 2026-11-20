@@ -776,7 +776,7 @@ export default function Home() {
 }
 
 // ---------- 本页样式（只作用于 hm- 前缀；需要时由主会话并入 app.css） ----------
-export const CSS = `
+const CSS = `
 .hm-t { margin-top: 20px; display: grid; gap: var(--gap); grid-template-columns: 1fr 1fr 1.08fr 1.08fr;
   grid-template-areas: "nx nx week prog" "rv rv week prog" "res feed feed tid"; align-items: stretch; }
 /* 管培生首页 · 深色「下一步」卡（排法沿用 .reco 与原焦点卡） */
