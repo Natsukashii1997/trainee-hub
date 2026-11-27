@@ -20,6 +20,14 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      # 通用规则检查只在 agent-kit 留一份（agent-kit#133），按固定标签检出；本仓库的设置在 scripts/hooks.json。
+      # 标签落后于 agent-kit 当前版本时，agent-kit 的 doctor 会报。.agent-kit 不算进大改动的文件数。
+      - uses: actions/checkout@v4
+        with:
+          repository: Natsukashii1997/agent-kit
+          ref: git-hooks-v1
+          path: .agent-kit
+      - run: echo .agent-kit/ >> .git/info/exclude && node .agent-kit/git-hooks/check-rules.mjs .
       # 后端测试要本机 PostgreSQL 16：ubuntu-latest（24.04）自带，装在 /usr/lib/postgresql/16/bin；scripts/db.mjs 默认找的是 Homebrew 路径
       - run: npm test
         env:

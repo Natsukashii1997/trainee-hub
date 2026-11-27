@@ -19,7 +19,7 @@ server.on('error', err => {
   console.error(`后端启动失败：${err.message}`);
   process.exit(1);
 });
-server.listen(port, '127.0.0.1', () =>
+server.listen(port, '127.0.0.1', () => // 来源校验见 app.ts
   console.log(`后端已启动：http://127.0.0.1:${port}（健康检查 /api/health；${demo ? '演示模式：可切换示例身份，只用合成数据' : '非演示模式：飞书登录做好之前，业务接口一律拒绝'}）`));
 
 for (const signal of ['SIGINT', 'SIGTERM'] as const)

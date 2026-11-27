@@ -36,8 +36,8 @@ npm run db:up                    # 建库并启动开发库（幂等）；db:sto
 TRAINEE_HUB_DEMO=1 npm run db:seed  # 清空本机开发库、从头迁移、写入虚构示例数据（只在演示模式下运行，PRD 4.1）
 npm test                         # vitest + 后端测试（连真测试库，会先 db:up）+ 交接格式 + 通用规则，提交前跑
 npm run typecheck                # 前端与后端（server/tsconfig.json）的 tsc --noEmit
-node --test tests/*.test.mjs     # 交接格式 + 通用规则（含自测）
-node scripts/check-rules.mjs     # 只跑通用规则检查
+node --test tests/*.test.mjs     # 交接格式
+node ~/Library/Application\ Support/agent-kit/runtime/git-hooks/check-rules.mjs .   # 只跑通用规则检查（共用实现在 agent-kit git-hooks/，本仓库设置在 scripts/hooks.json）
 ```
 
 数据库：本机 Homebrew PostgreSQL 16（`brew install postgresql@16`），但不用 Homebrew 的默认实例，`scripts/db.mjs` 给本项目单独建一个：
@@ -69,7 +69,8 @@ server/              后端（Node + TypeScript，Node 直接跑 .ts，不编译
   src/               入口 index.ts、HTTP 与来源校验 app.ts、统一授权入口 authorize.ts、演示模式 demo.ts、初始化脚本 seed.ts、连接池 db.ts、迁移 migrate.ts、测试 *.test.ts
   migrations/        数据库迁移（NNNN_名称.sql）
 scripts/
-  check-rules.mjs    通用规则检查（只查机器能判定的）
+  hooks/             提交、推送前钩子：只转发到 agent-kit 共用实现（git-hooks/）
+  hooks.json         本仓库的钩子设置：推送前跑哪些测试、规则检查扫哪些目录、依赖白名单
   db.mjs             本机开发库：建、启、停、带连接串执行命令
   dev.mjs            npm run dev:all 一条命令起数据库、后端、前端
 tests/               node:test 测试
@@ -96,7 +97,7 @@ single-context：根目录 `GLOSSARY.md` 与 `docs/adr/`，用到时再建。见
 ## 规则
 
 - 验证用的备份、日志等证据放 `~/Library/Application Support/trainee-hub/evidence/`，不放 `/tmp`（全局坑 G-01）；私人数据与完整日志不进仓库。
-- 本机服务只监听 127.0.0.1；新增依赖先改 `scripts/check-rules.mjs` 的 `ALLOWED_DEPS`，并在交接里说明理由（`check-rules` 会查）。
+- 本机服务只监听 127.0.0.1；新增依赖先改 `scripts/hooks.json` 的 `checkRules.allowedDeps`，并在交接里说明理由（`check-rules` 会查）。
 - 只做电脑版（≥1280px），不做窄屏适配；要加手机版须用户明确提出。
 - 可见性规则（产出、点评、考核只给本人、带教人、管理员）在服务端执行，不能只靠前端隐藏。骨架期例外：只在演示模式（本机、合成数据）下运行，统一授权入口里带教放行全部、管培生只看本人（PRD 2.2、2.3）；非演示模式在第二轮完成飞书登录与对象级权限前一律拒绝，真实数据进来前必须完成（PRD 下篇 R1）。
 - 页面上的时间经统一的格式化函数按北京时间显示，不直接截取 ISO 字符串（全局坑 G-02，`check-rules` 会查）。
