@@ -1,0 +1,15 @@
+{
+  "说明": [
+    "通用规则检查的实现在 agent-kit git-hooks/（写法见那里的 config.mjs），本仓库只写和默认值不同的地方。",
+    "本仓库没装推送前钩子，规则检查在 CI 上跑（.github/workflows/ci.yml 检出 agent-kit 固定标签）；本机单跑：node ~/Library/Application\\ Support/agent-kit/runtime/git-hooks/check-rules.mjs .",
+    "依赖白名单：前端 react、路由、字体、vite、vitest 一套；后端 pg（纯 JS 的 PostgreSQL 驱动，后端用 Node 自带 http 直接跑）和类型包。加依赖先改这里，并在交接里说明理由。"
+  ],
+  "checkRules": {
+    "scan": ["web/src", "server"],
+    "allowedDeps": [
+      "react", "react-dom", "react-router-dom", "@fontsource/geist-sans", "@fontsource/geist-mono", "@fontsource/manrope",
+      "pg", "@types/pg", "@types/node",
+      "vite", "@vitejs/plugin-react", "typescript", "vitest", "jsdom", "@testing-library/react", "@types/react", "@types/react-dom"
+    ]
+  }
+}
